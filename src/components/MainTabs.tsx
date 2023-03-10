@@ -20,6 +20,7 @@ function MainTabs({ style, labels, onChange, value }: Props): JSX.Element {
   return (
     <View style={[styles.container, style]}>
       {labels.map((label, index) => <TouchableOpacity
+        key={index}
         style={[styles.btn, value === index && styles.active]}
         onPress={() => onChange && onChange(index)}>
         <Text style={[styles.text, value === index && styles.textActive]}>{label}</Text>

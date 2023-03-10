@@ -8,17 +8,21 @@ import {
 import LinearGradient from 'react-native-linear-gradient'
 import ActionButton from '../components/ActionButton'
 import MainTabs from '../components/MainTabs'
+import Menu from '../components/Menu'
 
 interface Props {
+  onExitPress?: () => void,
 }
 
 const tabs = ['Assets', 'Activity', 'NFT']
 
-function Home({  }: Props): JSX.Element {
+function Home({ onExitPress }: Props): JSX.Element {
   const [tab, setTab] = useState(0)
   return (
     <View style={styles.page} >
-      <View style={styles.searchContainer}/>
+      <View style={styles.searchContainer}>
+        <Menu  onExitPress={onExitPress} />
+      </View>
       <LinearGradient colors={['#3F79CF','#2E74B5','#2160A1']} start={{x: 1, y: 0}} end={{x: 0, y: 0}} style={styles.walletContainer}/>
       <View style={styles.actionBtnsContainer}>
         <ActionButton label='Receive' source={require('../../assets/receive.png')} style={styles.actionBtn1}/>
@@ -45,6 +49,10 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 12,
   },
   walletContainer: {
     marginTop: 16,
@@ -70,7 +78,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-  }
+  },
 })
 
 export default Home

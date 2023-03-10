@@ -34,7 +34,7 @@ function App(): JSX.Element {
         {screen === 2 && <CreatePassword onCancelPress={() => setScreen(0)} onContinuePress={() => setScreen(3)}/>}
         {screen === 3 && <CreateBackup onContinuePress={() => setScreen(5)}/>}
         {screen === 4 && <ImportSecretWords onContinuePress={() => setScreen(5)}/>}
-        {screen === 5 && <Home />}
+        {screen === 5 && <Home onExitPress={() => setScreen(0)}/>}
       </View>
     </SafeAreaView>
   )
