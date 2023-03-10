@@ -9,6 +9,8 @@ import LinearGradient from 'react-native-linear-gradient'
 import ActionButton from '../components/ActionButton'
 import MainTabs from '../components/MainTabs'
 import Menu from '../components/Menu'
+import Send from './Send'
+import Backup from './Backup'
 
 interface Props {
   onExitPress?: () => void,
@@ -18,21 +20,28 @@ const tabs = ['Assets', 'Activity', 'NFT']
 
 function Home({ onExitPress }: Props): JSX.Element {
   const [tab, setTab] = useState(0)
+  const [isSendOpen, setSendOpen] = useState(false)
+  const [isBackupOpen, setBackupOpen] = useState(false)
   return (
     <View style={styles.page} >
       <View style={styles.searchContainer}>
-        <Menu  onExitPress={onExitPress} />
+        <Menu  onExitPress={onExitPress} onBackupPress={() => setBackupOpen(true)}/>
       </View>
       <LinearGradient colors={['#3F79CF','#2E74B5','#2160A1']} start={{x: 1, y: 0}} end={{x: 0, y: 0}} style={styles.walletContainer}/>
       <View style={styles.actionBtnsContainer}>
         <ActionButton label='Receive' source={require('../../assets/receive.png')} style={styles.actionBtn1}/>
-        <ActionButton label='Send' source={require('../../assets/send.png')} style={styles.actionBtn2}/>
+        <ActionButton label='Send'
+          source={require('../../assets/send.png')}
+          style={styles.actionBtn2}
+          onPress={() => setSendOpen(true)}/>
         <ActionButton label='Swap' source={require('../../assets/swap.png')} style={styles.actionBtn2}/>
         <ActionButton label='Earn' source={require('../../assets/earn.png')} style={styles.actionBtn2}/>
       </View>
       <View style={styles.listsContainer}>
         <MainTabs labels={tabs} onChange={setTab} value={tab}/>
       </View>
+      {isSendOpen && <Send onCancelPress={() => setSendOpen(false)}/>}
+      {isBackupOpen && <Backup onClosePress={() => setBackupOpen(false)} onContinuePress={() => setBackupOpen(false)}/>}
     </View>
   )
 }
