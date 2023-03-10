@@ -15,6 +15,7 @@ import LetsCheck from './BackupSteps/LetsCheck'
 
 interface Props {
   onCancelPress?: () => void,
+  onContinuePress?: () => void,
 }
 
 const titles = {
@@ -23,7 +24,7 @@ const titles = {
   3: 'Let’s Check!',
 }
 
-function CreateBackup({ onCancelPress }: Props): JSX.Element {
+function CreateBackup({ onCancelPress, onContinuePress }: Props): JSX.Element {
   const [step, setStep] = useState(0)
   return (
     <View
@@ -49,7 +50,7 @@ function CreateBackup({ onCancelPress }: Props): JSX.Element {
         onRequestClose={() => setStep(0)}>
         {step === 1 && <SafetyRules onUnderstoodPress={() => setStep(2)}/>}
         {step === 2 && <Words onCheckPress={() => setStep(3)}/>}
-        {step === 3 && <LetsCheck onContinuePress={() => setStep(0)} onBackPress={() => setStep(2)}/>}
+        {step === 3 && <LetsCheck onContinuePress={onContinuePress} onBackPress={() => setStep(2)}/>}
       </ModalBottom>
     </View>
   )
