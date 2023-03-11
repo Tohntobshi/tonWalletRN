@@ -7,11 +7,8 @@ import {
   View,
 } from 'react-native'
 
-import Button from '../components/Button'
 import ModalBottom from '../components/ModalBottom'
-import SafetyRules from './BackupSteps/SafetyRules'
-import Words from './BackupSteps/Words'
-import LetsCheck from './BackupSteps/LetsCheck'
+import SendStep1 from './SendSteps/SendStep1'
 
 interface Props {
   onCancelPress?: () => void,
@@ -28,6 +25,7 @@ function Send({ onCancelPress }: Props): JSX.Element {
       title={(titles as any)[step]}
       visible={true}
       onRequestClose={onCancelPress}>
+      {step === 0 && <SendStep1 onContinuePress={() => setStep(1)}/>}
     </ModalBottom>
   )
 }
