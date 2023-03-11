@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
   },
   btn: {
     marginTop: 'auto',
-    marginBottom: 16,
   },
   feeContainer: {
     marginTop: 6,
