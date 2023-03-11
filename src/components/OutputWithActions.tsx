@@ -15,30 +15,33 @@ import Clipboard from '@react-native-clipboard/clipboard'
 
 interface Props {
   style?: StyleProp<ViewStyle>,
-  address: string,
-  frame?: boolean
+  text: string,
+  frame?: boolean,
+  copy?: boolean,
+  tonScan?: boolean,
+  limit?: number,
 }
 
-function AddressOutput({ style, address, frame }: Props): JSX.Element {
+function OutputWithActions({ style, text, frame, copy, tonScan, limit }: Props): JSX.Element {
   const onCopyPress = () => {
-    Clipboard.setString(address)
+    Clipboard.setString(text)
   }
   const onTonScanPress = async () => {
-    const url = 'https://tonscan.org/address/' + address
+    const url = 'https://tonscan.org/address/' + text
     const supported = await Linking.canOpenURL(url)
     if (!supported) return
     Linking.openURL(url)
   }
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.text}>
-        {address}
-        <TouchableOpacity style={styles.pasteBtn} onPress={onCopyPress}>
-          <Image source={require('../../assets/copy.png')} style={styles.pasteImg}/>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.pasteBtn} onPress={onTonScanPress}>
-          <Image source={require('../../assets/tonScan.png')} style={styles.pasteImg}/>
-        </TouchableOpacity>
+      <Text style={styles.text} textBreakStrategy='simple'>
+        {text}
+        {copy && <TouchableOpacity style={styles.btn} onPress={onCopyPress}>
+            <Image source={require('../../assets/copy.png')} style={styles.img}/>
+          </TouchableOpacity>}
+        {tonScan && <TouchableOpacity style={styles.btn} onPress={onTonScanPress}>
+            <Image source={require('../../assets/tonScan.png')} style={styles.img}/>
+          </TouchableOpacity>}
       </Text>
     </View>
     
@@ -66,14 +69,14 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     textAlignVertical: 'bottom'
   },
-  pasteBtn: {
+  btn: {
     width: 16,
     height: 16,
   },
-  pasteImg: {
+  img: {
     width: 16,
     height: 16,
   },
 })
 
-export default AddressOutput
+export default OutputWithActions

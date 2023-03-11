@@ -17,24 +17,24 @@ interface Props {
 
 function CreatePassword({ onCancelPress, onContinuePress }: Props): JSX.Element {
   return (
-    <View
-      style={styles.page}
-      >
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <Image
-          source={require('../../assets/bird2.png')}
-          style={styles.logoImage}
-          />
-        <Text style={styles.title}>Congratulations!</Text>
-        <Text style={styles.text1}>The wallet is ready.</Text>
-        <Text style={styles.text2}>Create a password to protect it.</Text>
-        <Input style={styles.input1}/>
-        <Input style={styles.input2} error/>
-        <Text style={styles.text3}>To protect your wallet as much as possible,
-          use a password with at least 8 characters, one
-          small letter, one capital letter, one digit and one
-          special character.</Text>
-      </ScrollView>
+    <View style={styles.page} >
+      <View style={styles.scrollViewContainer}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <Image
+            source={require('../../assets/bird2.png')}
+            style={styles.logoImage}
+            />
+          <Text style={styles.title}>Congratulations!</Text>
+          <Text style={styles.text1}>The wallet is ready.</Text>
+          <Text style={styles.text2}>Create a password to protect it.</Text>
+          <Input style={styles.input1}/>
+          <Input style={styles.input2} error/>
+          <Text style={styles.text3}>To protect your wallet as much as possible,
+            use a password with at least 8 characters, one
+            small letter, one capital letter, one digit and one
+            special character.</Text>
+        </ScrollView>
+      </View>
       <View style={styles.buttonsContainer}>
         <Button type={'secondary'} style={styles.btn1} onPress={onCancelPress}>Cancel</Button>
         <Button type={'primary'} style={styles.btn2} onPress={onContinuePress}>Continue</Button>
@@ -46,12 +46,13 @@ function CreatePassword({ onCancelPress, onContinuePress }: Props): JSX.Element 
 const styles = StyleSheet.create({
   page: {
     flexGrow: 1,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+  },
+  scrollViewContainer: {
+    flex: 1,
   },
   scrollView: {
     alignItems: 'center',
-    flexGrow: 1,
-    justifyContent: 'center',
   },
   logoImage: {
     marginTop: 50,
@@ -91,16 +92,18 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   buttonsContainer: {
-    marginTop: 'auto',
     flexDirection: 'row',
-    marginBottom: 16,
+    marginVertical: 16,
+    flexShrink: 0,
   },
   btn1: {
-    flexGrow: 1,
+    flex: 1,
+    paddingHorizontal: 20,
   },
   btn2: {
-    flexGrow: 1,
+    flex: 1,
     marginLeft: 15,
+    paddingHorizontal: 20,
   }
 })
 

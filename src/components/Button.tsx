@@ -27,7 +27,7 @@ function Button({ type, children, style, onPress }: PropsWithChildren<Props>): J
     <TouchableOpacity
       onPress={onPress}
       style={containerStyle}>
-        <Text style={textStyle}>{children}</Text>
+        {typeof children === 'string' ? <Text style={textStyle}>{children}</Text> : children}
     </TouchableOpacity>
   )
 }

@@ -9,7 +9,7 @@ import {
 
 import Button from '../../components/Button'
 import Input from '../../components/Input'
-import AddressOutput from '../../components/AddressOutput'
+import OutputWithActions from '../../components/OutputWithActions'
 
 interface Props {
   onContinuePress?: () => void,
@@ -25,7 +25,7 @@ function SendStep2({ onContinuePress, onEditPress }: Props): JSX.Element {
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Receiving address</Text>
       </View>
-      <AddressOutput style={styles.input1} address='EQDAFX3J4Kl-5gZiBB8GpNB81ngLGlem3BrXVQ8-klfDcZhk' frame />
+      <OutputWithActions style={styles.input1} text='EQDAFX3J4Kl-5gZiBB8GpNB81ngLGlem3BrXVQ8-klfDcZhk' frame copy tonScan/>
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Amount</Text>
       </View>

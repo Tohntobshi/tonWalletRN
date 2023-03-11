@@ -11,6 +11,7 @@ import MainTabs from '../components/MainTabs'
 import Menu from '../components/Menu'
 import Send from './Send'
 import Backup from './Backup'
+import Receive from './Receive'
 
 interface Props {
   onExitPress?: () => void,
@@ -22,6 +23,7 @@ function Home({ onExitPress }: Props): JSX.Element {
   const [tab, setTab] = useState(0)
   const [isSendOpen, setSendOpen] = useState(false)
   const [isBackupOpen, setBackupOpen] = useState(false)
+  const [isReceiveOpen, setReceiveOpen] = useState(false)
   return (
     <View style={styles.page} >
       <View style={styles.searchContainer}>
@@ -29,7 +31,10 @@ function Home({ onExitPress }: Props): JSX.Element {
       </View>
       <LinearGradient colors={['#3F79CF','#2E74B5','#2160A1']} start={{x: 1, y: 0}} end={{x: 0, y: 0}} style={styles.walletContainer}/>
       <View style={styles.actionBtnsContainer}>
-        <ActionButton label='Receive' source={require('../../assets/receive.png')} style={styles.actionBtn1}/>
+        <ActionButton label='Receive'
+          source={require('../../assets/receive.png')}
+          style={styles.actionBtn1}
+          onPress={() => setReceiveOpen(true)}/>
         <ActionButton label='Send'
           source={require('../../assets/send.png')}
           style={styles.actionBtn2}
@@ -42,6 +47,7 @@ function Home({ onExitPress }: Props): JSX.Element {
       </View>
       {isSendOpen && <Send onCancelPress={() => setSendOpen(false)}/>}
       {isBackupOpen && <Backup onClosePress={() => setBackupOpen(false)} onContinuePress={() => setBackupOpen(false)}/>}
+      {isReceiveOpen && <Receive onCancelPress={() => setReceiveOpen(false)}/>}
     </View>
   )
 }
