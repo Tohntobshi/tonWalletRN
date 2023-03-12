@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -25,22 +26,22 @@ function SafetyRules({ onUnderstoodPress }: Props): JSX.Element {
       <Image
           source={require('../../../assets/bird4.png')}
           style={styles.logoImage} />
-      <View style={styles.textContainer}>
+      <TouchableOpacity style={styles.textContainer} onPress={() => setFirst(!first)}>
         <Checkbox value={first} style={styles.checkbox} onPress={() => setFirst(!first)}/>
         <Text style={styles.text}>On the next screen you will see the secret
           words. Write them down in the correct
           order and store in a secure place.</Text>
-      </View>
-      <View style={styles.textContainer}>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.textContainer} onPress={() => setSecond(!second)}>
         <Checkbox value={second} style={styles.checkbox} onPress={() => setSecond(!second)}/>
         <Text style={styles.text}>They allow to open your wallet if you lose
           your password or access to this device.</Text>
-      </View>
-      <View style={styles.textContainer}>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.textContainer} onPress={() => setThird(!third)}>
         <Checkbox value={third} style={styles.checkbox} onPress={() => setThird(!third)}/>
         <Text style={styles.text}>If anybody else sees these words your funds
           may be stolen.</Text>
-      </View>
+      </TouchableOpacity>
       <Button type={'primary'} style={styles.btn1} onPress={onUnderstoodPress}>Understood</Button>
     </View>
   )
