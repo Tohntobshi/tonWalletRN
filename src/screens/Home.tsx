@@ -5,13 +5,14 @@ import {
   Text,
   View,
 } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient'
+
 import ActionButton from '../components/ActionButton'
 import MainTabs from '../components/MainTabs'
 import Menu from '../components/Menu'
 import Send from './Send'
 import Backup from './Backup'
 import Receive from './Receive'
+import WalletSelector from '../components/WalletSelector'
 
 interface Props {
   onExitPress?: () => void,
@@ -29,7 +30,7 @@ function Home({ onExitPress }: Props): JSX.Element {
       <View style={styles.searchContainer}>
         <Menu  onExitPress={onExitPress} onBackupPress={() => setBackupOpen(true)}/>
       </View>
-      <LinearGradient colors={['#3F79CF','#2E74B5','#2160A1']} start={{x: 1, y: 0}} end={{x: 0, y: 0}} style={styles.walletContainer}/>
+      <WalletSelector style={styles.walletContainer}/>
       <View style={styles.actionBtnsContainer}>
         <ActionButton label='Receive'
           source={require('../../assets/receive.png')}
@@ -71,10 +72,6 @@ const styles = StyleSheet.create({
   },
   walletContainer: {
     marginTop: 16,
-    height: 240,
-    width: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
   },
   actionBtnsContainer: {
     marginTop: 12,

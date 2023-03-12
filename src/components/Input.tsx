@@ -20,18 +20,22 @@ type Props = React.ComponentProps<typeof TextInput> & {
   onChangeText?: (value: string) => void,
   pasteButton?: boolean,
   amountInput?: boolean,
+  walletNameInput?: boolean,
+  onDonePress?: () => void,
 }
 
-function Input({ style, error, prefix, suffix, pasteButton, onChangeText, amountInput, keyboardType, ...rest }: Props): JSX.Element {
+function Input({ style, error, prefix, suffix, pasteButton,
+  onChangeText, amountInput, keyboardType, walletNameInput,
+  onDonePress, ...rest }: Props): JSX.Element {
   const onPastePress = async () => {
     const result = await Clipboard.getString()
     onChangeText && onChangeText(result)
   }
   return (
-    <View style={[styles.container, error && styles.error, style]}>
+    <View style={[styles.container, walletNameInput && styles.walletNameContainer, error && styles.error, style]}>
       {prefix && <Text style={styles.prefix}>{prefix}</Text>}
       <TextInput
-        style={[styles.input, amountInput && styles.amtInput]}
+        style={[styles.input, amountInput && styles.amtInput, walletNameInput && styles.walletNameInput]}
         placeholderTextColor={'#91ABB8'}
         onChangeText={onChangeText}
         keyboardType={amountInput ? 'numbers-and-punctuation' : keyboardType}
@@ -40,6 +44,9 @@ function Input({ style, error, prefix, suffix, pasteButton, onChangeText, amount
       {suffix && <Text style={styles.suffix}>{suffix}</Text>}
       {pasteButton && <TouchableOpacity style={styles.pasteBtn} onPress={onPastePress}>
           <Image source={require('../../assets/paste.png')} style={styles.pasteImg}/>
+        </TouchableOpacity>}
+      {onDonePress && <TouchableOpacity style={styles.doneBtn} onPress={onDonePress}>
+          <Text style={styles.doneBtnText}>Done</Text>
         </TouchableOpacity>}
     </View>
     
@@ -57,6 +64,13 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: '#FFFFFF',
     alignItems: 'center',
+  },
+  walletNameContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: 'rgba(0,0,0,0)',
+    paddingLeft: 8,
+    paddingRight: 6,
+    borderRadius: 10,
   },
   prefix: {
     fontSize: 16,
@@ -80,6 +94,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#313D4F',
   },
+  walletNameInput: {
+    color: '#FFFFFF',
+    minHeight: 40,
+  },
   amtInput: {
     minHeight: 64,
     fontSize: 48,
@@ -96,6 +114,20 @@ const styles = StyleSheet.create({
   pasteImg: {
     width: 20,
     height: 20,
+  },
+  doneBtn: {
+    borderRadius: 8,
+    height: 28,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 6,
+  },
+  doneBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 })
 

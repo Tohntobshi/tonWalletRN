@@ -9,6 +9,7 @@ import {
 import QRCode from 'react-native-qrcode-svg'
 
 import Button from '../../components/Button'
+import { shortenString } from '../../utils'
 
 interface Props {
   onBackPress?: () => void,
@@ -16,7 +17,7 @@ interface Props {
 
 function ReceiveStepQR({ onBackPress }: Props): JSX.Element {
   const address = 'EQDAFX3J4Kl-5gZiBB8GpNB81ngLGlem3BrXVQ8-klfDcZhk'
-  const hint = address.slice(0, 6) + '...' + address.slice(address.length - 6, address.length)
+  const hint = shortenString(address)
   return (
     <View style={styles.page}>
       <View style={styles.qrContainer}>
