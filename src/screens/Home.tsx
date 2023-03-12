@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import {
   Image,
+  ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native'
 
@@ -15,6 +17,7 @@ import Receive from './Receive'
 import WalletSelector from '../components/WalletSelector'
 import AddWallet from './AddWallet'
 import LogOut from './LogOut'
+import AssetsList from '../components/AssetsList'
 
 interface Props {
   onExitPress?: () => void,
@@ -30,26 +33,34 @@ function Home({ onExitPress }: Props): JSX.Element {
   const [isAddWalletOpen, setAddWalletOpen] = useState(false)
   const [isLogOutOpen, setLogOutOpen] = useState(false)
   return (
-    <View style={styles.page} >
-      <View style={styles.searchContainer}>
-        <Menu onExitPress={() => setLogOutOpen(true)} onBackupPress={() => setBackupOpen(true)}/>
-      </View>
-      <WalletSelector style={styles.walletContainer} onAddWalletPress={() => setAddWalletOpen(true)}/>
-      <View style={styles.actionBtnsContainer}>
-        <ActionButton label='Receive'
-          source={require('../../assets/receive.png')}
-          style={styles.actionBtn1}
-          onPress={() => setReceiveOpen(true)}/>
-        <ActionButton label='Send'
-          source={require('../../assets/send.png')}
-          style={styles.actionBtn2}
-          onPress={() => setSendOpen(true)}/>
-        <ActionButton label='Swap' source={require('../../assets/swap.png')} style={styles.actionBtn2}/>
-        <ActionButton label='Earn' source={require('../../assets/earn.png')} style={styles.actionBtn2}/>
-      </View>
-      <View style={styles.listsContainer}>
-        <MainTabs labels={tabs} onChange={setTab} value={tab}/>
-      </View>
+    <View style={styles.page}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <TouchableOpacity style={styles.warningContainer} onPress={() => setBackupOpen(true)}>
+          <Text style={styles.warningText1}>Wallet is not backed up</Text>
+          <Text style={styles.warningText2}>Back up wallet to have full access to it</Text>
+        </TouchableOpacity>
+        <View style={styles.searchContainer}>
+          <Menu onExitPress={() => setLogOutOpen(true)} onBackupPress={() => setBackupOpen(true)}/>
+        </View>
+        <WalletSelector style={styles.walletContainer} onAddWalletPress={() => setAddWalletOpen(true)}/>
+        <View style={styles.actionBtnsContainer}>
+          <ActionButton label='Receive'
+            source={require('../../assets/receive.png')}
+            style={styles.actionBtn1}
+            onPress={() => setReceiveOpen(true)}/>
+          <ActionButton label='Send'
+            source={require('../../assets/send.png')}
+            style={styles.actionBtn2}
+            onPress={() => setSendOpen(true)}/>
+          <ActionButton label='Swap' source={require('../../assets/swap.png')} style={styles.actionBtn2}/>
+          <ActionButton label='Earn' source={require('../../assets/earn.png')} style={styles.actionBtn2}/>
+        </View>
+        <View style={styles.listsContainer}>
+          <MainTabs labels={tabs} onChange={setTab} value={tab}/>
+          {tab === 0 && <AssetsList style={styles.listContainer}/>}
+        </View>
+      </ScrollView>
+      
       {isSendOpen && <Send onCancelPress={() => setSendOpen(false)}/>}
       {isBackupOpen && <Backup onClosePress={() => setBackupOpen(false)} onContinuePress={() => setBackupOpen(false)}/>}
       {isReceiveOpen && <Receive onCancelPress={() => setReceiveOpen(false)}/>}
@@ -61,12 +72,33 @@ function Home({ onExitPress }: Props): JSX.Element {
 
 const styles = StyleSheet.create({
   page: {
-    alignItems: 'center',
     flexGrow: 1,
+  },
+  scrollViewContent: {
     paddingHorizontal: 16,
     paddingVertical: 8,
+    alignItems: 'center',
+  },
+  warningContainer: {
+    padding: 12,
+    backgroundColor: 'rgba(243, 91, 91, 0.9)',
+    width: '100%',
+    borderRadius: 16,
+  },
+  warningText1: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  warningText2: {
+    marginTop: 4,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    opacity: 0.7,
   },
   searchContainer: {
+    marginTop: 12,
     height: 40,
     width: '100%',
     backgroundColor: '#FFFFFF',
@@ -97,6 +129,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
   },
+  listContainer: {
+    // width: '100%',
+    // height: 400,
+  }
 })
 
 export default Home
