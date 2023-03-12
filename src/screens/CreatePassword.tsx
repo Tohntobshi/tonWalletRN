@@ -9,6 +9,7 @@ import {
 
 import Button from '../components/Button';
 import Input from '../components/Input';
+import InsecurePassword from './InsecurePassword';
 
 interface Props {
   onCancelPress?: () => void,
@@ -16,6 +17,7 @@ interface Props {
 }
 
 function CreatePassword({ onCancelPress, onContinuePress }: Props): JSX.Element {
+  const [isInsecurePassword, setInsecurePassword] = useState(false)
   return (
     <View style={styles.page} >
       <View style={styles.scrollViewContainer}>
@@ -37,8 +39,9 @@ function CreatePassword({ onCancelPress, onContinuePress }: Props): JSX.Element 
       </View>
       <View style={styles.buttonsContainer}>
         <Button type={'secondary'} style={styles.btn1} onPress={onCancelPress}>Cancel</Button>
-        <Button type={'primary'} style={styles.btn2} onPress={onContinuePress}>Continue</Button>
+        <Button type={'primary'} style={styles.btn2} onPress={() => setInsecurePassword(true)}>Continue</Button>
       </View>
+      {isInsecurePassword && <InsecurePassword onCancelPress={() => setInsecurePassword(false)} onContinuePress={onContinuePress}/>}
     </View>
   )
 }
