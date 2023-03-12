@@ -8,6 +8,7 @@ import {
   ViewStyle,
   View,
   TouchableHighlight,
+  ScrollView,
 } from 'react-native'
 
 
@@ -27,38 +28,43 @@ const mockList = [
 function AssetsList({ style }: Props): JSX.Element {
   return (
     <View style={[styles.container, style]}>
-      {mockList.map(({id, imgSrc, name, value, unit, rate, percentChange, valueChange, apy }) => {
-        const up = +percentChange > 0
-        return <TouchableHighlight key={id} style={styles.itemContainer1} activeOpacity={0.6} underlayColor="#EEEEEE" onPress={() => {}}>
-          <View style={styles.itemContainer2}>
-            <Image source={imgSrc} style={styles.assetImg}/>
-            <View style={styles.infoContainer}>
-              <View style={styles.row1}>
-                <View style={styles.row3}>
-                  <Text style={styles.name}>{name}</Text>
-                  {!!apy && <Text style={styles.apy}>APY {apy}%</Text>}
+      <ScrollView>
+        {mockList.map(({id, imgSrc, name, value, unit, rate, percentChange, valueChange, apy }, index) => {
+          const up = +percentChange > 0
+          return <React.Fragment key={id}>
+            <TouchableHighlight  style={styles.itemContainer1} activeOpacity={0.6} underlayColor="#EEEEEE" onPress={() => {}}>
+              <View style={styles.itemContainer2}>
+                <Image source={imgSrc} style={styles.assetImg}/>
+                <View style={styles.infoContainer}>
+                  <View style={styles.row1}>
+                    <View style={styles.row3}>
+                      <Text style={styles.name}>{name}</Text>
+                      {!!apy && <Text style={styles.apy}>APY {apy}%</Text>}
+                    </View>
+                    <View style={styles.row3}>
+                      <Text style={styles.valueUSD}>${value}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.row2}>
+                    <View style={styles.row3}>
+                      <Text style={styles.value}>{value} {unit} • ${rate}</Text>
+                    </View>
+                    <View style={styles.row3}>
+                      <Image style={styles.arrowImg2}
+                        source={up ? require('../../assets/greenArrowUp.png') : require('../../assets/redArrowDown.png')}/>
+                      <Text style={[styles.value, up ? styles.green : styles.red]}>{percentChange}% • ${valueChange}</Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.row3}>
-                  <Text style={styles.valueUSD}>${value}</Text>
+                <View style={styles.arrowContainer}>
+                  <Image source={require('../../assets/arrowRight2.png')} style={styles.arrowImg}/>
                 </View>
               </View>
-              <View style={styles.row2}>
-                <View style={styles.row3}>
-                  <Text style={styles.value}>{value} {unit} • ${rate}</Text>
-                </View>
-                <View style={styles.row3}>
-                  <Image style={styles.arrowImg2}
-                    source={up ? require('../../assets/greenArrowUp.png') : require('../../assets/redArrowDown.png')}/>
-                  <Text style={[styles.value, up ? styles.green : styles.red]}>{percentChange}% • ${valueChange}</Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.arrowContainer}>
-              <Image source={require('../../assets/arrowRight2.png')} style={styles.arrowImg}/>
-            </View>
-          </View>
-        </TouchableHighlight>
-      })}
+            </TouchableHighlight>
+            {index + 1 !== mockList.length && <View style={styles.separator1}><View style={styles.separator2}/></View>}
+          </React.Fragment>
+        })}
+      </ScrollView>
     </View>
   )
 }
@@ -82,8 +88,6 @@ const styles = StyleSheet.create({
   infoContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(132,146,171,0.3)',
     paddingVertical: 16,
     marginLeft: 10,
   },
@@ -143,6 +147,14 @@ const styles = StyleSheet.create({
     color: '#313D4F',
     fontSize: 15,
     fontWeight: '600',
+  },
+  separator1: {
+    paddingLeft: 62,
+    paddingRight: 32,
+  },
+  separator2: {
+    height: 1,
+    backgroundColor: 'rgba(132,146,171,0.3)',
   },
 })
 

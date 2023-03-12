@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import {
+  FlatList,
   Image,
   ScrollView,
   StyleSheet,
@@ -18,6 +19,7 @@ import WalletSelector from '../components/WalletSelector'
 import AddWallet from './AddWallet'
 import LogOut from './LogOut'
 import AssetsList from '../components/AssetsList'
+import ActivityList from '../components/ActivityList'
 
 interface Props {
   onExitPress?: () => void,
@@ -34,7 +36,7 @@ function Home({ onExitPress }: Props): JSX.Element {
   const [isLogOutOpen, setLogOutOpen] = useState(false)
   return (
     <View style={styles.page}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <View style={styles.contentContainer}>
         <TouchableOpacity style={styles.warningContainer} onPress={() => setBackupOpen(true)}>
           <Text style={styles.warningText1}>Wallet is not backed up</Text>
           <Text style={styles.warningText2}>Back up wallet to have full access to it</Text>
@@ -58,8 +60,9 @@ function Home({ onExitPress }: Props): JSX.Element {
         <View style={styles.listsContainer}>
           <MainTabs labels={tabs} onChange={setTab} value={tab}/>
           {tab === 0 && <AssetsList style={styles.listContainer}/>}
+          {tab === 1 && <ActivityList style={styles.listContainer}/>}
         </View>
-      </ScrollView>
+      </View>
       
       {isSendOpen && <Send onCancelPress={() => setSendOpen(false)}/>}
       {isBackupOpen && <Backup onClosePress={() => setBackupOpen(false)} onContinuePress={() => setBackupOpen(false)}/>}
@@ -74,7 +77,8 @@ const styles = StyleSheet.create({
   page: {
     flexGrow: 1,
   },
-  scrollViewContent: {
+  contentContainer: {
+    flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 8,
     alignItems: 'center',
@@ -130,9 +134,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   listContainer: {
-    // width: '100%',
-    // height: 400,
-  }
+    flex: 1,
+  },
 })
 
 export default Home
