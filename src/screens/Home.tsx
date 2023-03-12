@@ -13,6 +13,7 @@ import Send from './Send'
 import Backup from './Backup'
 import Receive from './Receive'
 import WalletSelector from '../components/WalletSelector'
+import AddWallet from './AddWallet'
 
 interface Props {
   onExitPress?: () => void,
@@ -25,12 +26,13 @@ function Home({ onExitPress }: Props): JSX.Element {
   const [isSendOpen, setSendOpen] = useState(false)
   const [isBackupOpen, setBackupOpen] = useState(false)
   const [isReceiveOpen, setReceiveOpen] = useState(false)
+  const [isAddWalletOpen, setAddWalletOpen] = useState(false)
   return (
     <View style={styles.page} >
       <View style={styles.searchContainer}>
         <Menu  onExitPress={onExitPress} onBackupPress={() => setBackupOpen(true)}/>
       </View>
-      <WalletSelector style={styles.walletContainer}/>
+      <WalletSelector style={styles.walletContainer} onAddWalletPress={() => setAddWalletOpen(true)}/>
       <View style={styles.actionBtnsContainer}>
         <ActionButton label='Receive'
           source={require('../../assets/receive.png')}
@@ -49,6 +51,7 @@ function Home({ onExitPress }: Props): JSX.Element {
       {isSendOpen && <Send onCancelPress={() => setSendOpen(false)}/>}
       {isBackupOpen && <Backup onClosePress={() => setBackupOpen(false)} onContinuePress={() => setBackupOpen(false)}/>}
       {isReceiveOpen && <Receive onCancelPress={() => setReceiveOpen(false)}/>}
+      {isAddWalletOpen && <AddWallet onCancelPress={() => setAddWalletOpen(false)}/>}
     </View>
   )
 }

@@ -18,15 +18,14 @@ import OutputWithActions from './OutputWithActions'
 
 interface Props {
   style?: StyleProp<ViewStyle>,
-  onBackupPress?: () => void,
-  onExitPress?: () => void,
+  onAddWalletPress?: () => void
 }
 
 const gradientColors = ['#3F79CF','#2E74B5','#2160A1']
 const gradientStart = {x: 1, y: 0}
 const gradientEnd = {x: 0, y: 0}
 
-function WalletSelector({ style, onBackupPress, onExitPress }: Props): JSX.Element {
+function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
   const [isSelectorOpen, setSelectorOpen] = useState(false)
   const [isEditNameOpen, setEditNameOpen] = useState(false)
   const [wallets, setWallets] = useState([{ name: 'Wallet1', address: 'EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' }])
@@ -37,7 +36,9 @@ function WalletSelector({ style, onBackupPress, onExitPress }: Props): JSX.Eleme
     setSelectorOpen(false)
   }
   const onAddPress = () => {
-    setWallets([...wallets, { name: 'Wallet' + (wallets.length + 1), address: 'EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' }])
+    setSelectorOpen(false)
+    onAddWalletPress && onAddWalletPress()
+    // setWallets([...wallets, { name: 'Wallet' + (wallets.length + 1), address: 'EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' }])
   }
   return (
     <View style={[styles.outerContainer, style]}>

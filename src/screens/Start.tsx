@@ -17,13 +17,10 @@ interface Props {
 
 function Start({ onCreatePress, onImportPress, onAboutPress }: Props): JSX.Element {
   return (
-    <View
-      style={styles.page}
-      >
+    <View style={styles.page}>
       <Image
         source={require('../../assets/logo.png')}
-        style={styles.logoImage}
-        />
+        style={styles.logoImage}/>
       <Text style={styles.title}>MyTonWallet</Text>
       <Text style={styles.text}>MyTonWallet allows to securely store{'\n'}
         crypto and make blockchain payments at{'\n'}

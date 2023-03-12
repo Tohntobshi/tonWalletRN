@@ -7,21 +7,22 @@ import {
   View,
 } from 'react-native'
 
-import Button from '../../components/Button'
-import Input from '../../components/Input'
+import Button from '../components/Button'
+import Input from '../components/Input'
 
 interface Props {
   onContinuePress?: () => void,
   onBackPress?: () => void,
+  placeholder?: string,
 }
 
-function SendStep3({ onContinuePress, onBackPress }: Props): JSX.Element {
+function EnterPasswordStep({ onContinuePress, onBackPress, placeholder }: Props): JSX.Element {
   return (
     <View style={styles.page}>
       <Image
-        source={require('../../../assets/bird5.png')}
+        source={require('../../assets/bird5.png')}
         style={styles.logoImage} />
-      <Input style={styles.input1} placeholder='Confirm operation with your password'/>
+      <Input style={styles.input1} placeholder={placeholder || 'Confirm operation with your password'}/>
       <Text style={styles.error}>Wrong password, please try again.</Text>
       <View style={styles.btnContainer}>
         <Button type='secondary' style={styles.btn1} onPress={onBackPress}>Back</Button>
@@ -65,4 +66,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default SendStep3
+export default EnterPasswordStep

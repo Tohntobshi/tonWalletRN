@@ -10,7 +10,7 @@ import {
 import ModalBottom from '../components/ModalBottom'
 import SendStep1 from './SendSteps/SendStep1'
 import SendStep2 from './SendSteps/SendStep2'
-import SendStep3 from './SendSteps/SendStep3'
+import EnterPasswordStep from './EnterPasswordStep'
 import SendStep4 from './SendSteps/SendStep4'
 
 interface Props {
@@ -33,7 +33,7 @@ function Send({ onCancelPress }: Props): JSX.Element {
       onRequestClose={onCancelPress}>
       {step === 0 && <SendStep1 onContinuePress={() => setStep(1)}/>}
       {step === 1 && <SendStep2 onContinuePress={() => setStep(2)} onEditPress={() => setStep(0)}/>}
-      {step === 2 && <SendStep3 onContinuePress={() => setStep(3)} onBackPress={() => setStep(1)}/>}
+      {step === 2 && <EnterPasswordStep onContinuePress={() => setStep(3)} onBackPress={() => setStep(1)}/>}
       {step === 3 && <SendStep4 onClosePress={onCancelPress}/>}
     </ModalBottom>
   )
