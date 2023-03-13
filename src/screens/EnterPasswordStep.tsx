@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Image,
   ScrollView,
@@ -19,11 +19,15 @@ interface Props {
 function EnterPasswordStep({ onContinuePress, onBackPress, placeholder }: Props): JSX.Element {
   return (
     <View style={styles.page}>
-      <Image
-        source={require('../../assets/bird5.png')}
-        style={styles.logoImage} />
-      <Input style={styles.input1} placeholder={placeholder || 'Confirm operation with your password'}/>
-      <Text style={styles.error}>Wrong password, please try again.</Text>
+      <View style={styles.scrollViewContainer}>
+        <ScrollView contentContainerStyle={styles.contentContainer}>
+          <Image
+            source={require('../../assets/bird5.png')}
+            style={styles.logoImage} />
+          <Input style={styles.input1} placeholder={placeholder || 'Confirm operation with your password'}/>
+          <Text style={styles.error}>Wrong password, please try again.</Text>
+        </ScrollView>
+      </View>
       <View style={styles.btnContainer}>
         <Button type='secondary' style={styles.btn1} onPress={onBackPress}>Back</Button>
         <Button type='primary' style={styles.btn2} onPress={onContinuePress}>Confirm</Button>
@@ -35,7 +39,15 @@ function EnterPasswordStep({ onContinuePress, onBackPress, placeholder }: Props)
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
-    minHeight: 500,
+    height: 450,
+    justifyContent: 'space-between',
+  },
+  scrollViewContainer: {
+    width: '100%',
+    flex: 1,
+  },
+  contentContainer: {
+    alignItems: 'center',
   },
   logoImage: {
     marginTop: 16,
@@ -52,7 +64,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   btnContainer: {
-    marginTop: 'auto',
+    marginTop: 24,
     flexDirection: 'row',
   },
   btn1: {

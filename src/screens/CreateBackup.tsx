@@ -54,12 +54,14 @@ const styles = StyleSheet.create({
     fontSize: 27,
     fontWeight: '800',
     textAlign: 'center',
+    color: '#313D4F',
   },
   text1: {
     marginTop: 32,
     fontSize: 17,
     fontWeight: '400',
     textAlign: 'center',
+    color: '#53657B',
   },
   btn1: {
     marginTop: 'auto'

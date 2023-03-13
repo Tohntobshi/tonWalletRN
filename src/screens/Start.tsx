@@ -47,12 +47,14 @@ const styles = StyleSheet.create({
     fontSize: 27,
     fontWeight: '800',
     textAlign: 'center',
+    color: '#313D4F',
   },
   text: {
     marginTop: 32,
     fontSize: 17,
     fontWeight: '700',
     textAlign: 'center',
+    color: '#53657B',
   },
   createBtn: {
     marginTop: 'auto',

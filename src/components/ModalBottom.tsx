@@ -1,14 +1,17 @@
 import React from 'react'
 import {
   Image,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
+  SafeAreaView,
   StyleProp,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
   ViewStyle,
-} from 'react-native';
+} from 'react-native'
 
 type Props = React.ComponentProps<typeof Modal> & {
   onRequestClose?: () => void,
@@ -19,26 +22,31 @@ type Props = React.ComponentProps<typeof Modal> & {
 function ModalBottom({ onRequestClose, title, style, children, ...rest }: Props): JSX.Element {
   return (
     <Modal transparent onRequestClose={onRequestClose} {...rest}>
-      <View style={styles.container1}>
-        <View style={styles.container2}>
-          <View style={styles.container3}>
-            <Text style={styles.title}>{title}</Text>
-            <TouchableOpacity style={styles.closeBtn} onPress={onRequestClose}>
-              <Image
-                source={require('../../assets/cross.png')} 
-                style={styles.closeBtnImg}/>
-            </TouchableOpacity>
+      <KeyboardAvoidingView style={styles.container0} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <SafeAreaView style={styles.container1}>
+          <View style={styles.container2}>
+            <View style={styles.container3}>
+              <Text style={styles.title}>{title}</Text>
+              <TouchableOpacity style={styles.closeBtn} onPress={onRequestClose}>
+                <Image
+                  source={require('../../assets/cross.png')} 
+                  style={styles.closeBtnImg}/>
+              </TouchableOpacity>
+            </View>
+            <View style={style}>
+              {children}
+            </View>
           </View>
-          <View style={style}>
-            {children}
-          </View>
-        </View>
-      </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </Modal>
   )
 }
 
 const styles = StyleSheet.create({
+  container0: {
+    flex: 1,
+  },
   container1: {
     flex: 1,
     justifyContent: 'flex-end',

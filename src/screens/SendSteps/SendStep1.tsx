@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
-  Image,
-  ScrollView,
   StyleSheet,
   Text,
   View,
-} from 'react-native';
+} from 'react-native'
 
 import Button from '../../components/Button'
-import Input from '../../components/Input';
+import Input from '../../components/Input'
 
 interface Props {
   onContinuePress?: () => void,
@@ -41,7 +39,6 @@ function SendStep1({ onContinuePress }: Props): JSX.Element {
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
-    minHeight: 500,
   },
   labelContainer: {
     marginTop: 16,
@@ -66,13 +63,13 @@ const styles = StyleSheet.create({
   input1: {
     marginTop: 6,
   },
-  btn: {
-    marginTop: 'auto',
-  },
   feeContainer: {
     marginTop: 6,
     minHeight: 12,
-  }
+  },
+  btn: {
+    marginTop: 24,
+  },
 })
 
 export default SendStep1

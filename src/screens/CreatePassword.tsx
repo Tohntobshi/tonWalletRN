@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Image,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
   View,
-} from 'react-native';
+} from 'react-native'
 
-import Button from '../components/Button';
-import Input from '../components/Input';
-import InsecurePassword from './InsecurePassword';
+import Button from '../components/Button'
+import Input from '../components/Input'
+import InsecurePassword from './InsecurePassword'
 
 interface Props {
   onCancelPress?: () => void,
@@ -20,23 +22,23 @@ function CreatePassword({ onCancelPress, onContinuePress }: Props): JSX.Element 
   const [isInsecurePassword, setInsecurePassword] = useState(false)
   return (
     <View style={styles.page} >
-      <View style={styles.scrollViewContainer}>
+      <KeyboardAvoidingView style={styles.scrollViewContainer} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Image
             source={require('../../assets/bird2.png')}
-            style={styles.logoImage}
-            />
+            style={styles.logoImage}/>
           <Text style={styles.title}>Congratulations!</Text>
           <Text style={styles.text1}>The wallet is ready.</Text>
           <Text style={styles.text2}>Create a password to protect it.</Text>
-          <Input style={styles.input1}/>
-          <Input style={styles.input2} error/>
+          <Input style={styles.input1} placeholder='Password'/>
+          <Input style={styles.input2} error placeholder='Repeat password'/>
           <Text style={styles.text3}>To protect your wallet as much as possible,
             use a password with at least 8 characters, one
             small letter, one capital letter, one digit and one
             special character.</Text>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
       <View style={styles.buttonsContainer}>
         <Button type={'secondary'} style={styles.btn1} onPress={onCancelPress}>Cancel</Button>
         <Button type={'primary'} style={styles.btn2} onPress={() => setInsecurePassword(true)}>Continue</Button>
@@ -48,7 +50,7 @@ function CreatePassword({ onCancelPress, onContinuePress }: Props): JSX.Element 
 
 const styles = StyleSheet.create({
   page: {
-    flexGrow: 1,
+    flex: 1,
     paddingHorizontal: 16,
   },
   scrollViewContainer: {
@@ -56,6 +58,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     alignItems: 'center',
+    paddingBottom: 50,
   },
   logoImage: {
     marginTop: 50,
@@ -67,18 +70,21 @@ const styles = StyleSheet.create({
     fontSize: 27,
     fontWeight: '800',
     textAlign: 'center',
+    color: '#313D4F',
   },
   text1: {
     marginTop: 32,
     fontSize: 17,
     fontWeight: '700',
     textAlign: 'center',
+    color: '#53657B',
   },
   text2: {
     marginTop: 10,
     fontSize: 17,
     fontWeight: '400',
     textAlign: 'center',
+    color: '#53657B',
   },
   text3: {
     marginTop: 16,
@@ -86,7 +92,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     paddingHorizontal: 8,
-    marginBottom: 30
+    color: '#53657B',
   },
   input1: {
     marginTop: 32,

@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Image,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,7 +20,8 @@ interface Props {
 function ImportSecretWords({ onContinuePress }: Props): JSX.Element {
   return (
     <View style={styles.page}>
-      <View style={styles.scrollViewContainer}>
+      <KeyboardAvoidingView style={styles.scrollViewContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Image
             source={require('../../assets/bird3.png')}
@@ -37,7 +40,7 @@ function ImportSecretWords({ onContinuePress }: Props): JSX.Element {
           </View>
           <Text style={styles.error}>Your mnemonic words are invalid.</Text>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
       <Button type={'primary'} style={styles.btn} onPress={onContinuePress}>Continue</Button>
     </View>
   )
@@ -45,8 +48,7 @@ function ImportSecretWords({ onContinuePress }: Props): JSX.Element {
 
 const styles = StyleSheet.create({
   page: {
-    flexGrow: 1,
-    flexShrink: 0,
+    flex: 1,
     paddingHorizontal: 16,
     alignItems: 'center',
   },
@@ -55,6 +57,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     alignItems: 'center',
+    paddingBottom: 50,
   },
   logoImage: {
     marginTop: 50,
@@ -66,12 +69,14 @@ const styles = StyleSheet.create({
     fontSize: 27,
     fontWeight: '800',
     textAlign: 'center',
+    color: '#313D4F',
   },
   text: {
     marginTop: 24,
     fontSize: 15,
     fontWeight: '400',
     textAlign: 'center',
+    color: '#53657B',
   },
   wordsContainer: {
     flexDirection: 'row',
@@ -92,6 +97,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   btn: {
+    flexShrink: 0,
     marginVertical: 16,
   },
 })

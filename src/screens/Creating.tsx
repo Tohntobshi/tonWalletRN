@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     fontSize: 27,
     fontWeight: '800',
     textAlign: 'center',
+    color: '#313D4F',
   },
   timerContainer: {
     marginTop: 80,

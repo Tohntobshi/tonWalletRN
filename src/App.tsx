@@ -25,7 +25,7 @@ function App(): JSX.Element {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        barStyle='dark-content'
         backgroundColor={styles.mainContainer.backgroundColor}
       />
       <View style={{ flexGrow: 1 }}>

@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
-  Image,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -39,6 +37,12 @@ function ReceiveStepInvoice({ onBackPress }: Props): JSX.Element {
 
 const styles = StyleSheet.create({
   page: {
+    alignItems: 'center',
+  },
+  scrollViewContainer: {
+    flex: 1,
+  },
+  contentContainer: {
     alignItems: 'center',
   },
   text: {

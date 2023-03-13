@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
-  Image,
-  ScrollView,
   StyleSheet,
   Text,
   View,
-} from 'react-native';
+} from 'react-native'
 
 import Button from '../../components/Button'
-import Input from '../../components/Input';
+import Input from '../../components/Input'
 
 interface Props {
   onBackPress?: () => void,
@@ -37,7 +35,6 @@ function LetsCheck({ onContinuePress, onBackPress }: Props): JSX.Element {
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
-    minHeight: 500,
   },
   text: {
     marginTop: 24,
@@ -62,8 +59,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   btnContainer: {
-    marginTop: 'auto',
+    marginTop: 16,
     flexDirection: 'row',
+    flexShrink: 0,
   },
   btn1: {
     flex: 1,
