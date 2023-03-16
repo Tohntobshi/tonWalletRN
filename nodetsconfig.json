@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "outDir": "server-build",
+      "target": "es2016"
+    },
+    "include": ["./src/**/*.ts"]
+  }

@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type {PropsWithChildren} from 'react'
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -10,17 +11,22 @@ import {
   View,
 } from 'react-native'
 
-
 import Start from './screens/Start'
 import Creating from './screens/Creating'
 import CreatePassword from './screens/CreatePassword'
 import CreateBackup from './screens/CreateBackup'
 import ImportSecretWords from './screens/ImportSecretWords'
 import Home from './screens/Home'
+import { initApi, callApi } from './api'
+
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark'
   const [screen, setScreen] = useState(0)
+
+  useEffect(() => {
+    initApi((...data) => {console.log('onUpdate', data)}, { origin: 'rn' })
+  }, [])
 
   return (
     <SafeAreaView style={styles.mainContainer}>

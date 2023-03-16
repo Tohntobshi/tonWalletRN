@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Image,
-  ImageBackground,
   Modal,
   Pressable,
   StyleProp,
@@ -15,6 +14,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import { shortenString } from '../utils'
 import Input from './Input'
 import OutputWithActions from './OutputWithActions'
+import { callApi } from '../api'
 
 interface Props {
   style?: StyleProp<ViewStyle>,
@@ -31,6 +31,13 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
   const [wallets, setWallets] = useState([{ name: 'Wallet1', address: 'EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' }])
   const [name, setName] = useState('Personal Wallet')
   const [activeWallet, setActiveWallet] = useState(0)
+  useEffect(() => {
+    const getData = async () => {
+      const n = await callApi('getItem', 'name')
+      setName(n)
+    }
+    getData()
+  }, [])
   const onEditPress = () => {
     setEditNameOpen(true)
     setSelectorOpen(false)
@@ -39,6 +46,10 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
     setSelectorOpen(false)
     onAddWalletPress && onAddWalletPress()
     // setWallets([...wallets, { name: 'Wallet' + (wallets.length + 1), address: 'EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' }])
+  }
+  const onDonePress = async () => {
+    setEditNameOpen(false)
+    await callApi('setItem', 'name', name)
   }
   return (
     <View style={[styles.outerContainer, style]}>
@@ -49,7 +60,7 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
             <Text style={styles.name} numberOfLines={1}>{name}</Text>
             <Image source={require('../../assets/arrowDown.png')} style={styles.arrowDown} />
           </TouchableOpacity>}
-          {isEditNameOpen && <Input walletNameInput onDonePress={() => setEditNameOpen(false)} value={name} onChangeText={setName}/>}
+          {isEditNameOpen && <Input walletNameInput onDonePress={onDonePress} value={name} onChangeText={setName}/>}
         </View>
         <Text style={styles.balance}>$18,025<Text style={styles.cents}>.26</Text></Text>
         <OutputWithActions text='EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' trim style={styles.address} copy tonScan/>
