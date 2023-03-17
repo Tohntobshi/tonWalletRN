@@ -5,8 +5,8 @@ import storages from '../storages'
 let storage: Storage
 
 // mock methods to test provider
-export function init(onUpdate: OnApiUpdate, args: ApiInitArgs, storageType: StorageType) {
-    storage = storages[storageType]
+export function init(onUpdate: OnApiUpdate, args: ApiInitArgs, stor: Storage) {
+    storage = stor
     return Promise.resolve()
 }
 

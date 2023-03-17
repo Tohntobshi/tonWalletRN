@@ -1,9 +1,10 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Storage } from './types'
 
-// TODO
+
 export default {
-  getItem: (key: string) => Promise.resolve(''),
-  setItem: (key: string, val: any) => Promise.resolve(),
-  removeItem: (key: string) => Promise.resolve(),
-  clear: () => Promise.resolve(),
+  getItem: AsyncStorage.getItem,
+  setItem: AsyncStorage.setItem,
+  removeItem: AsyncStorage.removeItem,
+  clear: AsyncStorage.clear,
 } as Storage
