@@ -14,7 +14,6 @@ import LinearGradient from 'react-native-linear-gradient'
 import { shortenString } from '../utils'
 import Input from './Input'
 import OutputWithActions from './OutputWithActions'
-import { callApi } from '../api'
 
 interface Props {
   style?: StyleProp<ViewStyle>,
@@ -31,13 +30,6 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
   const [wallets, setWallets] = useState([{ name: 'Wallet1', address: 'EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' }])
   const [name, setName] = useState('Personal Wallet')
   const [activeWallet, setActiveWallet] = useState(0)
-  useEffect(() => {
-    const getData = async () => {
-      const n = await callApi('getItem', 'name')
-      setName(n)
-    }
-    getData()
-  }, [])
   const onEditPress = () => {
     setEditNameOpen(true)
     setSelectorOpen(false)
@@ -49,7 +41,6 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
   }
   const onDonePress = async () => {
     setEditNameOpen(false)
-    await callApi('setItem', 'name', name)
   }
   return (
     <View style={[styles.outerContainer, style]}>

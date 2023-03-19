@@ -5,23 +5,46 @@ import { Storage } from './types'
 
 const dir = rnBridge.app.datadir() as string
 
+export async function initFileStorage() {
+  try {
+    await fspromises.mkdir(path.join(dir, 'values'))
+  } catch (e) {
+    return
+  }
+}
+
 export default {
-  getItem: (key: string) => {
+  getItem: async (key: string) => {
     if (!key) return Promise.reject('no key')
-    return fspromises.readFile(path.join(dir, key), { encoding: 'utf-8' })
+    try {
+      const data = await fspromises.readFile(path.join(dir, 'values', key), { encoding: 'utf-8' })
+      const isString = data.slice(0, 1) === 's'
+      return isString ? data.slice(1, data.length) : JSON.parse(data.slice(1, data.length))
+    } catch (e) {
+      return null
+    }
   },
-  setItem: (key: string, val: any) => {
+  setItem: async (key: string, val: any) => {
     if (!key) return Promise.reject('no key')
-    return fspromises.writeFile(path.join(dir, key), val, { encoding: 'utf-8' })
+    const isString = typeof val === 'string'
+    const valueToSave = isString ? 's' + val : 'n' + JSON.stringify(val)
+    return fspromises.writeFile(path.join(dir, 'values', key), valueToSave, { encoding: 'utf-8' })
   },
-  removeItem: (key: string) => {
+  removeItem: async (key: string) => {
     if (!key) return Promise.reject('no key')
-    return fspromises.unlink(path.join(dir, key))
+    try {
+      return await fspromises.unlink(path.join(dir, 'values', key))
+    } catch (e) {
+    }
   },
   clear: async () => {
-    const files = await fspromises.readdir(dir)
-    for (const file of files) {
-      await fspromises.unlink(path.join(dir, file))
+    try {
+      const files = await fspromises.readdir(path.join(dir, 'values'))
+      for (const file of files) {
+        await fspromises.unlink(path.join(dir, 'values', file))
+      }
+    } catch (e) {
+      return
     }
   },
 } as Storage

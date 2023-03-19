@@ -1,16 +1,18 @@
+// import './polyfill'
 import type { ApiInitArgs, OnApiUpdate } from '../../types'
 import { createNodeJSInterface } from '../../utils/createPostMessageInterface'
-import { StorageType } from '../../storages/types'
+import fileStorage, { initFileStorage } from '../../storages/fileStorage'
+import init from '../../methods/init'
 import * as methods from '../../methods'
-import fileStorage from '../../storages/fileStorage'
 
 
-createNodeJSInterface((name: string, origin?: string, ...args: any[]) => {
+createNodeJSInterface(async (name: string, origin?: string, ...args: any[]) => {
     if (name === 'init') {
-        return methods.init(args[0] as OnApiUpdate, args[1] as ApiInitArgs, fileStorage);
+        await initFileStorage()
+        return init(args[0] as OnApiUpdate, args[1] as ApiInitArgs, fileStorage)
     } else {
-        const method = (methods as any)[name];
+        const method = (methods as any)[name]
 
-        return method(...args);
+        return method(...args)
     }
-});
+})

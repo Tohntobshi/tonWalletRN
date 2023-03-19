@@ -1,3 +1,4 @@
+import 'text-encoding-polyfill'
 import React, { useEffect, useState } from 'react'
 import type {PropsWithChildren} from 'react'
 import {

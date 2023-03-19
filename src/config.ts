@@ -1,0 +1,12 @@
+export const DEBUG = false
+export const BRILLIANT_API_BASE_URL = 'https://mytonwallet-api.herokuapp.com'
+export const TON_TOKEN_SLUG = 'toncoin'
+export const STAKING_POOLS_MAINNET = [] as string[];
+export const STAKING_POOLS_TESTNET = [] as string[];
+export const STAKING_POOLS_ALL = STAKING_POOLS_MAINNET.concat(STAKING_POOLS_TESTNET);
+export const MAIN_ACCOUNT_ID = '0-ton-mainnet';
+export const APP_VERSION = '';
+export const TONHTTPAPI_MAINNET_URL = 'https://tonhttpapi.mytonwallet.org/jsonRPC';
+export const TONHTTPAPI_TESTNET_URL = 'https://tonhttpapi-testnet.mytonwallet.org/jsonRPC'
+export const TONAPIIO_MAINNET_URL = 'https://tonapiio.mytonwallet.org'
+export const TONAPIIO_TESTNET_URL = 'https://tonapiio-testnet.mytonwallet.org'
