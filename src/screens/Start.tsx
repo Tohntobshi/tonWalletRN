@@ -6,16 +6,12 @@ import {
   View,
 } from 'react-native';
 
-
 import Button from '../components/Button'
+import { startCreatingWallet, useAppDispatch } from '../redux';
 
-interface Props {
-  onCreatePress?: () => void,
-  onImportPress?: () => void,
-  onAboutPress?: () => void,
-}
 
-function Start({ onCreatePress, onImportPress, onAboutPress }: Props): JSX.Element {
+function Start(): JSX.Element {
+  const dispatch = useAppDispatch()
   return (
     <View style={styles.page}>
       <Image
@@ -25,9 +21,9 @@ function Start({ onCreatePress, onImportPress, onAboutPress }: Props): JSX.Eleme
       <Text style={styles.text}>MyTonWallet allows to securely store{'\n'}
         crypto and make blockchain payments at{'\n'}
         the speed of light.</Text>
-      <Button type='primary' style={styles.createBtn} onPress={onCreatePress}>Create Wallet</Button>
-      <Button type='link' style={styles.mnemonicLink} onPress={onImportPress}>Import From 24 Secret Words</Button>
-      <Button type='linkSecondary' style={styles.aboutLink} onPress={onAboutPress}>About MyTonWallet</Button>
+      <Button type='primary' style={styles.createBtn} onPress={() => dispatch(startCreatingWallet())}>Create Wallet</Button>
+      <Button type='link' style={styles.mnemonicLink} onPress={() => {}}>Import From 24 Secret Words</Button>
+      <Button type='linkSecondary' style={styles.aboutLink}>About MyTonWallet</Button>
     </View>
   )
 }

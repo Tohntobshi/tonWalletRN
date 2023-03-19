@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
 import {
-  FlatList,
-  Image,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -20,6 +17,7 @@ import AddWallet from './AddWallet'
 import LogOut from './LogOut'
 import AssetsList from '../components/AssetsList'
 import ActivityList from '../components/ActivityList'
+import { useAppSelector, useAppDispatch } from '../redux'
 
 interface Props {
   onExitPress?: () => void,
@@ -28,6 +26,7 @@ interface Props {
 const tabs = ['Assets', 'Activity', 'NFT']
 
 function Home({ onExitPress }: Props): JSX.Element {
+  const dispatch = useAppDispatch()
   const [tab, setTab] = useState(0)
   const [isSendOpen, setSendOpen] = useState(false)
   const [isBackupOpen, setBackupOpen] = useState(false)
@@ -54,8 +53,12 @@ function Home({ onExitPress }: Props): JSX.Element {
             source={require('../../assets/send.png')}
             style={styles.actionBtn2}
             onPress={() => setSendOpen(true)}/>
-          <ActionButton label='Swap' source={require('../../assets/swap.png')} style={styles.actionBtn2}/>
-          <ActionButton label='Earn' source={require('../../assets/earn.png')} style={styles.actionBtn2}/>
+          <ActionButton label='Swap' 
+            source={require('../../assets/swap.png')} 
+            style={styles.actionBtn2} onPress={() => {}}/>
+          <ActionButton label='Earn' 
+            source={require('../../assets/earn.png')} 
+            style={styles.actionBtn2} onPress={() => {}}/>
         </View>
         <View style={styles.listsContainer}>
           <MainTabs labels={tabs} onChange={setTab} value={tab}/>

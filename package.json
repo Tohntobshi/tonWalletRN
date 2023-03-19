@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.12",
     "@react-native-clipboard/clipboard": "^1.11.2",
+    "@reduxjs/toolkit": "^1.9.3",
     "@types/bn.js": "^5.1.1",
     "bn.js": "^5.2.1",
     "esbuild": "0.17.12",
@@ -21,6 +22,9 @@
     "react-native-linear-gradient": "^2.6.2",
     "react-native-qrcode-svg": "^6.2.0",
     "react-native-svg": "^13.8.0",
+    "react-redux": "^8.0.5",
+    "redux-persist": "^6.0.0",
+    "redux-saga": "^1.2.3",
     "text-encoding-polyfill": "^0.6.7",
     "tonapi-sdk-js": "^0.24.0",
     "tonweb": "^0.0.60",
