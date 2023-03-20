@@ -5,3 +5,9 @@ export const isBackedUpSelector = (state: RootState) => {
     if (!currentAccountId) return false
     return !(accounts[currentAccountId]?.isBackupRequired)
 }
+
+export const currenctAccountSelector = (state: RootState) => {
+    const { currentAccountId, accounts } = state
+    if (!currentAccountId) return undefined
+    return accounts[currentAccountId]
+}

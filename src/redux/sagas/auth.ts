@@ -1,10 +1,11 @@
+import { REHYDRATE } from 'redux-persist'
 import { call, put, takeLatest, all, delay, select } from 'redux-saga/effects'
 import { addNextWallet, completeBackup, createWallet, finishPasswordCreation,
     importWallet, logOut, requestMnemonic, startCreatingWallet, switchAccount } from '../asyncActions'
 import { callApi } from '../../api'
 import { AuthState, setAuthState, setAuthMnemonic, setAuthMnemonicError,
     setAuthPassword, setAuthIsImported, addAccount, resetAuth,
-    resetBackupRequred, removeAllAccounts, setAuthPasswordError } from '../reducers'
+    resetBackupRequred, removeAllAccounts, setAuthPasswordError, setCurrentAccountId, removeAccount } from '../reducers'
 import { MethodResponseUnwrapped } from '../../api/methods/types'
 import { RootState } from '../types'
 
@@ -77,11 +78,12 @@ function* logOutSaga({ payload: all }: ReturnType<typeof logOut>) {
         yield call(callApi, 'resetAccounts')
         yield put(removeAllAccounts())
         return
-    } 
+    }
     const { currentAccountId, accounts }: RootState = yield select()
     const remainingAccIds = Object.keys(accounts).filter(id => id !== currentAccountId)
     if (remainingAccIds.length > 0) {
-        yield put(switchAccount(remainingAccIds[0]))
+        yield put(switchAccount(remainingAccIds[remainingAccIds.length - 1]))
+        yield put(removeAccount(currentAccountId!))
         yield call(callApi, 'removeAccount', currentAccountId!)
         return
     }
@@ -90,7 +92,9 @@ function* logOutSaga({ payload: all }: ReturnType<typeof logOut>) {
 }
 
 function* switchAccountSaga({ payload: id }: ReturnType<typeof switchAccount>) {
-    // TODO
+    // TODO add newestTxId to apicall whatever it is
+    yield put(setCurrentAccountId(id))
+    yield call(callApi, 'switchAccount', id)
 }
 
 function* addNextWalletSaga({ payload: { password, isImported } }: ReturnType<typeof addNextWallet>) {
@@ -126,6 +130,13 @@ function* requestMnemonicSaga({ payload: { password } }: ReturnType<typeof reque
     yield put(setAuthMnemonic(mnemonic))
 }
 
+export function* activateAccountSaga() {
+    // TODO add newestTxId to apicall whatever it is
+    const { currentAccountId }: RootState = yield select()
+    if (!currentAccountId) return
+    yield call(callApi, 'activateAccount', currentAccountId)
+}
+
 export function* authSaga() {
     yield takeLatest(startCreatingWallet.toString(), startCreatingWalletSaga)
     yield takeLatest(importWallet.toString(), importWalletSaga)
@@ -136,6 +147,6 @@ export function* authSaga() {
     yield takeLatest(logOut.toString(), logOutSaga)
     yield takeLatest(addNextWallet.toString(), addNextWalletSaga)
     yield takeLatest(requestMnemonic, requestMnemonicSaga)
-    // TODO activate account after state rehydration
+    yield takeLatest(REHYDRATE, activateAccountSaga)
     // TODO add pending flags and block ui during loading
 }

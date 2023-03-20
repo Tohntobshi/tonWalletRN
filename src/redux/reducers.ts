@@ -64,7 +64,7 @@ export const mainSlice = createSlice({
         resetAuth: (state): MainState => {
             return { ...state, auth: initialState.auth }
         },
-        addAccount: (state, { payload: { id, address, isBackupRequired } }:PayloadAction<{ id: string; address: string; isBackupRequired: boolean }>): MainState => {
+        addAccount: (state, { payload: { id, address, isBackupRequired } }: PayloadAction<{ id: string; address: string; isBackupRequired: boolean }>): MainState => {
             return { ...state, currentAccountId: id,
                 accounts: {...state.accounts, [id]: { title: 'Personal Wallet', address, isBackupRequired } }}
         },
@@ -81,9 +81,14 @@ export const mainSlice = createSlice({
         removeAllAccounts: (state): MainState => {
             return { ...state, accounts: {}, currentAccountId: undefined }
         },
+        setAccountTitle: (state, { payload: { id, title } }: PayloadAction<{ id: string, title: string }>): MainState => {
+            const { accounts } = state
+            const newAccounts = { ...accounts, [id]: { ...accounts[id], title } }
+            return { ...state, accounts: newAccounts }
+        },
     }
 })
 
 export const { setCurrentAccountId, setAuthState, setAuthMnemonic, setAuthPassword,
     setAuthIsImported, setAuthMnemonicError, setAuthPasswordError, resetAuth, addAccount,
-    resetBackupRequred, removeAccount, removeAllAccounts } = mainSlice.actions
+    resetBackupRequred, removeAccount, removeAllAccounts, setAccountTitle } = mainSlice.actions

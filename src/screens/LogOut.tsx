@@ -8,7 +8,7 @@ import {
 import Button from '../components/Button'
 import Checkbox from '../components/Checkbox'
 import ModalRegular from '../components/ModalRegular'
-import { useAppDispatch, logOut } from '../redux'
+import { useAppDispatch, logOut, useAppSelector } from '../redux'
 
 interface Props {
   onCancelPress?: () => void,
@@ -18,10 +18,12 @@ interface Props {
 
 function LogOut({ onCancelPress, onExitPress }: Props): JSX.Element {
   const dispatch = useAppDispatch()
+  const accounts = useAppSelector(state => state.accounts)
+  const accAmount = Object.keys(accounts).length
   const [all, setAll] = useState(false)
   const onAllChangePress = () => setAll(!all)
   const _onExitPress = () => {
-    dispatch(logOut(all))
+    dispatch(logOut(all || accAmount < 2))
     onExitPress && onExitPress()
   }
   return (
@@ -33,10 +35,10 @@ function LogOut({ onCancelPress, onExitPress }: Props): JSX.Element {
         app. You will be able to restore your wallet 
         using 24 secret words - or import another 
         wallet.</Text>
-      <TouchableOpacity style={styles.checkContainer} onPress={onAllChangePress}>
+      {accAmount > 1 && <TouchableOpacity style={styles.checkContainer} onPress={onAllChangePress}>
         <Checkbox value={all} onPress={onAllChangePress}/>
         <Text style={styles.text2}>Log out of all wallets</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>}
       <Text style={styles.text}>Warning! You have not backed up this 
         wallet. If you log out, you will lose access 
         to your tokens and NFTs.</Text>

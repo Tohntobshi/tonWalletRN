@@ -34,15 +34,19 @@ function Home(): JSX.Element {
   return (
     <View style={styles.page}>
       <View style={styles.contentContainer}>
-        {!isBackedUp && <TouchableOpacity style={styles.warningContainer} onPress={() => setBackupOpen(true)}>
+        {!isBackedUp && <TouchableOpacity style={styles.warningContainer}
+          onPress={() => setBackupOpen(true)}>
           <Text style={styles.warningText1}>Wallet is not backed up</Text>
-          <Text style={styles.warningText2}>Back up wallet to have full access to it</Text>
+          <Text style={styles.warningText2}>
+            Back up wallet to have full access to it</Text>
         </TouchableOpacity>}
         
         <View style={styles.searchContainer}>
-          <Menu onExitPress={() => setLogOutOpen(true)} onBackupPress={() => setBackupOpen(true)}/>
+          <Menu onExitPress={() => setLogOutOpen(true)}
+            onBackupPress={() => setBackupOpen(true)}/>
         </View>
-        <WalletSelector style={styles.walletContainer} onAddWalletPress={() => setAddWalletOpen(true)}/>
+        <WalletSelector style={styles.walletContainer}
+          onAddWalletPress={() => setAddWalletOpen(true)}/>
         <View style={styles.actionBtnsContainer}>
           <ActionButton label='Receive'
             source={require('../../assets/receive.png')}
@@ -66,13 +70,18 @@ function Home(): JSX.Element {
         </View>
       </View>
       
-      {isSendOpen && <Send onCancelPress={() => setSendOpen(false)}/>}
+      {isSendOpen && <Send
+        onCancelPress={() => setSendOpen(false)}/>}
       {isBackupOpen && <BackupRequest
         onClosePress={() => setBackupOpen(false)}
         onSuccess={() => setBackupOpen(false)}/>}
-      {isReceiveOpen && <Receive onCancelPress={() => setReceiveOpen(false)}/>}
-      {isAddWalletOpen && <AddWallet onCancelPress={() => setAddWalletOpen(false)}/>}
-      {isLogOutOpen && <LogOut onCancelPress={() => setLogOutOpen(false)} onExitPress={() => setLogOutOpen(false)}/>}
+      {isReceiveOpen && <Receive
+        onCancelPress={() => setReceiveOpen(false)}/>}
+      {isAddWalletOpen && <AddWallet
+        onCancelPress={() => setAddWalletOpen(false)}/>}
+      {isLogOutOpen && <LogOut
+        onCancelPress={() => setLogOutOpen(false)} 
+        onExitPress={() => setLogOutOpen(false)}/>}
     </View>
   )
 }

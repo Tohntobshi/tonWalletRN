@@ -14,7 +14,7 @@ import Input from '../components/Input'
 import InsecurePassword from './InsecurePassword'
 
 import { finishPasswordCreation, resetAuth, useAppDispatch } from '../redux'
-import { usePasswordValidation } from '../hook/usePasswordValidation'
+import { usePasswordValidation } from '../hooks/usePasswordValidation'
 
 function CreatePassword(): JSX.Element {
   const dispatch = useAppDispatch()

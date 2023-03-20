@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   Image,
   Modal,
@@ -11,9 +11,11 @@ import {
   ViewStyle,
 } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import { shortenString } from '../utils'
 import Input from './Input'
 import OutputWithActions from './OutputWithActions'
+import { shortenString } from '../utils'
+import { currenctAccountSelector, useAppSelector, setAccountTitle,
+  useAppDispatch, switchAccount} from '../redux'
 
 interface Props {
   style?: StyleProp<ViewStyle>,
@@ -25,11 +27,12 @@ const gradientStart = {x: 1, y: 0}
 const gradientEnd = {x: 0, y: 0}
 
 function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
+  const dispatch = useAppDispatch()
+  const currentAccountId = useAppSelector(state => state.currentAccountId)
+  const currentAccount = useAppSelector(currenctAccountSelector)
+  const accounts = useAppSelector(state => state.accounts)
   const [isSelectorOpen, setSelectorOpen] = useState(false)
   const [isEditNameOpen, setEditNameOpen] = useState(false)
-  const [wallets, setWallets] = useState([{ name: 'Wallet1', address: 'EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' }])
-  const [name, setName] = useState('Personal Wallet')
-  const [activeWallet, setActiveWallet] = useState(0)
   const onEditPress = () => {
     setEditNameOpen(true)
     setSelectorOpen(false)
@@ -37,53 +40,83 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
   const onAddPress = () => {
     setSelectorOpen(false)
     onAddWalletPress && onAddWalletPress()
-    // setWallets([...wallets, { name: 'Wallet' + (wallets.length + 1), address: 'EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' }])
   }
-  const onDonePress = async () => {
+  const onDonePress = () => {
     setEditNameOpen(false)
   }
+  const onTitleChange = (val: string) => {
+    dispatch(setAccountTitle({ id: currentAccountId || '', title: val }))
+  }
+  const setActiveWallet = (accId: string) => {
+    dispatch(switchAccount(accId))
+  }
+  const accountsArr = useMemo(() => {
+    return Object.keys(accounts).map(accId => ({ ...accounts[accId], accId }))
+  }, [accounts])
   return (
     <View style={[styles.outerContainer, style]}>
-      <LinearGradient colors={gradientColors} start={gradientStart} end={gradientEnd} style={styles.walletContainer}>
-        <Image source={require('../../assets/logo2.png')} style={styles.backgroundImage} />
+      <LinearGradient colors={gradientColors} start={gradientStart}
+        end={gradientEnd} style={styles.walletContainer}>
+        <Image source={require('../../assets/logo2.png')}
+          style={styles.backgroundImage}/>
         <View style={styles.nameContainer}>
-          {!isEditNameOpen && <TouchableOpacity style={styles.btn1} onPress={() => setSelectorOpen(true)}>
-            <Text style={styles.name} numberOfLines={1}>{name}</Text>
-            <Image source={require('../../assets/arrowDown.png')} style={styles.arrowDown} />
+          {!isEditNameOpen && <TouchableOpacity style={styles.btn1}
+            onPress={() => setSelectorOpen(true)}>
+            <Text style={styles.name} numberOfLines={1}>
+              {currentAccount?.title}</Text>
+            <Image source={require('../../assets/arrowDown.png')}
+              style={styles.arrowDown} />
           </TouchableOpacity>}
-          {isEditNameOpen && <Input walletNameInput onDonePress={onDonePress} value={name} onChangeText={setName}/>}
+          {isEditNameOpen && <Input walletNameInput
+            onDonePress={onDonePress} value={currentAccount?.title}
+            onChangeText={onTitleChange}/>}
         </View>
-        <Text style={styles.balance}>$18,025<Text style={styles.cents}>.26</Text></Text>
-        <OutputWithActions text='EQ5VX7SD4KD98S3R1Q5VX7SD4KD98S3R1Q' trim style={styles.address} copy tonScan/>
+        <Text style={styles.balance}>$18,025
+          <Text style={styles.cents}>.26</Text></Text>
+        <OutputWithActions text={currentAccount?.address || ''}
+          trim style={styles.address} copy tonScan/>
       </LinearGradient>
       <Modal transparent visible={isSelectorOpen}>
         <View style={styles.modalContainer}>
-          <Pressable style={styles.touchableBackground} onPress={() => setSelectorOpen(false)}/>
+          <Pressable style={styles.touchableBackground}
+            onPress={() => setSelectorOpen(false)}/>
           <View style={styles.selectorContainer}>
-            {wallets.map((wallet, index) => <View key={index} style={styles.selectorElemContainer1}>
-              <View style={[styles.selectorElemContainer2, index === activeWallet && styles.selectorElemContainer2Active]}>
-                <TouchableOpacity style={styles.selectorElemContainer3} onPress={() => setActiveWallet(index)}>
-                  <LinearGradient colors={gradientColors} start={gradientStart} end={gradientEnd}
-                    style={[styles.selectorWalletGrad, index === activeWallet && styles.selectorWalletGradActive]}>
-                    <View style={styles.selectorNameContainer}>
-                      <Text style={styles.selectorName} numberOfLines={1}>{wallet.name}</Text>
-                      {index === activeWallet && <TouchableOpacity onPress={onEditPress}>
-                        <Image source={require('../../assets/edit.png')} style={styles.editIcon}/>
-                      </TouchableOpacity>}
-                    </View>
-                    <Text style={styles.selectorWalletAddress}>{shortenString(wallet.address, 4)}</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
+            {accountsArr.map(({ accId, address, title }) => {
+              const isActive = currentAccountId === accId
+              return <View key={accId} style={styles.selectorElemContainer1}>
+                <View style={[styles.selectorElemContainer2,
+                  isActive && styles.selectorElemContainer2Active]}>
+                  <TouchableOpacity style={styles.selectorElemContainer3}
+                    onPress={() => setActiveWallet(accId)}>
+                    <LinearGradient colors={gradientColors}
+                      start={gradientStart} end={gradientEnd}
+                      style={[styles.selectorWalletGrad,
+                        isActive && styles.selectorWalletGradActive]}>
+                      <View style={styles.selectorNameContainer}>
+                        <Text style={styles.selectorName}
+                          numberOfLines={1}>{title}</Text>
+                        {isActive && <TouchableOpacity onPress={onEditPress}>
+                          <Image source={require('../../assets/edit.png')}
+                            style={styles.editIcon}/>
+                        </TouchableOpacity>}
+                      </View>
+                      <Text style={styles.selectorWalletAddress}>
+                        {shortenString(address, 4)}</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>)}
+            })}
             <View style={styles.selectorElemContainer1}>
               <View style={styles.selectorElemContainer2}>
-                <TouchableOpacity style={styles.selectorElemContainer3} onPress={onAddPress}>
+                <TouchableOpacity style={styles.selectorElemContainer3}
+                  onPress={onAddPress}>
                   <View style={styles.newWalletBtn}>
                     <View style={styles.selectorNameContainer}>
                       <Text style={styles.addWalletText}>Add Wallet</Text>
                     </View>
-                    <Image source={require('../../assets/plus.png')} style={styles.plusIcon}/>
+                    <Image source={require('../../assets/plus.png')}
+                      style={styles.plusIcon}/>
                   </View>
                 </TouchableOpacity>
               </View>
