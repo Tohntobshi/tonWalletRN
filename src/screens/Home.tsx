@@ -10,7 +10,7 @@ import ActionButton from '../components/ActionButton'
 import MainTabs from '../components/MainTabs'
 import Menu from '../components/Menu'
 import Send from './Send'
-import Backup from './Backup'
+import BackupRequest from './BackupRequest'
 import Receive from './Receive'
 import WalletSelector from '../components/WalletSelector'
 import AddWallet from './AddWallet'
@@ -67,7 +67,9 @@ function Home(): JSX.Element {
       </View>
       
       {isSendOpen && <Send onCancelPress={() => setSendOpen(false)}/>}
-      {isBackupOpen && <Backup mnemonic={[]} onClosePress={() => setBackupOpen(false)} onSuccess={() => setBackupOpen(false)}/>}
+      {isBackupOpen && <BackupRequest
+        onClosePress={() => setBackupOpen(false)}
+        onSuccess={() => setBackupOpen(false)}/>}
       {isReceiveOpen && <Receive onCancelPress={() => setReceiveOpen(false)}/>}
       {isAddWalletOpen && <AddWallet onCancelPress={() => setAddWalletOpen(false)}/>}
       {isLogOutOpen && <LogOut onCancelPress={() => setLogOutOpen(false)} onExitPress={() => setLogOutOpen(false)}/>}

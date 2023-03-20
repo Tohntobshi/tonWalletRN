@@ -6,23 +6,22 @@ import {
   View,
 } from 'react-native'
 
-import { completeBackup, resetAuth, useAppDispatch, useAppSelector } from '../redux'
+import { completeBackup, resetAuth, useAppDispatch } from '../redux'
 import Button from '../components/Button'
-import Backup from './Backup'
+import BackupAuth from './BackupAuth'
 
 
 function CreateBackup(): JSX.Element {
   const dispatch = useAppDispatch()
   const onSkipPress = () => dispatch(resetAuth())
   const onComplete = () => dispatch(completeBackup())
-  const mnemonic = useAppSelector(state => state.auth.mnemonic)
+  
   const [isBackupOpen, setBackupOpen] = useState(false)
   return (
     <View style={styles.page}>
       <Image
         source={require('../../assets/bird3.png')}
-        style={styles.logoImage}
-        />
+        style={styles.logoImage}/>
       <Text style={styles.title}>Create Backup</Text>
       <Text style={styles.text1}>This is a secure wallet and is only
         controlled by you.</Text>
@@ -35,7 +34,7 @@ function CreateBackup(): JSX.Element {
         onPress={() => setBackupOpen(true)}>Back Up</Button>
       <Button type={'linkDanger'} style={styles.btn2}
         onPress={onSkipPress}>Skip For Now</Button>
-      {isBackupOpen && <Backup mnemonic={mnemonic || []}
+      {isBackupOpen && <BackupAuth
         onClosePress={() => setBackupOpen(false)}
         onSuccess={onComplete}/>}
     </View>

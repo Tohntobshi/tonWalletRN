@@ -1,5 +1,6 @@
 import nacl from 'tweetnacl';
 import * as tonWebMnemonic from 'tonweb-mnemonic';
+import crypto from 'isomorphic-webcrypto';
 import { Storage } from '../../storages/types';
 import {
   base64ToBytes,
@@ -9,7 +10,6 @@ import {
 } from '../../common/utils';
 import { toInternalAccountId } from '../../common/helpers';
 import { DEBUG } from '../../../config';
-import crypto from 'isomorphic-webcrypto'
 
 // global.crypto = require('crypto').webcrypto
 

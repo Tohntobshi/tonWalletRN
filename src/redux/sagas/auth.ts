@@ -1,6 +1,6 @@
 import { call, put, takeLatest, all, delay, select } from 'redux-saga/effects'
 import { addNextWallet, completeBackup, createWallet, finishPasswordCreation,
-    importWallet, logOut, startCreatingWallet, switchAccount } from '../asyncActions'
+    importWallet, logOut, requestMnemonic, startCreatingWallet, switchAccount } from '../asyncActions'
 import { callApi } from '../../api'
 import { AuthState, setAuthState, setAuthMnemonic, setAuthMnemonicError,
     setAuthPassword, setAuthIsImported, addAccount, resetAuth,
@@ -109,6 +109,23 @@ function* addNextWalletSaga({ payload: { password, isImported } }: ReturnType<ty
     yield put(startCreatingWallet())
 }
 
+function* requestMnemonicSaga({ payload: { password } }: ReturnType<typeof requestMnemonic>) {
+    const isPasswordValid: MethodResponseUnwrapped<'verifyPassword'> = 
+        yield call(callApi, 'verifyPassword', password)
+    if (!isPasswordValid) {
+        yield put(setAuthPasswordError('Wrong password, please try again.'))
+        return
+    }
+    const { currentAccountId }: RootState = yield select()
+    const mnemonic: MethodResponseUnwrapped<'getMnemonic'> = 
+        yield call(callApi, 'getMnemonic', currentAccountId!, password)
+    if (!mnemonic) {
+        // something went wrong
+        return
+    }
+    yield put(setAuthMnemonic(mnemonic))
+}
+
 export function* authSaga() {
     yield takeLatest(startCreatingWallet.toString(), startCreatingWalletSaga)
     yield takeLatest(importWallet.toString(), importWalletSaga)
@@ -118,6 +135,7 @@ export function* authSaga() {
     yield takeLatest(switchAccount.toString(), switchAccountSaga)
     yield takeLatest(logOut.toString(), logOutSaga)
     yield takeLatest(addNextWallet.toString(), addNextWalletSaga)
+    yield takeLatest(requestMnemonic, requestMnemonicSaga)
     // TODO activate account after state rehydration
     // TODO add pending flags and block ui during loading
 }

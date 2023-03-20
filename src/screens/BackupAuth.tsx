@@ -4,11 +4,11 @@ import ModalBottom from '../components/ModalBottom'
 import SafetyRules from './BackupSteps/SafetyRules'
 import Words from './BackupSteps/Words'
 import LetsCheck from './BackupSteps/LetsCheck'
+import { useAppSelector } from '../redux'
 
 interface Props {
   onClosePress?: () => void,
   onSuccess?: () => void,
-  mnemonic: string[],
 }
 
 const titles = {
@@ -17,7 +17,8 @@ const titles = {
   2: 'Let’s Check!',
 }
 
-function Backup({ onClosePress, onSuccess, mnemonic }: Props): JSX.Element {
+function BackupAuth({ onClosePress, onSuccess }: Props): JSX.Element {
+  const mnemonic = useAppSelector(state => state.auth.mnemonic)
   const [step, setStep] = useState(0)
   return (
     <ModalBottom
@@ -25,11 +26,11 @@ function Backup({ onClosePress, onSuccess, mnemonic }: Props): JSX.Element {
       visible={true}
       onRequestClose={onClosePress}>
       {step === 0 && <SafetyRules onUnderstoodPress={() => setStep(1)}/>}
-      {step === 1 && <Words mnemonic={mnemonic} onCheckPress={() => setStep(2)}/>}
-      {step === 2 && <LetsCheck mnemonic={mnemonic} onSuccess={onSuccess}
+      {step === 1 && <Words mnemonic={mnemonic || []} onCheckPress={() => setStep(2)}/>}
+      {step === 2 && <LetsCheck mnemonic={mnemonic || []} onSuccess={onSuccess}
         onBackPress={() => setStep(1)}/>}
     </ModalBottom>
   )
 }
 
-export default Backup
+export default BackupAuth
