@@ -4,10 +4,11 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
+} from 'react-native'
 
 import Button from '../components/Button'
-import { startCreatingWallet, useAppDispatch } from '../redux';
+import { AuthState, setAuthState, startCreatingWallet,
+  useAppDispatch } from '../redux'
 
 
 function Start(): JSX.Element {
@@ -21,9 +22,14 @@ function Start(): JSX.Element {
       <Text style={styles.text}>MyTonWallet allows to securely store{'\n'}
         crypto and make blockchain payments at{'\n'}
         the speed of light.</Text>
-      <Button type='primary' style={styles.createBtn} onPress={() => dispatch(startCreatingWallet())}>Create Wallet</Button>
-      <Button type='link' style={styles.mnemonicLink} onPress={() => {}}>Import From 24 Secret Words</Button>
-      <Button type='linkSecondary' style={styles.aboutLink}>About MyTonWallet</Button>
+      <Button type='primary' style={styles.createBtn}
+        onPress={() => dispatch(startCreatingWallet())}>
+        Create Wallet</Button>
+      <Button type='link' style={styles.mnemonicLink}
+        onPress={() => dispatch(setAuthState(AuthState.importWallet))}>
+        Import From 24 Secret Words</Button>
+      <Button type='linkSecondary' style={styles.aboutLink}>
+        About MyTonWallet</Button>
     </View>
   )
 }

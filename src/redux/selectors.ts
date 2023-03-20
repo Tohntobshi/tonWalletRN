@@ -1,3 +1,7 @@
 import { RootState } from './types'
 
-export const selectCurrentAccountId = (state: RootState) => state.currentAccountId
+export const isBackedUpSelector = (state: RootState) => {
+    const { currentAccountId, accounts } = state
+    if (!currentAccountId) return false
+    return !(accounts[currentAccountId]?.isBackupRequired)
+}

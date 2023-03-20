@@ -13,13 +13,40 @@ import Button from '../components/Button'
 import Input from '../components/Input'
 import InsecurePassword from './InsecurePassword'
 
-interface Props {
-  onCancelPress?: () => void,
-  onContinuePress?: () => void,
-}
+import { finishPasswordCreation, resetAuth, useAppDispatch } from '../redux'
+import { usePasswordValidation } from '../hook/usePasswordValidation'
 
-function CreatePassword({ onCancelPress, onContinuePress }: Props): JSX.Element {
-  const [isInsecurePassword, setInsecurePassword] = useState(false)
+function CreatePassword(): JSX.Element {
+  const dispatch = useAppDispatch()
+  const onCancelPress = () => dispatch(resetAuth())
+  const [isInsecurePasswordModalOpen, setInsecurePasswordModalOpen] = useState(false)
+  const [password1, setPassword1] = useState('')
+  const [password2, setPassword2] = useState('')
+  const [error, setError] = useState('')
+  const validation = usePasswordValidation({
+    firstPassword: password1, secondPassword: password2 })
+  const setFirstPassword = (value: string) => {
+    setPassword1(value)
+    setError('')
+  }
+  const setSecondPassword = (value: string) => {
+    setPassword2(value)
+    setError('')
+  }
+  const onContinuePress2 = () => dispatch(finishPasswordCreation(password1))
+  const onContinuePress1 = () => {
+    if (validation.noEqual) {
+      setError('Passwords must be equal.')
+      return
+    }
+    const isWeakPassword = Object.values(validation).find((rule) => rule)
+    if (isWeakPassword) {
+      setInsecurePasswordModalOpen(true)
+      return
+    }
+    onContinuePress2()
+  }
+  
   return (
     <View style={styles.page} >
       <KeyboardAvoidingView style={styles.scrollViewContainer} 
@@ -31,19 +58,27 @@ function CreatePassword({ onCancelPress, onContinuePress }: Props): JSX.Element 
           <Text style={styles.title}>Congratulations!</Text>
           <Text style={styles.text1}>The wallet is ready.</Text>
           <Text style={styles.text2}>Create a password to protect it.</Text>
-          <Input style={styles.input1} placeholder='Password'/>
-          <Input style={styles.input2} error placeholder='Repeat password'/>
-          <Text style={styles.text3}>To protect your wallet as much as possible,
+          <Input style={styles.input1} placeholder='Password' error={!!error}
+            value={password1} onChangeText={setFirstPassword}/>
+          <Input style={styles.input2} placeholder='Repeat password' error={!!error}
+            value={password2} onChangeText={setSecondPassword}/>
+          {!!error ? <Text style={styles.error}>{error}</Text> 
+            : <Text style={styles.text3}>To protect your wallet as much as possible,
             use a password with at least 8 characters, one
             small letter, one capital letter, one digit and one
-            special character.</Text>
+            special character.</Text>}
         </ScrollView>
       </KeyboardAvoidingView>
       <View style={styles.buttonsContainer}>
-        <Button type={'secondary'} style={styles.btn1} onPress={onCancelPress}>Cancel</Button>
-        <Button type={'primary'} style={styles.btn2} onPress={() => setInsecurePassword(true)}>Continue</Button>
+        <Button type={'secondary'} style={styles.btn1}
+          onPress={onCancelPress}>Cancel</Button>
+        <Button type={'primary'} style={styles.btn2}
+          disabled={!password1 || !password2 || !!error}
+          onPress={onContinuePress1}>Continue</Button>
       </View>
-      {isInsecurePassword && <InsecurePassword onCancelPress={() => setInsecurePassword(false)} onContinuePress={onContinuePress}/>}
+      {isInsecurePasswordModalOpen && <InsecurePassword
+        onCancelPress={() => setInsecurePasswordModalOpen(false)}
+        onContinuePress={onContinuePress2}/>}
     </View>
   )
 }
@@ -93,6 +128,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 8,
     color: '#53657B',
+  },
+  error: {
+    marginTop: 16,
+    fontSize: 15,
+    fontWeight: '400',
+    textAlign: 'center',
+    paddingHorizontal: 8,
+    color: '#F35B5B',
   },
   input1: {
     marginTop: 32,

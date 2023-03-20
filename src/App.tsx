@@ -18,7 +18,7 @@ import Home from './screens/Home'
 import { AuthState, persistor, store, useAppSelector } from './redux'
 
 function MainScreen(): JSX.Element {
-  const authState = useAppSelector(state => state.authState)
+  const authState = useAppSelector(state => state.auth.authState)
   const currentAccountId = useAppSelector(state => state.currentAccountId)
   return ( 
     <SafeAreaView style={styles.mainContainer}>
@@ -30,8 +30,7 @@ function MainScreen(): JSX.Element {
         {authState === AuthState.none && !currentAccountId && <Start />}
         {authState === AuthState.none && currentAccountId && <Home />}
         {authState === AuthState.creatingWallet && <Creating />}
-        {authState === AuthState.createPassword || authState === AuthState.importWalletCreatePassword
-          && <CreatePassword />}
+        {authState === AuthState.createPassword && <CreatePassword />}
         {authState === AuthState.createBackup && <CreateBackup />}
         {authState === AuthState.importWallet && <ImportSecretWords />}
       </View>

@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
-  Image,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,8 +7,8 @@ import {
 } from 'react-native'
 import Button from '../components/Button'
 import Checkbox from '../components/Checkbox'
-
 import ModalRegular from '../components/ModalRegular'
+import { useAppDispatch, logOut } from '../redux'
 
 interface Props {
   onCancelPress?: () => void,
@@ -19,8 +17,13 @@ interface Props {
 
 
 function LogOut({ onCancelPress, onExitPress }: Props): JSX.Element {
+  const dispatch = useAppDispatch()
   const [all, setAll] = useState(false)
   const onAllChangePress = () => setAll(!all)
+  const _onExitPress = () => {
+    dispatch(logOut(all))
+    onExitPress && onExitPress()
+  }
   return (
     <ModalRegular
       title='Log Out'
@@ -39,7 +42,7 @@ function LogOut({ onCancelPress, onExitPress }: Props): JSX.Element {
         to your tokens and NFTs.</Text>
       <View style={styles.btnContainer}>
         <Button type='secondary' style={styles.btn1} onPress={onCancelPress}>Cancel</Button>
-        <Button type='danger' style={styles.btn2} onPress={onExitPress}>Exit</Button>
+        <Button type='danger' style={styles.btn2} onPress={_onExitPress}>Exit</Button>
       </View>
     </ModalRegular>
   )

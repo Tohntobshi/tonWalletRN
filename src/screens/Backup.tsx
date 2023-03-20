@@ -1,11 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import React, { useState } from 'react'
 
 import ModalBottom from '../components/ModalBottom'
 import SafetyRules from './BackupSteps/SafetyRules'
@@ -14,7 +7,8 @@ import LetsCheck from './BackupSteps/LetsCheck'
 
 interface Props {
   onClosePress?: () => void,
-  onContinuePress?: () => void,
+  onSuccess?: () => void,
+  mnemonic: string[],
 }
 
 const titles = {
@@ -23,7 +17,7 @@ const titles = {
   2: 'Let’s Check!',
 }
 
-function Backup({ onClosePress, onContinuePress }: Props): JSX.Element {
+function Backup({ onClosePress, onSuccess, mnemonic }: Props): JSX.Element {
   const [step, setStep] = useState(0)
   return (
     <ModalBottom
@@ -31,14 +25,11 @@ function Backup({ onClosePress, onContinuePress }: Props): JSX.Element {
       visible={true}
       onRequestClose={onClosePress}>
       {step === 0 && <SafetyRules onUnderstoodPress={() => setStep(1)}/>}
-      {step === 1 && <Words onCheckPress={() => setStep(2)}/>}
-      {step === 2 && <LetsCheck onContinuePress={onContinuePress} onBackPress={() => setStep(1)}/>}
+      {step === 1 && <Words mnemonic={mnemonic} onCheckPress={() => setStep(2)}/>}
+      {step === 2 && <LetsCheck mnemonic={mnemonic} onSuccess={onSuccess}
+        onBackPress={() => setStep(1)}/>}
     </ModalBottom>
   )
 }
-
-const styles = StyleSheet.create({
-
-})
 
 export default Backup

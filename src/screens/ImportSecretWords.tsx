@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Image,
   KeyboardAvoidingView,
@@ -8,16 +8,29 @@ import {
   Text,
   View,
 } from 'react-native'
-
 import Button from '../components/Button'
 import Input from '../components/Input'
+import {
+  importWallet,
+  setAuthMnemonicError,
+  useAppDispatch,
+  useAppSelector,
+} from '../redux'
 
-interface Props {
-  onContinuePress?: () => void,
-}
+const defaultInputValues = Array.from({ length: 24 }).map(() => '')
 
-
-function ImportSecretWords({ onContinuePress }: Props): JSX.Element {
+function ImportSecretWords(): JSX.Element {
+  const dispatch = useAppDispatch()
+  const error = useAppSelector(state => state.auth.mnemonicError)
+  const [inputs, setInputs] = useState(defaultInputValues)
+  const onContinuePress = () => dispatch(importWallet(inputs))
+  const onChange = (index: number) => (value: string) => {
+    const newInputs = [...inputs]
+    newInputs[index] = value
+    setInputs(newInputs)
+    if (error) dispatch(setAuthMnemonicError())
+  }
+  const isFilled = inputs.reduce((acc, cur) => !!cur && acc, true)
   return (
     <View style={styles.page}>
       <KeyboardAvoidingView style={styles.scrollViewContainer}
@@ -31,17 +44,21 @@ function ImportSecretWords({ onContinuePress }: Props): JSX.Element {
             wallet by entering the 24 secret words you
             wrote down when creating the wallet.</Text>
           <View style={styles.wordsContainer}>
-            {[0, 1].map((colIndex) => <View key={colIndex} style={[styles.column, !!colIndex && styles.secondCol]}>
+            {[0, 1].map((colIndex) => <View key={colIndex}
+              style={[styles.column, !!colIndex && styles.secondCol]}>
               {Array.from({ length: 12 }).map((_, wordIndex) => {
                 const absIndex = wordIndex + 12 * colIndex
-                return <Input key={absIndex} prefix={`${(absIndex + 1)}`} style={styles.input}/>
+                return <Input key={absIndex} prefix={`${(absIndex + 1)}`}
+                  value={inputs[absIndex]} onChangeText={onChange(absIndex)}
+                  style={styles.input}/>
               })}
             </View>)}
           </View>
-          <Text style={styles.error}>Your mnemonic words are invalid.</Text>
+          {!!error && <Text style={styles.error}>{error}</Text>}
         </ScrollView>
       </KeyboardAvoidingView>
-      <Button type={'primary'} style={styles.btn} onPress={onContinuePress}>Continue</Button>
+      <Button type={'primary'} style={styles.btn} onPress={onContinuePress}
+        disabled={!isFilled || !!error}>Continue</Button>
     </View>
   )
 }

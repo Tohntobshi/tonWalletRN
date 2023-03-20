@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
 
+import { completeBackup, resetAuth, useAppDispatch, useAppSelector } from '../redux'
 import Button from '../components/Button'
 import Backup from './Backup'
 
-interface Props {
-  onCancelPress?: () => void,
-  onContinuePress?: () => void,
-}
 
-function CreateBackup({ onCancelPress, onContinuePress }: Props): JSX.Element {
+function CreateBackup(): JSX.Element {
+  const dispatch = useAppDispatch()
+  const onSkipPress = () => dispatch(resetAuth())
+  const onComplete = () => dispatch(completeBackup())
+  const mnemonic = useAppSelector(state => state.auth.mnemonic)
   const [isBackupOpen, setBackupOpen] = useState(false)
   return (
     <View style={styles.page}>
@@ -31,9 +31,13 @@ function CreateBackup({ onCancelPress, onContinuePress }: Props): JSX.Element {
       <Text style={styles.text1}>You need to manually back
         up secret keys in a case you forget your
         password or lose access to this device.</Text>
-      <Button type={'primary'} style={styles.btn1} onPress={() => setBackupOpen(true)}>Back Up</Button>
-      <Button type={'linkDanger'} style={styles.btn2}>Skip For Now</Button>
-      {isBackupOpen && <Backup onClosePress={() => setBackupOpen(false)} onContinuePress={onContinuePress}/>}
+      <Button type={'primary'} style={styles.btn1}
+        onPress={() => setBackupOpen(true)}>Back Up</Button>
+      <Button type={'linkDanger'} style={styles.btn2}
+        onPress={onSkipPress}>Skip For Now</Button>
+      {isBackupOpen && <Backup mnemonic={mnemonic || []}
+        onClosePress={() => setBackupOpen(false)}
+        onSuccess={onComplete}/>}
     </View>
   )
 }

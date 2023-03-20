@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from 'react-native'
 
 import Button from '../../components/Button'
 import Checkbox from '../../components/Checkbox'
@@ -42,7 +41,8 @@ function SafetyRules({ onUnderstoodPress }: Props): JSX.Element {
         <Text style={styles.text}>If anybody else sees these words your funds
           may be stolen.</Text>
       </TouchableOpacity>
-      <Button type={'primary'} style={styles.btn1} onPress={onUnderstoodPress}>Understood</Button>
+      <Button type={'primary'} style={styles.btn1} onPress={onUnderstoodPress}
+        disabled={!first || !second || !third}>Understood</Button>
     </View>
   )
 }

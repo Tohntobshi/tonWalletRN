@@ -17,16 +17,14 @@ import AddWallet from './AddWallet'
 import LogOut from './LogOut'
 import AssetsList from '../components/AssetsList'
 import ActivityList from '../components/ActivityList'
-import { useAppSelector, useAppDispatch } from '../redux'
+import { useAppSelector, useAppDispatch, isBackedUpSelector } from '../redux'
 
-interface Props {
-  onExitPress?: () => void,
-}
 
 const tabs = ['Assets', 'Activity', 'NFT']
 
-function Home({ onExitPress }: Props): JSX.Element {
+function Home(): JSX.Element {
   const dispatch = useAppDispatch()
+  const isBackedUp = useAppSelector(isBackedUpSelector)
   const [tab, setTab] = useState(0)
   const [isSendOpen, setSendOpen] = useState(false)
   const [isBackupOpen, setBackupOpen] = useState(false)
@@ -36,10 +34,11 @@ function Home({ onExitPress }: Props): JSX.Element {
   return (
     <View style={styles.page}>
       <View style={styles.contentContainer}>
-        <TouchableOpacity style={styles.warningContainer} onPress={() => setBackupOpen(true)}>
+        {!isBackedUp && <TouchableOpacity style={styles.warningContainer} onPress={() => setBackupOpen(true)}>
           <Text style={styles.warningText1}>Wallet is not backed up</Text>
           <Text style={styles.warningText2}>Back up wallet to have full access to it</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
+        
         <View style={styles.searchContainer}>
           <Menu onExitPress={() => setLogOutOpen(true)} onBackupPress={() => setBackupOpen(true)}/>
         </View>
@@ -68,10 +67,10 @@ function Home({ onExitPress }: Props): JSX.Element {
       </View>
       
       {isSendOpen && <Send onCancelPress={() => setSendOpen(false)}/>}
-      {isBackupOpen && <Backup onClosePress={() => setBackupOpen(false)} onContinuePress={() => setBackupOpen(false)}/>}
+      {isBackupOpen && <Backup mnemonic={[]} onClosePress={() => setBackupOpen(false)} onSuccess={() => setBackupOpen(false)}/>}
       {isReceiveOpen && <Receive onCancelPress={() => setReceiveOpen(false)}/>}
       {isAddWalletOpen && <AddWallet onCancelPress={() => setAddWalletOpen(false)}/>}
-      {isLogOutOpen && <LogOut onCancelPress={() => setLogOutOpen(false)} onExitPress={onExitPress}/>}
+      {isLogOutOpen && <LogOut onCancelPress={() => setLogOutOpen(false)} onExitPress={() => setLogOutOpen(false)}/>}
     </View>
   )
 }

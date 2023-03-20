@@ -13,10 +13,12 @@ interface Props {
   type: 'primary' | 'secondary' | 'danger' | 'link' | 'linkSecondary' | 'linkDanger',
   style?: StyleProp<ViewStyle>,
   onPress?: () => void,
+  disabled?: boolean,
 }
 
-function Button({ type, children, style, onPress }: PropsWithChildren<Props>): JSX.Element {
-  const containerStyle = ['primary', 'secondary', 'danger'].includes(type) ? [(styles as any)[type], styles.container, style] : style
+function Button({ type, children, style, disabled, onPress }: PropsWithChildren<Props>): JSX.Element {
+  const containerStyle = ['primary', 'secondary', 'danger'].includes(type) ?
+    [(styles as any)[type], styles.container, disabled && styles.disabled, style] : style
   const textStyle = ['primary',  'danger'].includes(type) ? styles.textButton : (
     type === 'secondary' ? styles.textButtonSec : (
       type === 'link' ? styles.textLink : (
@@ -26,7 +28,8 @@ function Button({ type, children, style, onPress }: PropsWithChildren<Props>): J
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={containerStyle}>
+      style={containerStyle}
+      disabled={disabled}>
         {typeof children === 'string' ? <Text style={textStyle}>{children}</Text> : children}
     </TouchableOpacity>
   )
@@ -48,6 +51,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: 'row',
     justifyContent: 'center'
+  },
+  disabled: {
+    opacity: 0.4,
   },
   textButton: {
     fontSize: 17,

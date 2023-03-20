@@ -1,32 +1,54 @@
-import React from 'react'
-import {
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import React, { useMemo, useState } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
 import Button from '../../components/Button'
 import Input from '../../components/Input'
+import { selectMnemonicForCheck } from '../../utils'
 
 interface Props {
   onBackPress?: () => void,
-  onContinuePress?: () => void,
+  onSuccess?: () => void,
+  mnemonic: string[]
 }
+const defaultInputValues = Array.from({ length: 3 }).map(() => '')
 
-function LetsCheck({ onContinuePress, onBackPress }: Props): JSX.Element {
+function LetsCheck({ onSuccess, onBackPress, mnemonic }: Props): JSX.Element {
+  const chosenIdxs = useMemo(() => selectMnemonicForCheck(), [])
+  const [inputs, setInputs] = useState(defaultInputValues)
+  const [error, setError] = useState('')
+  const onChange = (index: number) => (value: string) => {
+    const newInputs = [...inputs]
+    newInputs[index] = value
+    setInputs(newInputs)
+    setError('')
+  }
+  const onContinuePress = () => {
+    const words = inputs.map(el => el.toLowerCase().trim())
+    const isEqual = chosenIdxs
+      .map((chosen, index) => words[index] === mnemonic[chosen])
+      .reduce((acc, cur) => acc && cur, true)
+    if (!isEqual) {
+      setError('The secret words you have entered do not match the ones in the list. Please try again.')
+      return
+    }
+    onSuccess && onSuccess()
+  }
+  const isFilled = inputs.reduce((acc, cur) => !!cur && acc, true)
   return (
     <View style={styles.page}>
       <Text style={styles.text}>Now let’s check that you wrote your
         secret words correctly.</Text>
-      <Text style={styles.text}>Please enter the words 12, 14, 22 below:</Text>
-      <Input prefix='12' style={styles.input1}/>
-      <Input prefix='14' style={styles.input2}/>
-      <Input prefix='22' style={styles.input2}/>
-      <Text style={styles.error}>The secret words you have entered do not
-        match the ones in the list. Please try again.</Text>
+      <Text style={styles.text}>Please enter the words{' '}
+        {chosenIdxs[0] + 1}, {chosenIdxs[1] + 1}, {chosenIdxs[2] + 1} below:</Text>
+      {chosenIdxs.map((chosen, index) => <Input key={index} prefix={(chosen + 1).toString()}
+        style={index ? styles.input2 : styles.input1} value={inputs[index]}
+        onChangeText={onChange(index)} error={!!error}/>)}
+      {!!error && <Text style={styles.error}>{error}</Text>}
       <View style={styles.btnContainer}>
-        <Button type='secondary' style={styles.btn1} onPress={onBackPress}>Back</Button>
-        <Button type='primary' style={styles.btn2} onPress={onContinuePress}>Continue</Button>
+        <Button type='secondary' style={styles.btn1}
+          onPress={onBackPress}>Back</Button>
+        <Button type='primary' style={styles.btn2}
+          onPress={onContinuePress} disabled={!isFilled || !!error}>Continue</Button>
       </View>
     </View>
   )
