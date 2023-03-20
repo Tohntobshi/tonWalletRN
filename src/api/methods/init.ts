@@ -17,9 +17,9 @@ export default function init(onUpdate: OnApiUpdate, args: ApiInitArgs, _storage:
   methods.initPolling(onUpdate, storage, methods.isAccountActive, args);
   void methods.setupPricesPolling();
   methods.initAuth(onUpdate, storage);
-  // methods.initTransactions(onUpdate, storage); TODO
+  methods.initTransactions(onUpdate, storage); 
   void methods.initWallet(onUpdate, storage);
-  // methods.initNfts(storage);
+  // methods.initNfts(storage); TODO
   // void methods.initExtension(storage);
   methods.initStaking(onUpdate, storage);
 
