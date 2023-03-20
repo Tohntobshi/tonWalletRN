@@ -14,9 +14,13 @@ interface Props {
   onContinuePress?: () => void,
   onBackPress?: () => void,
   placeholder?: string,
+  error?: string,
+  value?: string,
+  onChange?: (val: string) => void,
 }
 
-function EnterPasswordStep({ onContinuePress, onBackPress, placeholder }: Props): JSX.Element {
+function EnterPasswordStep({ onContinuePress, onBackPress, placeholder,
+  error, value, onChange }: Props): JSX.Element {
   return (
     <View style={styles.page}>
       <View style={styles.scrollViewContainer}>
@@ -24,13 +28,17 @@ function EnterPasswordStep({ onContinuePress, onBackPress, placeholder }: Props)
           <Image
             source={require('../../assets/bird5.png')}
             style={styles.logoImage} />
-          <Input style={styles.input1} placeholder={placeholder || 'Confirm operation with your password'}/>
-          <Text style={styles.error}>Wrong password, please try again.</Text>
+          <Input style={styles.input1} value={value} error={!!error}
+            onChangeText={onChange}
+            placeholder={placeholder || 'Confirm operation with your password'}/>
+          {!!error && <Text style={styles.error}>{error}</Text>}
         </ScrollView>
       </View>
       <View style={styles.btnContainer}>
-        <Button type='secondary' style={styles.btn1} onPress={onBackPress}>Back</Button>
-        <Button type='primary' style={styles.btn2} onPress={onContinuePress}>Confirm</Button>
+        <Button type='secondary' style={styles.btn1}
+          onPress={onBackPress}>Back</Button>
+        <Button type='primary' style={styles.btn2} disabled={!!error || !value}
+          onPress={onContinuePress}>Confirm</Button>
       </View>
     </View>
   )

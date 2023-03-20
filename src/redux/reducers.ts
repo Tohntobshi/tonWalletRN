@@ -85,5 +85,5 @@ export const mainSlice = createSlice({
 })
 
 export const { setCurrentAccountId, setAuthState, setAuthMnemonic, setAuthPassword,
-    setAuthIsImported, setAuthMnemonicError, resetAuth, addAccount, resetBackupRequred,
-    removeAccount, removeAllAccounts } = mainSlice.actions
+    setAuthIsImported, setAuthMnemonicError, setAuthPasswordError, resetAuth, addAccount,
+    resetBackupRequred, removeAccount, removeAllAccounts } = mainSlice.actions

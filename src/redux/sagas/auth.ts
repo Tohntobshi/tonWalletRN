@@ -4,7 +4,7 @@ import { addNextWallet, completeBackup, createWallet, finishPasswordCreation,
 import { callApi } from '../../api'
 import { AuthState, setAuthState, setAuthMnemonic, setAuthMnemonicError,
     setAuthPassword, setAuthIsImported, addAccount, resetAuth,
-    resetBackupRequred, removeAllAccounts } from '../reducers'
+    resetBackupRequred, removeAllAccounts, setAuthPasswordError } from '../reducers'
 import { MethodResponseUnwrapped } from '../../api/methods/types'
 import { RootState } from '../types'
 
@@ -93,8 +93,20 @@ function* switchAccountSaga({ payload: id }: ReturnType<typeof switchAccount>) {
     // TODO
 }
 
-function* addNextWalletSaga({ payload: { password, isImport } }: ReturnType<typeof addNextWallet>) {
-    // TODO
+function* addNextWalletSaga({ payload: { password, isImported } }: ReturnType<typeof addNextWallet>) {
+    // check password, set password into auth state, and send to import screen or run start creating
+    const isPasswordValid: MethodResponseUnwrapped<'verifyPassword'> = 
+        yield call(callApi, 'verifyPassword', password)
+    if (!isPasswordValid) {
+        yield put(setAuthPasswordError('Wrong password, please try again.'))
+        return
+    }
+    yield put(setAuthPassword(password))
+    if (isImported) {
+        yield put(setAuthState(AuthState.importWallet))
+        return
+    }
+    yield put(startCreatingWallet())
 }
 
 export function* authSaga() {
@@ -106,4 +118,6 @@ export function* authSaga() {
     yield takeLatest(switchAccount.toString(), switchAccountSaga)
     yield takeLatest(logOut.toString(), logOutSaga)
     yield takeLatest(addNextWallet.toString(), addNextWalletSaga)
+    // TODO activate account after state rehydration
+    // TODO add pending flags and block ui during loading
 }
