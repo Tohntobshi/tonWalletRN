@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
-  Image,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -13,10 +11,10 @@ import { shortenString } from '../../utils'
 
 interface Props {
   onBackPress?: () => void,
+  address: string,
 }
 
-function ReceiveStepQR({ onBackPress }: Props): JSX.Element {
-  const address = 'EQDAFX3J4Kl-5gZiBB8GpNB81ngLGlem3BrXVQ8-klfDcZhk'
+function ReceiveStepQR({ onBackPress, address }: Props): JSX.Element {
   const hint = shortenString(address)
   return (
     <View style={styles.page}>
@@ -28,7 +26,8 @@ function ReceiveStepQR({ onBackPress }: Props): JSX.Element {
         />
       </View>
       <Text style={styles.hint}>{hint}</Text>
-      <Button type='secondary' style={styles.btn} onPress={onBackPress}>Back</Button>
+      <Button type='secondary' style={styles.btn}
+        onPress={onBackPress}>Back</Button>
     </View>
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   StyleSheet,
   Text,
@@ -11,9 +11,17 @@ import OutputWithActions from '../../components/OutputWithActions'
 
 interface Props {
   onBackPress?: () => void,
+  address: string,
 }
 
-function ReceiveStepInvoice({ onBackPress }: Props): JSX.Element {
+function ReceiveStepInvoice({ onBackPress, address }: Props): JSX.Element {
+  const [amount, setAmount] = useState('')
+  const [comment, setComment] = useState('')
+  const amountNumber = parseFloat(amount)
+  const commentToAdd = comment ? 'comment=' + encodeURI(comment) : ''
+  const amountToAdd = Number.isNaN(amountNumber) ? '' : 'amount=' + Math.floor(amountNumber * 1e9)
+  const params = [commentToAdd, amountToAdd].filter(el => el).join('&')
+  const link = 'ton://transfer/' + address + (params && '?' + params)
   return (
     <View style={styles.page}>
       <Text style={styles.text}>You can specify the amount and purpose of
@@ -21,15 +29,17 @@ function ReceiveStepInvoice({ onBackPress }: Props): JSX.Element {
       <View style={styles.labelContainer}>
         <Text style={styles.label1}>Amount</Text>
       </View>
-      <Input style={styles.input1} amountInput placeholder='0'/>
+      <Input style={styles.input1} amountInput placeholder='0'
+        value={amount} onChangeText={setAmount}/>
       <View style={styles.labelContainer}>
         <Text style={styles.label1}>Comment</Text>
       </View>
-      <Input style={styles.input1} placeholder='Optional'/>
+      <Input style={styles.input1} placeholder='Optional'
+        value={comment} onChangeText={setComment}/>
       <View style={styles.labelContainer}>
         <Text style={styles.label2}>Share this URL to receive TON</Text>
       </View>
-      <OutputWithActions style={styles.input1} text='ton://transfer/1Q5VX7SD4KD98S3R1Q5VXSD4KD98QKD98S3R1QX' frame copy/>
+      <OutputWithActions style={styles.input1} text={link} frame copy/>
       <Button type='secondary' style={styles.btn} onPress={onBackPress}>Back</Button>
     </View>
   )

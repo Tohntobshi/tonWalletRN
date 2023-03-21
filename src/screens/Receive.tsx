@@ -1,11 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import React, { useState } from 'react'
+
+import { selectCurrentAccount, useAppSelector } from '../redux'
 
 import ModalBottom from '../components/ModalBottom'
 import ReceiveStepAddress from './ReceiveSteps/ReceiveStepAddress'
@@ -23,21 +18,26 @@ const titles = {
 }
 
 function Receive({ onCancelPress }: Props): JSX.Element {
+  const account = useAppSelector(selectCurrentAccount)
+  const address = account?.address || ''
   const [step, setStep] = useState(0)
   return (
     <ModalBottom
       title={(titles as any)[step]}
       visible={true}
       onRequestClose={onCancelPress}>
-      {step === 0 && <ReceiveStepAddress onQRPress={() => setStep(1)} onInvoicePress={() => setStep(2)}/>}
-      {step === 1 && <ReceiveStepQR onBackPress={() => setStep(0)} />}
-      {step === 2 && <ReceiveStepInvoice onBackPress={() => setStep(0)} />}
+      {step === 0 && <ReceiveStepAddress
+        onQRPress={() => setStep(1)} 
+        onInvoicePress={() => setStep(2)}
+        address={address}/>}
+      {step === 1 && <ReceiveStepQR
+        onBackPress={() => setStep(0)}
+        address={address}/>}
+      {step === 2 && <ReceiveStepInvoice
+        onBackPress={() => setStep(0)}
+        address={address}/>}
     </ModalBottom>
   )
 }
-
-const styles = StyleSheet.create({
-
-})
 
 export default Receive

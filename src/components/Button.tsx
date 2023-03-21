@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     borderRadius: 12,
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   disabled: {
     opacity: 0.4,

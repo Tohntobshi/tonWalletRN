@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -13,9 +12,10 @@ import OutputWithActions from '../../components/OutputWithActions'
 interface Props {
   onQRPress?: () => void,
   onInvoicePress?: () => void,
+  address: string,
 }
 
-function ReceiveStepAddress({ onQRPress, onInvoicePress }: Props): JSX.Element {
+function ReceiveStepAddress({ onQRPress, onInvoicePress, address }: Props): JSX.Element {
   return (
     <View style={styles.page}>
       <Text style={styles.text}>You can share this address, show QR-code
@@ -23,12 +23,13 @@ function ReceiveStepAddress({ onQRPress, onInvoicePress }: Props): JSX.Element {
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Your address</Text>
       </View>
-      <OutputWithActions style={styles.input1} text='EQDAFX3J4Kl-5gZiBB8GpNB81ngLGlem3BrXVQ8-klfDcZhk' frame copy tonScan/>
+      <OutputWithActions style={styles.input1} text={address} frame copy tonScan/>
       <View style={styles.btnContainer}>
         <Button type='secondary' style={styles.btn1} onPress={onQRPress}>
           <Image source={require('../../../assets/qr.png')} style={styles.qrImg}/>
         </Button>
-        <Button type='secondary' style={styles.btn2} onPress={onInvoicePress}>Create Invoice</Button>
+        <Button type='secondary' style={styles.btn2}
+          onPress={onInvoicePress}>Create Invoice</Button>
       </View>
     </View>
   )
