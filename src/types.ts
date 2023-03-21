@@ -24,6 +24,13 @@ export enum AuthState {
     createBackup,
 }
 
+export enum TransferState {
+    None,
+    Confirm,
+    Password,
+    Complete,
+}
+
 export interface AccountState {
     title: string;
     address: string;
@@ -39,6 +46,16 @@ export interface MainState {
         isImported?: boolean;
         mnemonicError?: string;
         passwordError?: string;
+    };
+    currentTransfer: {
+        state: TransferState;
+        tokenSlug?: string;
+        toAddress?: string;
+        error?: string;
+        amount?: number;
+        fee?: string;
+        comment?: string;
+        initialBalance?: number;
     };
     tokenInfoBySlug: Record<string, ApiToken>;
     currentAccountId?: string;

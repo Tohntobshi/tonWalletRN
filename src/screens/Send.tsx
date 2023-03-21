@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
 
 import ModalBottom from '../components/ModalBottom'
 import SendStep1 from './SendSteps/SendStep1'
 import SendStep2 from './SendSteps/SendStep2'
 import EnterPasswordStep from './EnterPasswordStep'
 import SendStep4 from './SendSteps/SendStep4'
+import { useAppDispatch, useAppSelector, setCurrentTransferState,
+  resetCurrentTransfer, validateSendRequest, send,
+  selectCurrentAccountTokens, setCurrentTransferError } from '../redux'
+import { TransferState } from '../types'
+import { bigStrToHuman } from '../utils'
 
 interface Props {
   onCancelPress?: () => void,
@@ -25,22 +23,73 @@ const titles = {
 }
 
 function Send({ onCancelPress }: Props): JSX.Element {
-  const [step, setStep] = useState(0)
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    return () => void dispatch(resetCurrentTransfer())
+  }, [])
+  const userTokens = useAppSelector(selectCurrentAccountTokens)
+  const toncoin = userTokens?.find((el) => el.slug === 'toncoin')
+  const { state: step, error, amount, fee, comment, toAddress, initialBalance } =
+    useAppSelector(state => state.currentTransfer)
+  const onAnyChange = () => {
+    if (error) dispatch(setCurrentTransferError())
+  }
+
+  const [password, setPassword] = useState('')
+  const onPasswordChange = (val: string) => {
+    onAnyChange()
+    setPassword(val)
+  }
+
+  const onFirstStepConfirmPress = (address: string, amount: number, comment: string) => {
+    dispatch(validateSendRequest({ slug: 'toncoin', address, amount, comment }))
+  }
+  const onPasswordStepConfirmPress = () => {
+    dispatch(send({ password, initialBalance: toncoin?.amount || 0 }))
+  }
+  const onEditPress = () => {
+    dispatch(setCurrentTransferState(TransferState.None))
+  }
+  const onBackFromPasswordPress = () => {
+    dispatch(setCurrentTransferState(TransferState.None))
+  }
+  const onProceedToPasswordPress = () => {
+    dispatch(setCurrentTransferState(TransferState.Password))
+  }
+  const feeReadable = bigStrToHuman(fee || '0', toncoin?.decimals)
   return (
     <ModalBottom
       title={(titles as any)[step]}
       visible={true}
       onRequestClose={onCancelPress}>
-      {step === 0 && <SendStep1 onContinuePress={() => setStep(1)}/>}
-      {step === 1 && <SendStep2 onContinuePress={() => setStep(2)} onEditPress={() => setStep(0)}/>}
-      {step === 2 && <EnterPasswordStep onContinuePress={() => setStep(3)} onBackPress={() => setStep(1)}/>}
-      {step === 3 && <SendStep4 onClosePress={onCancelPress}/>}
+      {step === TransferState.None && <SendStep1
+        balance={toncoin?.amount || 0}
+        symbol={toncoin?.symbol || ''}
+        onContinuePress={onFirstStepConfirmPress}
+        onAnyChange={onAnyChange}
+        error={error}/>}
+      {step === TransferState.Confirm && <SendStep2
+        amount={amount || 0}
+        symbol={toncoin?.symbol || ''}
+        address={toAddress || ''}
+        fee={feeReadable}
+        comment={comment}
+        onContinuePress={onProceedToPasswordPress}
+        onEditPress={onEditPress}/>}
+      {step === TransferState.Password && <EnterPasswordStep
+        value={password} onChange={onPasswordChange} 
+        onContinuePress={onPasswordStepConfirmPress}
+        onBackPress={onBackFromPasswordPress} error={error}/>}
+      {step === TransferState.Complete && <SendStep4
+        initialBalance={initialBalance || 0}
+        amount={amount || 0}
+        symbol={toncoin?.symbol || ''}
+        fee={feeReadable}
+        price={toncoin?.price || 0}
+        onClosePress={onCancelPress}/>}
     </ModalBottom>
   )
 }
 
-const styles = StyleSheet.create({
-
-})
 
 export default Send

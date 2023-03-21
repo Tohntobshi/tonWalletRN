@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -10,13 +9,20 @@ import {
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import OutputWithActions from '../../components/OutputWithActions'
+import { formatCurrency } from '../../utils/formatNumber'
 
 interface Props {
   onContinuePress?: () => void,
   onEditPress?: () => void,
+  address: string,
+  amount: number,
+  symbol: string,
+  comment?: string,
+  fee: number,
 }
 
-function SendStep2({ onContinuePress, onEditPress }: Props): JSX.Element {
+function SendStep2({ onContinuePress, onEditPress,
+  address, amount, comment, fee, symbol }: Props): JSX.Element {
   return (
     <View style={styles.page}>
       <Image
@@ -25,18 +31,22 @@ function SendStep2({ onContinuePress, onEditPress }: Props): JSX.Element {
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Receiving address</Text>
       </View>
-      <OutputWithActions style={styles.input1} text='EQDAFX3J4Kl-5gZiBB8GpNB81ngLGlem3BrXVQ8-klfDcZhk' frame copy tonScan/>
+      <OutputWithActions style={styles.input1} text={address} frame copy tonScan/>
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Amount</Text>
       </View>
-      <Input style={styles.input1} value='123.123 TON' editable={false} suffix='+ 0.0123456 TON'/>
+      <Input style={styles.input1} value={formatCurrency(amount, symbol)}
+        editable={false} suffix={'+ ' + formatCurrency(fee, symbol)}/>
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Comment</Text>
       </View>
-      <Input style={styles.input1} value='Hello world' editable={false}/>
+      <Input style={styles.input1} value={comment}
+        placeholder='Optional' editable={false}/>
       <View style={styles.btnContainer}>
-        <Button type='secondary' style={styles.btn1} onPress={onEditPress}>Edit</Button>
-        <Button type='primary' style={styles.btn2} onPress={onContinuePress}>Confirm</Button>
+        <Button type='secondary' style={styles.btn1}
+          onPress={onEditPress}>Edit</Button>
+        <Button type='primary' style={styles.btn2}
+          onPress={onContinuePress}>Confirm</Button>
       </View>
     </View>
   )

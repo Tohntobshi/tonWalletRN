@@ -1,14 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ApiToken } from '../api/types'
 import { omit } from '../api/utils/iteratees'
-import { MainState, AuthState } from '../types'
+import { MainState, AuthState, TransferState } from '../types'
 
 const initialState: MainState = {
     auth: {
         authState: AuthState.none,
     },
     accounts: {},
-    tokenInfoBySlug: {}
+    tokenInfoBySlug: {},
+    currentTransfer: {
+        state: TransferState.None
+    }
 }
 
 export const mainSlice = createSlice({
@@ -74,10 +77,26 @@ export const mainSlice = createSlice({
             const { tokenInfoBySlug } = state
             return { ...state, tokenInfoBySlug: { ...tokenInfoBySlug, ...payload } }
         },
+        setCurrentTransferState: (state, { payload }: PayloadAction<TransferState>): MainState => {
+            return { ...state, currentTransfer: { ...state.currentTransfer, state: payload }  }
+        },
+        setCurrentTransferError: (state, { payload }: PayloadAction<string | undefined>): MainState => {
+            return { ...state, currentTransfer: { ...state.currentTransfer, error: payload }  }
+        },
+        setCurrentTransferInitialBalance: (state, { payload }: PayloadAction<number | undefined>): MainState => {
+            return { ...state, currentTransfer: { ...state.currentTransfer, initialBalance: payload } }
+        },
+        setCurrentTransfer: (state, { payload }: PayloadAction<MainState['currentTransfer']>): MainState => {
+            return { ...state, currentTransfer: payload }
+        },
+        resetCurrentTransfer: (state): MainState => {
+            return { ...state, currentTransfer: initialState.currentTransfer }
+        },
     }
 })
 
 export const { setCurrentAccountId, setAuthState, setAuthMnemonic, setAuthPassword,
     setAuthIsImported, setAuthMnemonicError, setAuthPasswordError, resetAuth, addAccount,
     resetBackupRequred, removeAccount, removeAllAccounts, setAccountTitle, setBalance,
-    updateTokenInfo } = mainSlice.actions
+    updateTokenInfo, setCurrentTransferState, resetCurrentTransfer, setCurrentTransferError,
+    setCurrentTransfer, setCurrentTransferInitialBalance } = mainSlice.actions

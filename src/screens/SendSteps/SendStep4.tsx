@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,23 +8,41 @@ import {
 } from 'react-native'
 
 import Button from '../../components/Button'
+import { formatCurrency } from '../../utils/formatNumber'
 
 interface Props {
   onClosePress?: () => void,
+  initialBalance: number,
+  amount: number,
+  fee: number,
+  price: number,
+  symbol: string
 }
 
-function SendStep4({ onClosePress }: Props): JSX.Element {
+function SendStep4({ onClosePress,
+  initialBalance, amount, fee, price, symbol }: Props): JSX.Element {
+  const spent = formatCurrency(amount + fee, '').split('.')
   return (
     <View style={styles.page}>
       <Image
         source={require('../../../assets/bird6.png')}
         style={styles.logoImage} />
       <View style={styles.container1}>
-        <Text style={styles.text1}>$18,025.26</Text>
-        <Image source={require('../../../assets/arrowRight.png')} style={styles.img1}/>
-        <Text style={styles.text1}>$18,003.57</Text>
+        <Text style={styles.text1}>
+          {formatCurrency(initialBalance * price, '$')}
+        </Text>
+        <Image source={require('../../../assets/arrowRight.png')}
+          style={styles.img1}/>
+        <Text style={styles.text1}>
+          {formatCurrency((initialBalance - amount - fee) * price, '$')}
+        </Text>
       </View>
-      <Text style={styles.text2}>-10.<Text style={styles.text3}>15 TON</Text></Text>
+      <Text style={styles.text2}>
+        -{spent[0]}
+        <Text style={styles.text3}>
+          {!!spent[1] && '.' + spent[1]} {symbol}
+        </Text>
+      </Text>
       <View style={styles.btnsContainer}>
         <TouchableOpacity style={styles.btn1}>
           <Text style={styles.btnText}>Details</Text>
@@ -34,7 +51,8 @@ function SendStep4({ onClosePress }: Props): JSX.Element {
           <Text style={styles.btnText}>Repeat</Text>
         </TouchableOpacity>
       </View>
-      <Button type='primary' style={styles.btn} onPress={onClosePress}>Close</Button>
+      <Button type='primary' style={styles.btn}
+        onPress={onClosePress}>Close</Button>
     </View>
   )
 }

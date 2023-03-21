@@ -36,7 +36,7 @@ function AssetsList({ style }: Props): JSX.Element {
           const value = amount * price
           const changeValue = Math.abs(round(calcChangeValue(value, change24h), 4))
           const changePercent = Math.abs(round(change24h * 100, 2))
-          const imgSrc = images[slug] ? images[slug] : { src: ''}
+          const imgSrc = images[slug] ? images[slug] : { src: image }
           return <React.Fragment key={slug}>
             <TouchableHighlight  style={styles.itemContainer1} activeOpacity={0.6} underlayColor="#EEEEEE" onPress={() => {}}>
               <View style={styles.itemContainer2}>
