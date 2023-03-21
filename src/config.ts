@@ -10,3 +10,5 @@ export const TONHTTPAPI_MAINNET_URL = 'https://tonhttpapi.mytonwallet.org/jsonRP
 export const TONHTTPAPI_TESTNET_URL = 'https://tonhttpapi-testnet.mytonwallet.org/jsonRPC'
 export const TONAPIIO_MAINNET_URL = 'https://tonapiio.mytonwallet.org'
 export const TONAPIIO_TESTNET_URL = 'https://tonapiio-testnet.mytonwallet.org'
+export const CURRENT_NETWORK = 'testnet'
+export const DEFAULT_DECIMAL_PLACES = 9

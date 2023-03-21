@@ -1,39 +1,14 @@
-import { createSlice, PayloadAction, createReducer } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { ApiToken } from '../api/types'
 import { omit } from '../api/utils/iteratees'
-
-export enum AuthState {
-    none,
-    creatingWallet,
-    importWallet,
-    createPassword,
-    createBackup,
-}
-
-export interface AccountState {
-    title: string;
-    address: string;
-    isBackupRequired: boolean;
-}
-
-export interface MainState {
-    auth: {
-        authState: AuthState;
-        mnemonic?: string[];
-        password?: string;
-        isImported?: boolean;
-        mnemonicError?: string;
-        passwordError?: string;
-    };
-    currentAccountId?: string;
-    accounts: Record<string, AccountState>;
-}
-
+import { MainState, AuthState } from '../types'
 
 const initialState: MainState = {
     auth: {
         authState: AuthState.none,
     },
     accounts: {},
+    tokenInfoBySlug: {}
 }
 
 export const mainSlice = createSlice({
@@ -66,7 +41,7 @@ export const mainSlice = createSlice({
         },
         addAccount: (state, { payload: { id, address, isBackupRequired } }: PayloadAction<{ id: string; address: string; isBackupRequired: boolean }>): MainState => {
             return { ...state, currentAccountId: id,
-                accounts: {...state.accounts, [id]: { title: 'Personal Wallet', address, isBackupRequired } }}
+                accounts: {...state.accounts, [id]: { title: 'Personal Wallet', address, isBackupRequired, balancesBySlug: {} } }}
         },
         resetBackupRequred: (state): MainState => {
             const { currentAccountId: id } = state
@@ -86,9 +61,23 @@ export const mainSlice = createSlice({
             const newAccounts = { ...accounts, [id]: { ...accounts[id], title } }
             return { ...state, accounts: newAccounts }
         },
+        setBalance: (state, { payload: { accountId, balance, slug } }: PayloadAction<{ accountId: string, balance: string, slug: string }>): MainState => {
+            const { accounts } = state
+            const account = accounts[accountId]
+            if (!account) return state
+            const newAccounts = { ...accounts,
+                [accountId]: { ...account, balancesBySlug: { ...account.balancesBySlug, [slug]: balance } }
+            }
+            return { ...state, accounts: newAccounts }
+        },
+        updateTokenInfo: (state, { payload }: PayloadAction<Record<string, ApiToken>>): MainState => {
+            const { tokenInfoBySlug } = state
+            return { ...state, tokenInfoBySlug: { ...tokenInfoBySlug, ...payload } }
+        },
     }
 })
 
 export const { setCurrentAccountId, setAuthState, setAuthMnemonic, setAuthPassword,
     setAuthIsImported, setAuthMnemonicError, setAuthPasswordError, resetAuth, addAccount,
-    resetBackupRequred, removeAccount, removeAllAccounts, setAccountTitle } = mainSlice.actions
+    resetBackupRequred, removeAccount, removeAllAccounts, setAccountTitle, setBalance,
+    updateTokenInfo } = mainSlice.actions

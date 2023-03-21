@@ -14,8 +14,9 @@ import LinearGradient from 'react-native-linear-gradient'
 import Input from './Input'
 import OutputWithActions from './OutputWithActions'
 import { shortenString } from '../utils'
-import { currenctAccountSelector, useAppSelector, setAccountTitle,
-  useAppDispatch, switchAccount} from '../redux'
+import { selectCurrentAccount, useAppSelector, setAccountTitle,
+  useAppDispatch, switchAccount, selectCurrentAccountTokens} from '../redux'
+import { buildWalletSelectorValues } from '../utils/buildWalletSelectorValues'
 
 interface Props {
   style?: StyleProp<ViewStyle>,
@@ -28,8 +29,10 @@ const gradientEnd = {x: 0, y: 0}
 
 function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
   const dispatch = useAppDispatch()
+  const userTokens = useAppSelector(selectCurrentAccountTokens)
+  const valuesToShow = buildWalletSelectorValues(userTokens || [])
   const currentAccountId = useAppSelector(state => state.currentAccountId)
-  const currentAccount = useAppSelector(currenctAccountSelector)
+  const currentAccount = useAppSelector(selectCurrentAccount)
   const accounts = useAppSelector(state => state.accounts)
   const [isSelectorOpen, setSelectorOpen] = useState(false)
   const [isEditNameOpen, setEditNameOpen] = useState(false)
@@ -71,8 +74,10 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
             onDonePress={onDonePress} value={currentAccount?.title}
             onChangeText={onTitleChange}/>}
         </View>
-        <Text style={styles.balance}>$18,025
-          <Text style={styles.cents}>.26</Text></Text>
+        <Text style={styles.balance}>${valuesToShow.primaryWholePart}
+          {!!valuesToShow.primaryFractionPart &&
+            <Text style={styles.cents}>.{valuesToShow.primaryFractionPart}</Text>}
+        </Text>
         <OutputWithActions text={currentAccount?.address || ''}
           trim style={styles.address} copy tonScan/>
       </LinearGradient>
@@ -87,6 +92,7 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
                 <View style={[styles.selectorElemContainer2,
                   isActive && styles.selectorElemContainer2Active]}>
                   <TouchableOpacity style={styles.selectorElemContainer3}
+                    disabled={isActive}
                     onPress={() => setActiveWallet(accId)}>
                     <LinearGradient colors={gradientColors}
                       start={gradientStart} end={gradientEnd}

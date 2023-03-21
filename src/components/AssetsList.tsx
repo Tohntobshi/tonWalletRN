@@ -4,34 +4,40 @@ import {
   StyleProp,
   StyleSheet,
   Text,
-  TouchableOpacity,
   ViewStyle,
   View,
   TouchableHighlight,
   ScrollView,
 } from 'react-native'
+import { selectCurrentAccountTokens, useAppSelector } from '../redux'
+import { calcChangeValue } from '../utils/calcChangeValue'
+import { formatCurrency } from '../utils/formatNumber'
+import { round } from '../utils/round'
 
 
 interface Props {
   style?: StyleProp<ViewStyle>,
 }
 
-const mockList = [
-  { id: 0, imgSrc: require('../../assets/ton.png'), usdValue: '3,349.31', name: 'Toncoin',
-    value: '1.543', unit: 'TON', rate: '2.17', valueChange: '703.15', percentChange: '21', apy: '5' },
-  { id: 1, imgSrc: require('../../assets/btc.png'), usdValue: '7,505', name: 'Bitcoin',
-    value: '0.31', unit: 'BTC', rate: '24209', valueChange: '-176', percentChange: '-15' },
-  { id: 2, imgSrc: require('../../assets/eth.png'), usdValue: '3,349.31', name: 'Ethereum',
-    value: '1.543', unit: 'ETH', rate: '2.17', valueChange: '-703.15', percentChange: '-21' },
-]
+const images: any = {
+  toncoin: require('../../assets/ton.png'),
+  bitcoin: require('../../assets/btc.png'),
+  etherium: require('../../assets/eth.png'),
+}
+
 
 function AssetsList({ style }: Props): JSX.Element {
+  const tokens = useAppSelector(selectCurrentAccountTokens)
   return (
     <View style={[styles.container, style]}>
       <ScrollView>
-        {mockList.map(({id, imgSrc, name, value, unit, rate, percentChange, valueChange, apy }, index) => {
-          const up = +percentChange > 0
-          return <React.Fragment key={id}>
+        {!!tokens && tokens.map(({ amount, slug, change24h, name, price, symbol, image }, index) => {
+          const up = change24h >= 0
+          const value = amount * price
+          const changeValue = Math.abs(round(calcChangeValue(value, change24h), 4))
+          const changePercent = Math.abs(round(change24h * 100, 2))
+          const imgSrc = images[slug] ? images[slug] : { src: ''}
+          return <React.Fragment key={slug}>
             <TouchableHighlight  style={styles.itemContainer1} activeOpacity={0.6} underlayColor="#EEEEEE" onPress={() => {}}>
               <View style={styles.itemContainer2}>
                 <Image source={imgSrc} style={styles.assetImg}/>
@@ -39,20 +45,20 @@ function AssetsList({ style }: Props): JSX.Element {
                   <View style={styles.row1}>
                     <View style={styles.row3}>
                       <Text style={styles.name}>{name}</Text>
-                      {!!apy && <Text style={styles.apy}>APY {apy}%</Text>}
+                      {/* {<Text style={styles.apy}>APY {apy}%</Text>} */}
                     </View>
                     <View style={styles.row3}>
-                      <Text style={styles.valueUSD}>${value}</Text>
+                      <Text style={styles.valueUSD}>{formatCurrency(value, '$')}</Text>
                     </View>
                   </View>
                   <View style={styles.row2}>
                     <View style={styles.row3}>
-                      <Text style={styles.value}>{value} {unit} • ${rate}</Text>
+                      <Text style={styles.value}>{formatCurrency(amount, symbol)} • {formatCurrency(price, '$')}</Text>
                     </View>
                     <View style={styles.row3}>
                       <Image style={styles.arrowImg2}
                         source={up ? require('../../assets/greenArrowUp.png') : require('../../assets/redArrowDown.png')}/>
-                      <Text style={[styles.value, up ? styles.green : styles.red]}>{percentChange}% • ${valueChange}</Text>
+                      <Text style={[styles.value, up ? styles.green : styles.red]}>{changePercent}% • {formatCurrency(changeValue, '$')}</Text>
                     </View>
                   </View>
                 </View>
@@ -61,7 +67,7 @@ function AssetsList({ style }: Props): JSX.Element {
                 </View>
               </View>
             </TouchableHighlight>
-            {index + 1 !== mockList.length && <View style={styles.separator1}><View style={styles.separator2}/></View>}
+            {index + 1 !== tokens.length && <View style={styles.separator1}><View style={styles.separator2}/></View>}
           </React.Fragment>
         })}
       </ScrollView>

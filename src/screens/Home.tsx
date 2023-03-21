@@ -17,14 +17,14 @@ import AddWallet from './AddWallet'
 import LogOut from './LogOut'
 import AssetsList from '../components/AssetsList'
 import ActivityList from '../components/ActivityList'
-import { useAppSelector, useAppDispatch, isBackedUpSelector } from '../redux'
+import { useAppSelector, useAppDispatch, selectIsBackedUp } from '../redux'
 
 
 const tabs = ['Assets', 'Activity', 'NFT']
 
 function Home(): JSX.Element {
   const dispatch = useAppDispatch()
-  const isBackedUp = useAppSelector(isBackedUpSelector)
+  const isBackedUp = useAppSelector(selectIsBackedUp)
   const [tab, setTab] = useState(0)
   const [isSendOpen, setSendOpen] = useState(false)
   const [isBackupOpen, setBackupOpen] = useState(false)

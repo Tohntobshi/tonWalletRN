@@ -15,7 +15,8 @@ import CreatePassword from './screens/CreatePassword'
 import CreateBackup from './screens/CreateBackup'
 import ImportSecretWords from './screens/ImportSecretWords'
 import Home from './screens/Home'
-import { AuthState, persistor, store, useAppSelector } from './redux'
+import { persistor, store, useAppSelector } from './redux'
+import { AuthState } from './types'
 
 function MainScreen(): JSX.Element {
   const authState = useAppSelector(state => state.auth.authState)

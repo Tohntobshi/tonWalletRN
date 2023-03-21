@@ -10,7 +10,8 @@ const persistConfig = {
     storage: AsyncStorage,
     whitelist: [
         'currentAccountId',
-        'accounts'
+        'accounts',
+        'tokenInfoBySlug'
     ]
 }
 

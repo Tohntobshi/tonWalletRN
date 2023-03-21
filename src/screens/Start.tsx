@@ -7,8 +7,9 @@ import {
 } from 'react-native'
 
 import Button from '../components/Button'
-import { AuthState, setAuthState, startCreatingWallet,
+import { setAuthState, startCreatingWallet,
   useAppDispatch } from '../redux'
+import { AuthState } from '../types'
 
 
 function Start(): JSX.Element {

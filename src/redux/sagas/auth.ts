@@ -1,13 +1,17 @@
 import { REHYDRATE } from 'redux-persist'
 import { call, put, takeLatest, all, delay, select } from 'redux-saga/effects'
 import { addNextWallet, completeBackup, createWallet, finishPasswordCreation,
-    importWallet, logOut, requestMnemonic, startCreatingWallet, switchAccount } from '../asyncActions'
+    importWallet, logOut, requestMnemonic, startCreatingWallet, switchAccount
+} from '../asyncActions'
 import { callApi } from '../../api'
-import { AuthState, setAuthState, setAuthMnemonic, setAuthMnemonicError,
+import { setAuthState, setAuthMnemonic, setAuthMnemonicError,
     setAuthPassword, setAuthIsImported, addAccount, resetAuth,
-    resetBackupRequred, removeAllAccounts, setAuthPasswordError, setCurrentAccountId, removeAccount } from '../reducers'
+    resetBackupRequred, removeAllAccounts, setAuthPasswordError,
+    setCurrentAccountId, removeAccount } from '../reducers'
 import { MethodResponseUnwrapped } from '../../api/methods/types'
+import { AuthState } from '../../types'
 import { RootState } from '../types'
+import { CURRENT_NETWORK } from '../../config'
 
 
 function* startCreatingWalletSaga() {
@@ -57,7 +61,8 @@ function* createWalletSaga() {
     // clean auth tmp values
     const { auth: { password, mnemonic, isImported } }: RootState = yield select()
     const result: MethodResponseUnwrapped<'createWallet'> =
-        yield call(callApi, isImported ? 'importMnemonic' : 'createWallet', 'mainnet', mnemonic!, password!)
+        yield call(callApi, isImported ?
+            'importMnemonic' : 'createWallet', CURRENT_NETWORK, mnemonic!, password!)
     if (!result) return
     const { accountId, address } = result
     yield put(addAccount({ id: accountId, address, isBackupRequired: !isImported }))

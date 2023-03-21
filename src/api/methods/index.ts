@@ -6,7 +6,6 @@ export * from './transactions';
 export * from './polling';
 export * from './accounts';
 export * from './staking';
-export * from './testMethods'
 // export {
 //   initDapps,
 //   isDappConnected,
