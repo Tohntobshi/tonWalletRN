@@ -1,79 +1,70 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo } from 'react'
+import { format } from 'date-fns'
 import {
   Image,
   StyleProp,
   StyleSheet,
   Text,
-  TouchableOpacity,
   ViewStyle,
   View,
   TouchableHighlight,
-  ScrollView,
   SectionList,
 } from 'react-native'
-import { shortenString } from '../utils'
+import { ApiTransaction } from '../api/types'
+import { requestTransactions, selectCurrentTransactions,
+  useAppDispatch, useAppSelector } from '../redux'
+import { bigStrToHuman, shortenString } from '../utils'
 
 
 interface Props {
   style?: StyleProp<ViewStyle>,
 }
 
-const mockList = Array.from({ length: 100 }).map((_, index) => {
-  index = 100 - index
-  let day = Math.ceil(index/10).toString()
-  day = day.length === 1 ? '0' + day : day
-  const date = `2023-03-${day}T10:00:00`
-  let comment = !(index % 7) ? 'Good morning! It’s very long first comment' : ''
-  comment = [95, 94].includes(index) ? 'Short' : comment
-  return { id: index, type: index % 2 ? 'sent' : 'received', address: '546Fadf49fm398urERet598fdjwErRTfSeFrtR567TUilk',
-    value: '21', units: 'TON', date, comment }
-})
-
-const makeSections = (list: any[]) => {
-  const sections = {}
+const makeSections = (list: ApiTransaction[]): { data: ApiTransaction[], title: string }[] => {
+  const today = format(new Date, 'yyyy-MM-dd')
+  const sections: Record<string, ApiTransaction[]> = {}
   for (const el of list) {
-    const date = el.date.slice(0,10) as string
-    if ((sections as any )[date]) {
-      (sections as any)[date].push(el)
+    const date = format(el.timestamp, 'yyyy-MM-dd')
+    if (sections[date]) {
+      sections[date].push(el)
     } else {
-      (sections as any)[date] = [el]
+      sections[date] = [el]
     }
   }
+
   const dates = Object.keys(sections)
   dates.sort()
   dates.reverse()
-  return dates.map(date => ({ title: date, data: (sections as any)[date]}))
-}
-
-const mockSections = makeSections(mockList)
-
-const getMockData = async (offset: number) => {
-  await new Promise((resolve) => setTimeout(() => resolve(null), 1000))
-  return mockList.slice(offset, offset + 10)
+  return dates.map(date => ({
+    title: today === date ? 'Today' : format(new Date(date + 'T00:00:00'), 'do LLLL'),
+    data: sections[date]
+  }))
 }
 
 function ActivityList({ style }: Props): JSX.Element {
-  const [loading, setLoading] = useState(false)
-  const [list, setList] = useState([] as any[])
-  const getData = async () => {
-    if (loading) return
-    setLoading(true)
-    const data = await getMockData(list.length)
-    setList([...list, ...data])
-    setLoading(false)
+  const dispatch = useAppDispatch()
+  const currentAccountId = useAppSelector(state => state.currentAccountId)
+  const transactions = useAppSelector(selectCurrentTransactions)
+  const tokens = useAppSelector(state => state.tokenInfoBySlug)
+  const isLoading = useAppSelector(state => state.isTransactionsLoading)
+
+  const getData = (isRefresh: boolean) => {
+    if (isLoading) return
+    dispatch(requestTransactions({ isRefresh }))
   }
   const sections = useMemo(() => {
-    return makeSections(list)
-  }, [list])
-  const onEndReached = () => {
-    getData()
-  }
+    return makeSections(transactions)
+  }, [transactions])
+  const onEndReached = () => getData(false)
   useEffect(() => {
-    getData()
-  }, [])
+    if (transactions.length < 10) getData(false)
+  }, [currentAccountId])
   return (
     <View style={style}>
-      <SectionList sections={sections} stickySectionHeadersEnabled={false} onEndReached={onEndReached} onEndReachedThreshold={0.9}
+      <SectionList sections={sections} stickySectionHeadersEnabled={false}
+        onEndReached={onEndReached} onEndReachedThreshold={0.9}
+        onRefresh={() => getData(true)}
+        refreshing={isLoading}
         ListHeaderComponent={() => <View style={styles.header}/>}
         ItemSeparatorComponent={() => <View style={styles.separator1}><View style={styles.separator2}/></View>}
         renderSectionHeader={({section: {title}}) => <View style={styles.sectionHeaderContainer1}>
@@ -82,33 +73,35 @@ function ActivityList({ style }: Props): JSX.Element {
             </View>
           </View>}
         renderItem={({ item }) => {
-          const { id, type, value, units, date, address, comment } = item
-          const isReceived = type === 'received'
-          const isSent = type === 'sent'
-          const imgSrc = isReceived ? require('../../assets/received.png') : require('../../assets/sent.png')
-          return <TouchableHighlight key={id} style={styles.itemContainer1} activeOpacity={0.6} underlayColor="#EEEEEE" onPress={() => {}}>
+          const { txId, amount, comment, isIncoming, type, timestamp, fromAddress, toAddress, slug } = item
+          const tokenInfo = slug ? tokens[slug] : undefined
+          const address = isIncoming ? fromAddress : toAddress
+          const imgSrc = isIncoming ? require('../../assets/received.png') : require('../../assets/sent.png')
+          return <TouchableHighlight key={txId} style={styles.itemContainer1}
+            activeOpacity={0.6} underlayColor="#EEEEEE" onPress={() => {}}>
             <View style={styles.itemContainer2}>
               <Image source={imgSrc} style={styles.typeImg}/>
               <View style={styles.infoContainer}>
                 <View style={styles.row1}>
                   <View style={styles.row3}>
-                    <Text style={styles.name}>{type}</Text>
+                    <Text style={styles.name}>{type || (isIncoming ? 'Received' : 'Sent')}</Text>
                   </View>
                   <View style={styles.row3}>
-                    <Text style={[styles.value, isReceived && styles.green]}>{isSent && '-'}{isReceived && '+'}{value} {units}</Text>
+                    <Text style={[styles.value, isIncoming && styles.green]}>
+                      {isIncoming && '+'}{bigStrToHuman(amount, tokenInfo?.decimals)} {tokenInfo?.symbol}</Text>
                   </View>
                 </View>
                 <View style={styles.row2}>
                   <View style={styles.row3}>
-                    <Text style={styles.lowerText}>{date}</Text>
+                    <Text style={styles.lowerText}>{format(timestamp, 'HH:mm')}</Text>
                   </View>
                   <View style={styles.row3}>
                     <Text style={styles.lowerText}>{shortenString(address)}</Text>
                   </View>
                 </View>
-                {!!comment && <View style={isReceived ? styles.receivedCommentContainer1 : styles.commentContainer1}>
-                    <View style={[styles.commentContainer2, isReceived && styles.receivedCommentContainer]}>
-                      <Text style={[styles.comment, isReceived && styles.green]} numberOfLines={1}>{comment}</Text>
+                {!!comment && <View style={isIncoming ? styles.receivedCommentContainer1 : styles.commentContainer1}>
+                    <View style={[styles.commentContainer2, isIncoming && styles.receivedCommentContainer]}>
+                      <Text style={[styles.comment, isIncoming && styles.green]} numberOfLines={1}>{comment}</Text>
                     </View>
                   </View>}
               </View>

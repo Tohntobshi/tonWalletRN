@@ -1,4 +1,4 @@
-import { ApiHistoryList, ApiToken } from "./api/types";
+import { ApiHistoryList, ApiToken, ApiTransaction } from './api/types'
 
 export type UserToken = {
     amount: number;
@@ -57,6 +57,8 @@ export interface MainState {
         comment?: string;
         initialBalance?: number;
     };
+    transactionsByAccountId: Record<string, ApiTransaction[]>;
+    isTransactionsLoading: boolean;
     tokenInfoBySlug: Record<string, ApiToken>;
     currentAccountId?: string;
     accounts: Record<string, AccountState>;

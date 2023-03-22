@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ApiToken } from '../api/types'
+import { ApiToken, ApiTransaction } from '../api/types'
 import { omit } from '../api/utils/iteratees'
 import { MainState, AuthState, TransferState } from '../types'
 
@@ -9,6 +9,8 @@ const initialState: MainState = {
     },
     accounts: {},
     tokenInfoBySlug: {},
+    transactionsByAccountId: {},
+    isTransactionsLoading: false,
     currentTransfer: {
         state: TransferState.None
     }
@@ -52,12 +54,13 @@ export const mainSlice = createSlice({
             return { ...state, accounts: { ...state.accounts, [id]: { ...state.accounts[id], isBackupRequired: false } } }
         },
         removeAccount: (state, { payload: id }: PayloadAction<string>): MainState => {
-            const { accounts } = state
+            const { accounts, transactionsByAccountId } = state
             const newAccounts = omit(accounts, [id])
-            return { ...state, accounts: newAccounts }
+            const newTransactionsByAccountId = omit(transactionsByAccountId, [id])
+            return { ...state, accounts: newAccounts, transactionsByAccountId: newTransactionsByAccountId }
         },
         removeAllAccounts: (state): MainState => {
-            return { ...state, accounts: {}, currentAccountId: undefined }
+            return { ...state, accounts: {}, currentAccountId: undefined, transactionsByAccountId: {} }
         },
         setAccountTitle: (state, { payload: { id, title } }: PayloadAction<{ id: string, title: string }>): MainState => {
             const { accounts } = state
@@ -92,6 +95,59 @@ export const mainSlice = createSlice({
         resetCurrentTransfer: (state): MainState => {
             return { ...state, currentTransfer: initialState.currentTransfer }
         },
+        setIsTransactionsLoading: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, isTransactionsLoading: payload }
+        },
+        setTransactions: (state, { payload }: PayloadAction<{ accId: string; txs: ApiTransaction[] }>): MainState => {
+            const { accId, txs } = payload
+            const { transactionsByAccountId } = state
+            return { ...state, transactionsByAccountId: { ...transactionsByAccountId, [accId]: txs } }
+        },
+        appendTransactions: (state, { payload }: PayloadAction<{ accId: string; newTxs: ApiTransaction[] }>): MainState => {
+            const { accId, newTxs } = payload
+            const { transactionsByAccountId } = state
+            const oldTxList =  transactionsByAccountId[accId]
+            const newTxList = oldTxList ? [...oldTxList, ...newTxs] : newTxs
+            return { ...state, transactionsByAccountId: { ...transactionsByAccountId, [accId]: newTxList } }
+        },
+        prependTransaction: (state, { payload }: PayloadAction<{ accId: string; newTx: ApiTransaction }>): MainState => {
+            const { accId, newTx } = payload
+            const { transactionsByAccountId } = state
+            const oldTxList =  transactionsByAccountId[accId]
+            const alreadyExist = oldTxList?.find(el => el.txId === newTx.txId)
+            if (alreadyExist) {
+                return state
+            }
+            const newTxList = oldTxList ? [newTx, ...oldTxList] : [newTx]
+            return { ...state, transactionsByAccountId: { ...transactionsByAccountId, [accId]: newTxList } }
+        },
+        updateTransactionId: (state, { payload }: PayloadAction<{ oldId: string; newId: string }>): MainState => {
+            const { transactionsByAccountId } = state
+            const { oldId, newId } = payload
+            for (const accId of Object.keys(transactionsByAccountId)) {
+                const transactions = transactionsByAccountId[accId]
+                const txIndex = transactions.findIndex(el => el.txId === oldId)
+                if (txIndex === -1) continue
+                if (transactions.find(el => el.txId === newId)) {
+                    const newTransactions = transactions.filter(el => el.txId !== oldId)
+                    return { ...state, 
+                        transactionsByAccountId: {
+                            ...transactionsByAccountId,
+                            [accId]: newTransactions
+                        }
+                    }
+                }
+                const newTransactions = [ ...transactions ]
+                newTransactions[txIndex] = { ...transactions[txIndex], txId: newId }
+                return { ...state, 
+                    transactionsByAccountId: {
+                        ...transactionsByAccountId,
+                        [accId]: newTransactions
+                    }
+                }
+            }
+            return state
+        },
     }
 })
 
@@ -99,4 +155,5 @@ export const { setCurrentAccountId, setAuthState, setAuthMnemonic, setAuthPasswo
     setAuthIsImported, setAuthMnemonicError, setAuthPasswordError, resetAuth, addAccount,
     resetBackupRequred, removeAccount, removeAllAccounts, setAccountTitle, setBalance,
     updateTokenInfo, setCurrentTransferState, resetCurrentTransfer, setCurrentTransferError,
-    setCurrentTransfer, setCurrentTransferInitialBalance } = mainSlice.actions
+    setCurrentTransfer, setCurrentTransferInitialBalance, setIsTransactionsLoading,
+    appendTransactions, prependTransaction, updateTransactionId, setTransactions } = mainSlice.actions

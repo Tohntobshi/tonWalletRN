@@ -55,3 +55,9 @@ export function selectCurrentAccountTokens(state: RootState) {
     if (!balancesBySlug) return undefined
     return selectAccountTokensMemoized(balancesBySlug, state.tokenInfoBySlug)
 }
+
+export function selectCurrentTransactions(state: RootState) {
+    const { currentAccountId, transactionsByAccountId } = state
+    if (!currentAccountId) return []
+    return transactionsByAccountId[currentAccountId] || []
+}

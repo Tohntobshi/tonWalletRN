@@ -12,6 +12,9 @@ import { MethodResponseUnwrapped } from '../../api/methods/types'
 import { AuthState } from '../../types'
 import { RootState } from '../types'
 import { CURRENT_NETWORK } from '../../config'
+import { selectCurrentTransactions } from '../selectors'
+import { ApiTransaction } from '../../api/types'
+import { getIsTxIdLocal } from '../../utils'
 
 
 function* startCreatingWalletSaga() {
@@ -97,9 +100,10 @@ function* logOutSaga({ payload: all }: ReturnType<typeof logOut>) {
 }
 
 function* switchAccountSaga({ payload: id }: ReturnType<typeof switchAccount>) {
-    // TODO add newestTxId to apicall whatever it is
     yield put(setCurrentAccountId(id))
-    yield call(callApi, 'switchAccount', id)
+    const transactions: ApiTransaction[] = yield select(selectCurrentTransactions)
+    const lastTx = transactions.find((el) => !getIsTxIdLocal(el.txId))
+    yield call(callApi, 'switchAccount', id, lastTx?.txId)
 }
 
 function* addNextWalletSaga({ payload: { password, isImported } }: ReturnType<typeof addNextWallet>) {

@@ -15,6 +15,7 @@ export const logOut = createAction<boolean>('log_out')
 export const addNextWallet = createAction<{ password: string, isImported: boolean }>('add_next_wallet')
 export const requestMnemonic = createAction<{ password: string }>('request_mnemonic')
 
-// send
+// transactions
 export const validateSendRequest = createAction<{ slug: string; address: string; amount: number; comment: string }>('validate_send_request')
 export const send = createAction<{ password: string, initialBalance: number }>('send')
+export const requestTransactions = createAction<{ isRefresh: boolean }>('request_transactions')

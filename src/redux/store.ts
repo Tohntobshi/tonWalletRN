@@ -11,7 +11,8 @@ const persistConfig = {
     whitelist: [
         'currentAccountId',
         'accounts',
-        'tokenInfoBySlug'
+        'tokenInfoBySlug',
+        'transactionsByAccountId'
     ]
 }
 
