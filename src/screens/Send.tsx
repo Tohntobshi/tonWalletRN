@@ -31,6 +31,7 @@ function Send({ onCancelPress }: Props): JSX.Element {
   const toncoin = userTokens?.find((el) => el.slug === 'toncoin')
   const { state: step, error, amount, fee, comment, toAddress, initialBalance } =
     useAppSelector(state => state.currentTransfer)
+  const isLoading = useAppSelector(state => state.isCurrentTransferLoading)
   const onAnyChange = () => {
     if (error) dispatch(setCurrentTransferError())
   }
@@ -61,13 +62,15 @@ function Send({ onCancelPress }: Props): JSX.Element {
     <ModalBottom
       title={(titles as any)[step]}
       visible={true}
-      onRequestClose={onCancelPress}>
+      onRequestClose={onCancelPress}
+      disabledClose={isLoading}>
       {step === TransferState.None && <SendStep1
         balance={toncoin?.amount || 0}
         symbol={toncoin?.symbol || ''}
         onContinuePress={onFirstStepConfirmPress}
         onAnyChange={onAnyChange}
-        error={error}/>}
+        error={error}
+        isLoading={isLoading}/>}
       {step === TransferState.Confirm && <SendStep2
         amount={amount || 0}
         symbol={toncoin?.symbol || ''}
@@ -79,7 +82,8 @@ function Send({ onCancelPress }: Props): JSX.Element {
       {step === TransferState.Password && <EnterPasswordStep
         value={password} onChange={onPasswordChange} 
         onContinuePress={onPasswordStepConfirmPress}
-        onBackPress={onBackFromPasswordPress} error={error}/>}
+        onBackPress={onBackFromPasswordPress}
+        isLoading={isLoading} error={error}/>}
       {step === TransferState.Complete && <SendStep4
         initialBalance={initialBalance || 0}
         amount={amount || 0}

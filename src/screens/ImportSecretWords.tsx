@@ -22,6 +22,7 @@ const defaultInputValues = Array.from({ length: 24 }).map(() => '')
 function ImportSecretWords(): JSX.Element {
   const dispatch = useAppDispatch()
   const error = useAppSelector(state => state.auth.mnemonicError)
+  const isLoading = useAppSelector(state => state.isAuthLoading)
   const [inputs, setInputs] = useState(defaultInputValues)
   const onContinuePress = () => dispatch(importWallet(inputs))
   const onChange = (index: number) => (value: string) => {
@@ -50,7 +51,7 @@ function ImportSecretWords(): JSX.Element {
                 const absIndex = wordIndex + 12 * colIndex
                 return <Input key={absIndex} prefix={`${(absIndex + 1)}`}
                   value={inputs[absIndex]} onChangeText={onChange(absIndex)}
-                  style={styles.input}/>
+                  style={styles.input} editable={!isLoading}/>
               })}
             </View>)}
           </View>
@@ -58,7 +59,7 @@ function ImportSecretWords(): JSX.Element {
         </ScrollView>
       </KeyboardAvoidingView>
       <Button type={'primary'} style={styles.btn} onPress={onContinuePress}
-        disabled={!isFilled || !!error}>Continue</Button>
+        disabled={!isFilled || !!error || isLoading}>Continue</Button>
     </View>
   )
 }

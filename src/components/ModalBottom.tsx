@@ -17,17 +17,26 @@ type Props = React.ComponentProps<typeof Modal> & {
   onRequestClose?: () => void,
   title: string,
   style?: StyleProp<ViewStyle>,
+  disabledClose?: boolean,
 }
 
-function ModalBottom({ onRequestClose, title, style, children, ...rest }: Props): JSX.Element {
+function ModalBottom({ onRequestClose, title, style, children,
+  disabledClose, ...rest }: Props): JSX.Element {
+  const _onRequestClose = () => {
+    if (disabledClose) return
+    onRequestClose && onRequestClose()
+  }
   return (
-    <Modal transparent onRequestClose={onRequestClose} {...rest}>
-      <KeyboardAvoidingView style={styles.container0} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <Modal transparent onRequestClose={_onRequestClose} {...rest}>
+      <KeyboardAvoidingView style={styles.container0}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <SafeAreaView style={styles.container1}>
           <View style={styles.container2}>
             <View style={styles.container3}>
               <Text style={styles.title}>{title}</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={onRequestClose}>
+              <TouchableOpacity
+                style={[styles.closeBtn, disabledClose && styles.disabled]}
+                onPress={_onRequestClose} disabled={disabledClose}>
                 <Image
                   source={require('../../assets/cross.png')} 
                   style={styles.closeBtnImg}/>
@@ -77,6 +86,9 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  disabled: {
+    opacity: 0.4,
   },
   closeBtnImg: {
     width: 12,

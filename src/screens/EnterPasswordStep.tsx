@@ -17,10 +17,11 @@ interface Props {
   error?: string,
   value?: string,
   onChange?: (val: string) => void,
+  isLoading?: boolean,
 }
 
 function EnterPasswordStep({ onContinuePress, onBackPress, placeholder,
-  error, value, onChange }: Props): JSX.Element {
+  error, value, onChange, isLoading }: Props): JSX.Element {
   return (
     <View style={styles.page}>
       <View style={styles.scrollViewContainer}>
@@ -29,15 +30,17 @@ function EnterPasswordStep({ onContinuePress, onBackPress, placeholder,
             source={require('../../assets/bird5.png')}
             style={styles.logoImage} />
           <Input style={styles.input1} value={value} error={!!error}
-            onChangeText={onChange}
+            onChangeText={onChange} editable={!isLoading}
             placeholder={placeholder || 'Confirm operation with your password'}/>
           {!!error && <Text style={styles.error}>{error}</Text>}
         </ScrollView>
       </View>
       <View style={styles.btnContainer}>
         <Button type='secondary' style={styles.btn1}
+          disabled={isLoading}
           onPress={onBackPress}>Back</Button>
-        <Button type='primary' style={styles.btn2} disabled={!!error || !value}
+        <Button type='primary' style={styles.btn2}
+          disabled={!!error || !value || isLoading}
           onPress={onContinuePress}>Confirm</Button>
       </View>
     </View>

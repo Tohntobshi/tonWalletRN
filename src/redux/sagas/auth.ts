@@ -1,5 +1,5 @@
 import { REHYDRATE } from 'redux-persist'
-import { call, put, takeLatest, all, delay, select } from 'redux-saga/effects'
+import { call, put, takeLatest, all, delay, select, takeEvery } from 'redux-saga/effects'
 import { addNextWallet, completeBackup, createWallet, finishPasswordCreation,
     importWallet, logOut, requestMnemonic, startCreatingWallet, switchAccount
 } from '../asyncActions'
@@ -7,7 +7,7 @@ import { callApi } from '../../api'
 import { setAuthState, setAuthMnemonic, setAuthMnemonicError,
     setAuthPassword, setAuthIsImported, addAccount, resetAuth,
     resetBackupRequred, removeAllAccounts, setAuthPasswordError,
-    setCurrentAccountId, removeAccount } from '../reducers'
+    setCurrentAccountId, removeAccount, setIsAuthLoading } from '../reducers'
 import { MethodResponseUnwrapped } from '../../api/methods/types'
 import { AuthState } from '../../types'
 import { RootState } from '../types'
@@ -35,15 +35,20 @@ function* startCreatingWalletSaga() {
 function* importWalletSaga({ payload }: ReturnType<typeof importWallet>) {
     // verify mnemonic and check password presence and send to create wallet
     // or send to password create if no tmp password (first wallet)
+    const { isAuthLoading }: RootState = yield select()
+    if (isAuthLoading) return
+    yield put(setIsAuthLoading(true))
     const mnemonic = payload.map(el => el.toLowerCase().trim())
     const isValid: MethodResponseUnwrapped<'validateMnemonic'> =
         yield call(callApi, 'validateMnemonic', mnemonic)
     if (!isValid) {
         yield put(setAuthMnemonicError('Your mnemonic words are invalid.'))
+        yield put(setIsAuthLoading(false))
         return
     }
     yield put(setAuthIsImported(true))
     yield put(setAuthMnemonic(mnemonic))
+    yield put(setIsAuthLoading(false))
     const { auth: { password } }: RootState = yield select()
     if (password) {
         yield put(createWallet())
@@ -62,11 +67,16 @@ function* createWalletSaga() {
     // if mnemonic is not imported send to backup screen
     // otherwise finish auth process
     // clean auth tmp values
-    const { auth: { password, mnemonic, isImported } }: RootState = yield select()
+    const { auth: { password, mnemonic, isImported }, isAuthLoading }: RootState = yield select()
+    if (isAuthLoading) return
+    yield put(setIsAuthLoading(true))
     const result: MethodResponseUnwrapped<'createWallet'> =
         yield call(callApi, isImported ?
             'importMnemonic' : 'createWallet', CURRENT_NETWORK, mnemonic!, password!)
-    if (!result) return
+    if (!result) {
+        yield put(setIsAuthLoading(false))
+        return
+    }
     const { accountId, address } = result
     yield put(addAccount({ id: accountId, address, isBackupRequired: !isImported }))
     if (isImported) {
@@ -74,6 +84,7 @@ function* createWalletSaga() {
     } else {
         yield put(setAuthState(AuthState.createBackup))
     }
+    yield put(setIsAuthLoading(false))
 }
 
 function* completeBackupSaga() {
@@ -108,25 +119,35 @@ function* switchAccountSaga({ payload: id }: ReturnType<typeof switchAccount>) {
 
 function* addNextWalletSaga({ payload: { password, isImported } }: ReturnType<typeof addNextWallet>) {
     // check password, set password into auth state, and send to import screen or run start creating
+    const { isAuthLoading }: RootState = yield select()
+    if (isAuthLoading) return
+    yield put(setIsAuthLoading(true))
     const isPasswordValid: MethodResponseUnwrapped<'verifyPassword'> = 
         yield call(callApi, 'verifyPassword', password)
     if (!isPasswordValid) {
         yield put(setAuthPasswordError('Wrong password, please try again.'))
+        yield put(setIsAuthLoading(false))
         return
     }
     yield put(setAuthPassword(password))
     if (isImported) {
         yield put(setAuthState(AuthState.importWallet))
+        yield put(setIsAuthLoading(false))
         return
     }
     yield put(startCreatingWallet())
+    yield put(setIsAuthLoading(false))
 }
 
 function* requestMnemonicSaga({ payload: { password } }: ReturnType<typeof requestMnemonic>) {
+    const { isAuthLoading }: RootState = yield select()
+    if (isAuthLoading) return
+    yield put(setIsAuthLoading(true))
     const isPasswordValid: MethodResponseUnwrapped<'verifyPassword'> = 
         yield call(callApi, 'verifyPassword', password)
     if (!isPasswordValid) {
         yield put(setAuthPasswordError('Wrong password, please try again.'))
+        yield put(setIsAuthLoading(false))
         return
     }
     const { currentAccountId }: RootState = yield select()
@@ -134,16 +155,23 @@ function* requestMnemonicSaga({ payload: { password } }: ReturnType<typeof reque
         yield call(callApi, 'getMnemonic', currentAccountId!, password)
     if (!mnemonic) {
         // something went wrong
+        yield put(setIsAuthLoading(false))
         return
     }
     yield put(setAuthMnemonic(mnemonic))
+    yield put(setIsAuthLoading(false))
 }
 
 export function* activateAccountSaga() {
     // TODO add newestTxId to apicall whatever it is
+    console.log('activate acc saga')
     const { currentAccountId }: RootState = yield select()
     if (!currentAccountId) return
-    yield call(callApi, 'activateAccount', currentAccountId)
+    try {
+        yield call(callApi, 'activateAccount', currentAccountId)
+    } catch (e: any) {
+        console.log('failed to activate account', e?.message)
+    }
 }
 
 export function* authSaga() {
@@ -154,8 +182,8 @@ export function* authSaga() {
     yield takeLatest(completeBackup.toString(), completeBackupSaga)
     yield takeLatest(switchAccount.toString(), switchAccountSaga)
     yield takeLatest(logOut.toString(), logOutSaga)
-    yield takeLatest(addNextWallet.toString(), addNextWalletSaga)
-    yield takeLatest(requestMnemonic, requestMnemonicSaga)
+    yield takeEvery(addNextWallet.toString(), addNextWalletSaga)
+    yield takeEvery(requestMnemonic, requestMnemonicSaga)
     yield takeLatest(REHYDRATE, activateAccountSaga)
     // TODO add pending flags and block ui during loading
 }

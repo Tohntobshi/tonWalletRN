@@ -47,6 +47,7 @@ export interface MainState {
         mnemonicError?: string;
         passwordError?: string;
     };
+    isAuthLoading: boolean;
     currentTransfer: {
         state: TransferState;
         tokenSlug?: string;
@@ -57,6 +58,7 @@ export interface MainState {
         comment?: string;
         initialBalance?: number;
     };
+    isCurrentTransferLoading: boolean;
     transactionsByAccountId: Record<string, ApiTransaction[]>;
     isTransactionsLoading: boolean;
     tokenInfoBySlug: Record<string, ApiToken>;

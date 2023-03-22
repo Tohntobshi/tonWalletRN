@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useMemo, useState } from 'react'
+import { StyleSheet, Text, View, Keyboard } from 'react-native'
 
 import Button from '../../components/Button'
 import Input from '../../components/Input'
@@ -34,6 +34,9 @@ function LetsCheck({ onSuccess, onBackPress, mnemonic }: Props): JSX.Element {
     onSuccess && onSuccess()
   }
   const isFilled = inputs.reduce((acc, cur) => !!cur && acc, true)
+  useEffect(() => {
+    return () => Keyboard.dismiss()
+  }, [])
   return (
     <View style={styles.page}>
       <Text style={styles.text}>Now let’s check that you wrote your

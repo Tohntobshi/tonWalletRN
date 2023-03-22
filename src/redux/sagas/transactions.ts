@@ -1,8 +1,9 @@
-import { call, put, takeLatest, select, takeEvery } from 'redux-saga/effects'
+import { call, put, select, takeEvery } from 'redux-saga/effects'
 import { validateSendRequest, send, requestTransactions, apiUpdate } from '../asyncActions'
 import { callApi } from '../../api'
 import { appendTransactions, prependTransaction, setCurrentTransfer, setCurrentTransferError,
-    setCurrentTransferInitialBalance, setCurrentTransferState, setIsTransactionsLoading, setTransactions, updateTransactionId } from '../reducers'
+    setCurrentTransferInitialBalance, setCurrentTransferState, setIsCurrentTransferLoading,
+    setIsTransactionsLoading, setTransactions, updateTransactionId } from '../reducers'
 import { MethodResponseUnwrapped } from '../../api/methods/types'
 import { TransferState } from '../../types'
 import { RootState } from '../types'
@@ -13,13 +14,16 @@ import { ApiTransaction } from '../../api/types'
 
 function* validateSendRequestSaga({ payload }: ReturnType<typeof validateSendRequest>) {
     const { address, amount, comment, slug } = payload
-    const { currentAccountId, tokenInfoBySlug }: RootState = yield select()
+    const { currentAccountId, tokenInfoBySlug, isCurrentTransferLoading }: RootState = yield select()
+    if (isCurrentTransferLoading) return
+    yield put(setIsCurrentTransferLoading(true))
     const tokenInfo = tokenInfoBySlug[slug]
     const { error, fee }: MethodResponseUnwrapped<'checkTransactionDraft'> = 
         yield call(callApi, 'checkTransactionDraft', currentAccountId!, slug, address,
         humanToBigStr(amount, tokenInfo?.decimals), comment)
     if (error) {
         yield put(setCurrentTransferError(error))
+        yield put(setIsCurrentTransferLoading(false))
         return
     }
     yield put(setCurrentTransfer({
@@ -30,13 +34,18 @@ function* validateSendRequestSaga({ payload }: ReturnType<typeof validateSendReq
         fee,
         comment
     }))
+    yield put(setIsCurrentTransferLoading(false))
 }
 
 function* sendSaga({ payload: { password, initialBalance } }: ReturnType<typeof send>) {
+    const { isCurrentTransferLoading }: RootState = yield select()
+    if (isCurrentTransferLoading) return
+    yield put(setIsCurrentTransferLoading(true))
     const isPasswordValid: MethodResponseUnwrapped<'verifyPassword'> = 
     yield call(callApi, 'verifyPassword', password)
     if (!isPasswordValid) {
         yield put(setCurrentTransferError('Wrong password, please try again.'))
+        yield put(setIsCurrentTransferLoading(false))
         return
     }
     yield put(setCurrentTransferInitialBalance(initialBalance))
@@ -48,9 +57,11 @@ function* sendSaga({ payload: { password, initialBalance } }: ReturnType<typeof 
         toAddress!, humanToBigStr(amount || 0, tokenInfo?.decimals), comment, fee)
     if (!result) {
         yield put(setCurrentTransferError('Something went wrong.'))
+        yield put(setIsCurrentTransferLoading(false))
         return
     }
     yield put(setCurrentTransferState(TransferState.Complete))
+    yield put(setIsCurrentTransferLoading(false))
 }
 
 function* requestTransactionsSaga({ payload: { isRefresh } }: ReturnType<typeof requestTransactions>) {
@@ -76,14 +87,12 @@ function* requestTransactionsSaga({ payload: { isRefresh } }: ReturnType<typeof 
 function* apiUpdateSaga({ payload }: ReturnType<typeof apiUpdate>) {
     switch(payload.type) {
         case 'newTransaction':
-            console.log(payload)
             yield put(prependTransaction({
                 accId: payload.accountId,
                 newTx: payload.transaction
             }))
             break
         case 'updateTxComplete':
-            console.log(payload)
             yield put(updateTransactionId({
                 oldId: payload.localTxId,
                 newId: payload.txId
@@ -94,8 +103,8 @@ function* apiUpdateSaga({ payload }: ReturnType<typeof apiUpdate>) {
 
 
 export function* transactionsSaga() {
-    yield takeLatest(validateSendRequest.toString(), validateSendRequestSaga)
-    yield takeLatest(send.toString(), sendSaga)
+    yield takeEvery(validateSendRequest.toString(), validateSendRequestSaga)
+    yield takeEvery(send.toString(), sendSaga)
     yield takeEvery(requestTransactions.toString(), requestTransactionsSaga)
     yield takeEvery(apiUpdate.toString(), apiUpdateSaga)
 }

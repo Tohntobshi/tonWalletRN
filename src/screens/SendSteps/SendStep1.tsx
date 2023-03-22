@@ -32,10 +32,12 @@ interface Props {
   balance: number,
   symbol: string,
   error?: string,
-  onAnyChange?: () => void
+  onAnyChange?: () => void,
+  isLoading?: boolean,
 }
 
-function SendStep1({ onContinuePress, balance, symbol, onAnyChange, error }: Props): JSX.Element {
+function SendStep1({ onContinuePress, balance, symbol, onAnyChange,
+  error, isLoading }: Props): JSX.Element {
   const [address, setAddress] = useState('')
   const [addressError, setAddressError] = useState('')
   const onAddressChange = (val: string) => {
@@ -80,13 +82,16 @@ function SendStep1({ onContinuePress, balance, symbol, onAnyChange, error }: Pro
           <Text style={[styles.label2, styles.errorLabel]}>{addressError}</Text>}
       </View>
       <Input style={styles.input1} placeholder='Wallet address or domain'
-        pasteButton value={address} onChangeText={onAddressChange}/>
+        pasteButton value={address} onChangeText={onAddressChange}
+        editable={!isLoading}/>
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Amount</Text>
-        {amountError ? <Text style={[styles.label2, styles.errorLabel]}>{amountError}</Text>
+        {amountError
+          ? <Text style={[styles.label2, styles.errorLabel]}>{amountError}</Text>
           : <Text style={styles.label2}>Your balance: {formatCurrency(balance, symbol)}</Text>}
       </View>
-      <Input style={styles.input1} amountInput placeholder='0'
+      <Input style={styles.input1} amountInput
+        placeholder='0' editable={!isLoading}
         value={amount} onChangeText={onAmountChange}/>
       <View style={styles.feeContainer}>
         {!!error && <Text style={styles.error}>{error}</Text>}
@@ -95,9 +100,11 @@ function SendStep1({ onContinuePress, balance, symbol, onAnyChange, error }: Pro
         <Text style={styles.label}>Comment</Text>
       </View>
       <Input style={styles.input1} placeholder='Optional'
+        editable={!isLoading}
         value={comment} onChangeText={onCommentChange}/>
       <Button type='primary' style={styles.btn} onPress={onSendPress} 
-        disabled={!!addressError || !!amountError || !!error}>Send TON</Button>
+        disabled={!!addressError || !!amountError || !!error || isLoading}>
+        Send TON</Button>
     </View>
   )
 }

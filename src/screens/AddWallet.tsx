@@ -23,6 +23,7 @@ const titles = {
 
 function AddWallet({ onCancelPress }: Props): JSX.Element {
   const dispatch = useAppDispatch()
+  const isLoading = useAppSelector(state => state.isAuthLoading)
   const error = useAppSelector(state => state.auth.passwordError)
   const [step, setStep] = useState(0)
   const [password, setPassword] = useState('')
@@ -50,7 +51,8 @@ function AddWallet({ onCancelPress }: Props): JSX.Element {
     <ModalBottom
       title={(titles as any)[step]}
       visible={true}
-      onRequestClose={_onCancelPress}>
+      onRequestClose={_onCancelPress}
+      disabledClose={isLoading}>
       {step === 0 && <View style={styles.step}>
         <Image
           source={require('../../assets/bird7.png')}
@@ -67,6 +69,7 @@ function AddWallet({ onCancelPress }: Props): JSX.Element {
       </View>}
       {step === 1 && <EnterPasswordStep onContinuePress={onContinuePress}
         value={password} onChange={onPasswordChange} error={error}
+        isLoading={isLoading}
         onBackPress={() => setStep(0)} placeholder='Enter your password'/>}
     </ModalBottom>
   )

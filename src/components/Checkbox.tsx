@@ -14,13 +14,15 @@ interface Props {
   style?: StyleProp<ViewStyle>,
   onPress?: () => void,
   value: boolean,
+  disabled?: boolean,
 }
 
-function Checkbox({ value, style, onPress }: PropsWithChildren<Props>): JSX.Element {
+function Checkbox({ value, style, onPress, disabled }: PropsWithChildren<Props>): JSX.Element {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.container, value && styles.checked, style]}>
+      style={[styles.container, value && styles.checked, disabled && styles.disabled, style]}
+      disabled={disabled}>
       {value && <Image
         source={require('../../assets/checkmark.png')} 
         style={styles.checkImg}/>}
@@ -42,6 +44,9 @@ const styles = StyleSheet.create({
   checked: {
     backgroundColor: '#0088CC',
     borderColor: '#0088CC',
+  },
+  disabled: {
+    opacity: 0.4,
   },
   checkImg: {
     width: 10,

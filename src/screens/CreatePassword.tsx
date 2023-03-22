@@ -13,11 +13,12 @@ import Button from '../components/Button'
 import Input from '../components/Input'
 import InsecurePassword from './InsecurePassword'
 
-import { finishPasswordCreation, resetAuth, useAppDispatch } from '../redux'
+import { finishPasswordCreation, resetAuth, useAppDispatch, useAppSelector } from '../redux'
 import { usePasswordValidation } from '../hooks/usePasswordValidation'
 
 function CreatePassword(): JSX.Element {
   const dispatch = useAppDispatch()
+  const isLoading = useAppSelector(state => state.isAuthLoading)
   const onCancelPress = () => dispatch(resetAuth())
   const [isInsecurePasswordModalOpen, setInsecurePasswordModalOpen] = useState(false)
   const [password1, setPassword1] = useState('')
@@ -33,7 +34,11 @@ function CreatePassword(): JSX.Element {
     setPassword2(value)
     setError('')
   }
-  const onContinuePress2 = () => dispatch(finishPasswordCreation(password1))
+  const onContinuePress2 = () => {
+    if (isLoading) return
+    setInsecurePasswordModalOpen(false)
+    dispatch(finishPasswordCreation(password1))
+  }
   const onContinuePress1 = () => {
     if (validation.noEqual) {
       setError('Passwords must be equal.')
@@ -58,9 +63,11 @@ function CreatePassword(): JSX.Element {
           <Text style={styles.title}>Congratulations!</Text>
           <Text style={styles.text1}>The wallet is ready.</Text>
           <Text style={styles.text2}>Create a password to protect it.</Text>
-          <Input style={styles.input1} placeholder='Password' error={!!error}
+          <Input style={styles.input1} placeholder='Password'
+            error={!!error} editable={!isLoading}
             value={password1} onChangeText={setFirstPassword}/>
-          <Input style={styles.input2} placeholder='Repeat password' error={!!error}
+          <Input style={styles.input2} placeholder='Repeat password'
+            error={!!error} editable={!isLoading}
             value={password2} onChangeText={setSecondPassword}/>
           {!!error ? <Text style={styles.error}>{error}</Text> 
             : <Text style={styles.text3}>To protect your wallet as much as possible,
@@ -71,9 +78,10 @@ function CreatePassword(): JSX.Element {
       </KeyboardAvoidingView>
       <View style={styles.buttonsContainer}>
         <Button type={'secondary'} style={styles.btn1}
+          disabled={isLoading}
           onPress={onCancelPress}>Cancel</Button>
         <Button type={'primary'} style={styles.btn2}
-          disabled={!password1 || !password2 || !!error}
+          disabled={!password1 || !password2 || !!error || isLoading}
           onPress={onContinuePress1}>Continue</Button>
       </View>
       {isInsecurePasswordModalOpen && <InsecurePassword

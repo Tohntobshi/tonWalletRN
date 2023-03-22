@@ -7,19 +7,24 @@ const initialState: MainState = {
     auth: {
         authState: AuthState.none,
     },
+    isAuthLoading: false,
     accounts: {},
     tokenInfoBySlug: {},
     transactionsByAccountId: {},
     isTransactionsLoading: false,
     currentTransfer: {
         state: TransferState.None
-    }
+    },
+    isCurrentTransferLoading: false
 }
 
 export const mainSlice = createSlice({
     name: 'main',
     initialState,
     reducers: {
+        setIsAuthLoading: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, isAuthLoading: payload }
+        },
         setCurrentAccountId: (state, { payload }: PayloadAction<string | undefined>): MainState => {
             return { ...state, currentAccountId: payload }
         },
@@ -79,6 +84,9 @@ export const mainSlice = createSlice({
         updateTokenInfo: (state, { payload }: PayloadAction<Record<string, ApiToken>>): MainState => {
             const { tokenInfoBySlug } = state
             return { ...state, tokenInfoBySlug: { ...tokenInfoBySlug, ...payload } }
+        },
+        setIsCurrentTransferLoading: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, isCurrentTransferLoading: payload }
         },
         setCurrentTransferState: (state, { payload }: PayloadAction<TransferState>): MainState => {
             return { ...state, currentTransfer: { ...state.currentTransfer, state: payload }  }
@@ -156,4 +164,5 @@ export const { setCurrentAccountId, setAuthState, setAuthMnemonic, setAuthPasswo
     resetBackupRequred, removeAccount, removeAllAccounts, setAccountTitle, setBalance,
     updateTokenInfo, setCurrentTransferState, resetCurrentTransfer, setCurrentTransferError,
     setCurrentTransfer, setCurrentTransferInitialBalance, setIsTransactionsLoading,
-    appendTransactions, prependTransaction, updateTransactionId, setTransactions } = mainSlice.actions
+    appendTransactions, prependTransaction, updateTransactionId, setTransactions,
+    setIsAuthLoading, setIsCurrentTransferLoading } = mainSlice.actions
