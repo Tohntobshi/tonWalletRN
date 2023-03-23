@@ -21,19 +21,22 @@ export default {
       const isString = data.slice(0, 1) === 's'
       return isString ? data.slice(1, data.length) : JSON.parse(data.slice(1, data.length))
     } catch (e) {
-      return null
+      return undefined
     }
   },
   setItem: async (key: string, val: any) => {
     if (!key) return Promise.reject('no key')
     const isString = typeof val === 'string'
     const valueToSave = isString ? 's' + val : 'n' + JSON.stringify(val)
-    return fspromises.writeFile(path.join(dir, 'values', key), valueToSave, { encoding: 'utf-8' })
+    try {
+      await fspromises.writeFile(path.join(dir, 'values', key), valueToSave, { encoding: 'utf-8' })
+    } catch (e) {
+    }
   },
   removeItem: async (key: string) => {
     if (!key) return Promise.reject('no key')
     try {
-      return await fspromises.unlink(path.join(dir, 'values', key))
+      await fspromises.unlink(path.join(dir, 'values', key))
     } catch (e) {
     }
   },
@@ -41,7 +44,7 @@ export default {
     try {
       const files = await fspromises.readdir(path.join(dir, 'values'))
       for (const file of files) {
-        await fspromises.unlink(path.join(dir, 'values', file))
+        fspromises.unlink(path.join(dir, 'values', file)).catch(() => {})
       }
     } catch (e) {
       return

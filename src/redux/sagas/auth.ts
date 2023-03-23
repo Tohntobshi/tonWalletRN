@@ -70,9 +70,15 @@ function* createWalletSaga() {
     const { auth: { password, mnemonic, isImported }, isAuthLoading }: RootState = yield select()
     if (isAuthLoading) return
     yield put(setIsAuthLoading(true))
-    const result: MethodResponseUnwrapped<'createWallet'> =
-        yield call(callApi, isImported ?
-            'importMnemonic' : 'createWallet', CURRENT_NETWORK, mnemonic!, password!)
+    let result: MethodResponseUnwrapped<'createWallet'> | undefined = undefined
+    try {
+        result = yield call(callApi, isImported ?
+                'importMnemonic' : 'createWallet', CURRENT_NETWORK, mnemonic!, password!)
+    } catch (e: any) {
+        console.log('failed to crate wallet', e)
+        yield put(setIsAuthLoading(false))
+        return
+    }
     if (!result) {
         yield put(setIsAuthLoading(false))
         return
@@ -163,12 +169,12 @@ function* requestMnemonicSaga({ payload: { password } }: ReturnType<typeof reque
 }
 
 export function* activateAccountSaga() {
-    // TODO add newestTxId to apicall whatever it is
-    console.log('activate acc saga')
     const { currentAccountId }: RootState = yield select()
+    const transactions: ApiTransaction[] = yield select(selectCurrentTransactions)
+    const lastTx = transactions.find((el) => !getIsTxIdLocal(el.txId))
     if (!currentAccountId) return
     try {
-        yield call(callApi, 'activateAccount', currentAccountId)
+        yield call(callApi, 'activateAccount', currentAccountId, lastTx?.txId)
     } catch (e: any) {
         console.log('failed to activate account', e?.message)
     }

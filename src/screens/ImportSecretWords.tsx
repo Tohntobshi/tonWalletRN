@@ -18,6 +18,8 @@ import {
 } from '../redux'
 
 const defaultInputValues = Array.from({ length: 24 }).map(() => '')
+// const defaultInputValues = 'sun give drum gun fitness spread thought reopen prepare broken knee remind deposit stem dinner isolate speed trumpet alpha popular magnet enough provide rival'.split(' ')
+// const defaultInputValues = 'bless school renew drama tray marriage accident below act build fog clay shrimp napkin grunt moment helmet rally cloud camera segment assume valve supply'.split(' ')
 
 function ImportSecretWords(): JSX.Element {
   const dispatch = useAppDispatch()

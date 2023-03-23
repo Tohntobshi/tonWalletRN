@@ -202,23 +202,30 @@ async function signTransaction(
 }
 
 export async function getAccountNewestTxId(storage: Storage, accountId: string) {
-  const { network } = parseAccountId(accountId);
-  const address = await fetchAddress(storage, accountId);
-  const tonWeb = getTonWeb(network);
-
-  const result: any[] = await tonWeb.provider.getTransactions(
-    address,
-    1,
-    undefined,
-    undefined,
-    undefined,
-    true,
-  );
-  if (!result?.length) {
-    return undefined;
+  try {
+    const { network } = parseAccountId(accountId);
+    const address = await fetchAddress(storage, accountId);
+    const tonWeb = getTonWeb(network);
+  
+    const result: any[] = await tonWeb.provider.getTransactions(
+      address,
+      1,
+      undefined,
+      undefined,
+      undefined,
+      true,
+    );
+    if (!result?.length) {
+      return undefined;
+    }
+  
+    return stringifyTxId(result[0].transaction_id);
+  } catch(e) {
+    if (DEBUG) {
+      console.error('getAccountNewestTxId error', e)
+    }
+    return undefined
   }
-
-  return stringifyTxId(result[0].transaction_id);
 }
 
 export async function getAccountTransactionSlice(
