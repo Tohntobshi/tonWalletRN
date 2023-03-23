@@ -1,4 +1,5 @@
 import { REHYDRATE } from 'redux-persist'
+import { Alert } from 'react-native'
 import { call, put, takeLatest, all, delay, select, takeEvery } from 'redux-saga/effects'
 import { addNextWallet, completeBackup, createWallet, finishPasswordCreation,
     importWallet, logOut, requestMnemonic, startCreatingWallet, switchAccount
@@ -75,6 +76,7 @@ function* createWalletSaga() {
         result = yield call(callApi, isImported ?
                 'importMnemonic' : 'createWallet', CURRENT_NETWORK, mnemonic!, password!)
     } catch (e: any) {
+        Alert.alert('Fail', 'Something went wrong. Please try again')
         console.log('failed to crate wallet', e)
         yield put(setIsAuthLoading(false))
         return
