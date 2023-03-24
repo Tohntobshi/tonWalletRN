@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import {
-  Image,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
+import Lottie from 'lottie-react-native'
 
 import { completeBackup, resetAuth, useAppDispatch } from '../redux'
 import Button from '../components/Button'
 import BackupAuth from './BackupAuth'
-import { ANIMATED } from '../config'
 
 
 function CreateBackup(): JSX.Element {
@@ -20,11 +19,8 @@ function CreateBackup(): JSX.Element {
   const [isBackupOpen, setBackupOpen] = useState(false)
   return (
     <View style={styles.page}>
-      <Image
-        source={ANIMATED
-          ? require('../../assets/bird3.gif')
-          : require('../../assets/bird3.png')}
-        style={styles.logoImage}/>
+      <Lottie source={require('../../assets/bird3.json')}
+        autoPlay loop style={styles.logoImage}/>
       <Text style={styles.title}>Create Backup</Text>
       <Text style={styles.text1}>This is a secure wallet and is only
         controlled by you.</Text>
@@ -49,9 +45,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 24,
     alignItems: 'center',
+    paddingTop: 50,
   },
   logoImage: {
-    marginTop: 50,
     width: 150,
     height: 150,
   },

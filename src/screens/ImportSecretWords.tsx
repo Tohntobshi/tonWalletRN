@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -8,9 +7,10 @@ import {
   Text,
   View,
 } from 'react-native'
+import Lottie from 'lottie-react-native'
+
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { ANIMATED } from '../config'
 import {
   importWallet,
   resetAuth,
@@ -19,9 +19,9 @@ import {
   useAppSelector,
 } from '../redux'
 
-const defaultInputValues = Array.from({ length: 24 }).map(() => '')
+// const defaultInputValues = Array.from({ length: 24 }).map(() => '')
 // const defaultInputValues = 'sun give drum gun fitness spread thought reopen prepare broken knee remind deposit stem dinner isolate speed trumpet alpha popular magnet enough provide rival'.split(' ')
-// const defaultInputValues = 'bless school renew drama tray marriage accident below act build fog clay shrimp napkin grunt moment helmet rally cloud camera segment assume valve supply'.split(' ')
+const defaultInputValues = 'bless school renew drama tray marriage accident below act build fog clay shrimp napkin grunt moment helmet rally cloud camera segment assume valve supply'.split(' ')
 
 function ImportSecretWords(): JSX.Element {
   const dispatch = useAppDispatch()
@@ -42,11 +42,8 @@ function ImportSecretWords(): JSX.Element {
       <KeyboardAvoidingView style={styles.scrollViewContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={styles.scrollView}>
-          <Image
-            source={ANIMATED
-              ? require('../../assets/bird3.gif')
-              : require('../../assets/bird3.png')}
-            style={styles.logoImage} />
+          <Lottie source={require('../../assets/bird3.json')}
+            autoPlay loop style={styles.logoImage}/>
           <Text style={styles.title}>24 Secret Words</Text>
           <Text style={styles.text}>Please restore access to your non-hardware
             wallet by entering the 24 secret words you
@@ -87,10 +84,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     alignItems: 'center',
-    paddingBottom: 50,
+    paddingVertical: 50,
   },
   logoImage: {
-    marginTop: 50,
     width: 150,
     height: 150,
   },

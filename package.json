@@ -17,6 +17,7 @@
     "bn.js": "^5.2.1",
     "date-fns": "^2.29.3",
     "esbuild": "0.17.12",
+    "lottie-react-native": "^5.1.5",
     "nodejs-mobile-react-native": "~16.17.7",
     "react": "18.2.0",
     "react-native": "0.71.4",

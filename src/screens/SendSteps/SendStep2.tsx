@@ -1,15 +1,14 @@
 import React from 'react'
 import {
-  Image,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
+import Lottie from 'lottie-react-native'
 
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import OutputWithActions from '../../components/OutputWithActions'
-import { ANIMATED } from '../../config'
 import { formatCurrency } from '../../utils/formatNumber'
 
 interface Props {
@@ -26,11 +25,8 @@ function SendStep2({ onContinuePress, onEditPress,
   address, amount, comment, fee, symbol }: Props): JSX.Element {
   return (
     <View style={styles.page}>
-      <Image
-        source={ANIMATED
-          ? require('../../../assets/bird4.gif')
-          : require('../../../assets/bird4.png')}
-        style={styles.logoImage} />
+      <Lottie source={require('../../../assets/bird4.json')}
+        autoPlay loop style={styles.logoImage}/>
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Receiving address</Text>
       </View>
@@ -59,9 +55,9 @@ const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
     minHeight: 500,
+    paddingTop: 16,
   },
   logoImage: {
-    marginTop: 16,
     width: 100,
     height: 100,
   },

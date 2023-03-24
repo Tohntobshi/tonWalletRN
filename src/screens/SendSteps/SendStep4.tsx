@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+import Lottie from 'lottie-react-native'
 
 import Button from '../../components/Button'
-import { ANIMATED } from '../../config'
 import { formatCurrency } from '../../utils/formatNumber'
 
 interface Props {
@@ -25,11 +25,8 @@ function SendStep4({ onClosePress,
   const spent = formatCurrency(amount + fee, '').split('.')
   return (
     <View style={styles.page}>
-      <Image
-        source={ANIMATED
-          ? require('../../../assets/bird6.gif')
-          : require('../../../assets/bird6.png')}
-        style={styles.logoImage} />
+      <Lottie source={require('../../../assets/bird6.json')}
+        autoPlay loop style={styles.logoImage}/>
       <View style={styles.container1}>
         <Text style={styles.text1}>
           {formatCurrency(initialBalance * price, '$')}
@@ -64,13 +61,14 @@ const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
     minHeight: 500,
+    paddingTop: 16,
   },
   logoImage: {
-    marginTop: 16,
     width: 160,
     height: 160,
   },
   container1: {
+    marginTop: 20,
     backgroundColor: '#FFFFFF',
     borderRadius: 14,
     flexDirection: 'row',

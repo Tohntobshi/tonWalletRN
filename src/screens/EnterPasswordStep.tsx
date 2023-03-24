@@ -1,15 +1,14 @@
 import React from 'react'
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
+import Lottie from 'lottie-react-native'
 
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { ANIMATED } from '../config'
 
 interface Props {
   onContinuePress?: () => void,
@@ -27,11 +26,8 @@ function EnterPasswordStep({ onContinuePress, onBackPress, placeholder,
     <View style={styles.page}>
       <View style={styles.scrollViewContainer}>
         <ScrollView contentContainerStyle={styles.contentContainer}>
-          <Image
-            source={ANIMATED
-              ? require('../../assets/bird5.gif')
-              : require('../../assets/bird5.png')}
-            style={styles.logoImage} />
+          <Lottie source={require('../../assets/bird5.json')}
+            autoPlay loop style={styles.logoImage}/>
           <Input style={styles.input1} value={value} error={!!error}
             onChangeText={onChange} editable={!isLoading}
             placeholder={placeholder || 'Confirm operation with your password'}/>
@@ -62,9 +58,9 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     alignItems: 'center',
+    paddingTop: 16,
   },
   logoImage: {
-    marginTop: 16,
     width: 160,
     height: 160,
   },

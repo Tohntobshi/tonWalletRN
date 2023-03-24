@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import {
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native'
+import Lottie from 'lottie-react-native'
 
 import Button from '../../components/Button'
 import Checkbox from '../../components/Checkbox'
-import { ANIMATED } from '../../config'
 
 interface Props {
   onUnderstoodPress?: () => void,
@@ -20,14 +19,9 @@ function SafetyRules({ onUnderstoodPress }: Props): JSX.Element {
   const [second, setSecond] = useState(false)
   const [third, setThird] = useState(false)
   return (
-    <View
-      style={styles.page}
-      >
-      <Image
-          source={ANIMATED
-            ? require('../../../assets/bird4.gif')
-            : require('../../../assets/bird4.png')}
-          style={styles.logoImage} />
+    <View style={styles.page}>
+      <Lottie source={require('../../../assets/bird4.json')}
+        autoPlay loop style={styles.logoImage}/>
       <TouchableOpacity style={styles.textContainer} onPress={() => setFirst(!first)}>
         <Checkbox value={first} style={styles.checkbox} onPress={() => setFirst(!first)}/>
         <Text style={styles.text}>On the next screen you will see the secret
@@ -54,9 +48,9 @@ const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
     minHeight: 500,
+    paddingTop: 24,
   },
   logoImage: {
-    marginTop: 24,
     width: 100,
     height: 100,
   },

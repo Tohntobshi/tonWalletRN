@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import {
-  Image,
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import { ANIMATED } from '../config';
+} from 'react-native'
+import Lottie from 'lottie-react-native'
 
 interface Props {
   onCreated?: () => void,
@@ -27,15 +26,9 @@ function Creating({ onCreated }: Props): JSX.Element {
     return () => clearInterval(interval)
   }, [])
   return (
-    <View
-      style={styles.page}
-      >
-      <Image
-        source={ANIMATED
-          ? require('../../assets/bird1.gif')
-          : require('../../assets/bird1.png')}
-        style={styles.logoImage}
-        />
+    <View style={styles.page}>
+      <Lottie source={require('../../assets/bird1.json')}
+        autoPlay loop style={styles.logoImage}/>
       <Text style={styles.title}>Creating Wallet...</Text>
       <View style={styles.timerContainer}>
         <Text style={styles.text1}>On the count of three...</Text>

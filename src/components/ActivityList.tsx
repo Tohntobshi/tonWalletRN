@@ -10,11 +10,11 @@ import {
   TouchableHighlight,
   SectionList,
 } from 'react-native'
+import Lottie from 'lottie-react-native'
 import { ApiTransaction } from '../api/types'
 import { requestTransactions, selectCurrentTransactions,
   useAppDispatch, useAppSelector } from '../redux'
 import { bigStrToHuman, shortenString } from '../utils'
-import { ANIMATED } from '../config'
 
 
 interface Props {
@@ -66,20 +66,17 @@ function ActivityList({ style }: Props): JSX.Element {
         onEndReached={onEndReached} onEndReachedThreshold={0.9}
         onRefresh={() => getData(true)}
         refreshing={isLoading}
-        ListHeaderComponent={() => <View style={styles.header}>
-          {transactions.length === 0 && <>
-            <Image source={ANIMATED
-              ? require('../../assets/bird8.gif')
-              : require('../../assets/bird8.png')}
-              style={styles.noDataImage}/>
-            <Text style={styles.noDataText}>No Activity</Text>
-          </>}
-        </View>}
+        ListHeaderComponent={() => <View style={styles.header}/>}
         ItemSeparatorComponent={() => <View style={styles.separator1}><View style={styles.separator2}/></View>}
         renderSectionHeader={({section: {title}}) => <View style={styles.sectionHeaderContainer1}>
             <View style={styles.sectionHeaderContainer2}>
               <Text style={styles.sectionHeader}>{title}</Text>
             </View>
+          </View>}
+        ListEmptyComponent={() => <View style={styles.noDataContainer}>
+            <Lottie source={require('../../assets/bird8.json')}
+              autoPlay loop style={styles.noDataImage}/>
+            <Text style={styles.noDataText}>No Activity</Text>
           </View>}
         renderItem={({ item }) => {
           const { txId, amount, comment, isIncoming, type, timestamp, fromAddress, toAddress, slug } = item
@@ -169,7 +166,6 @@ const styles = StyleSheet.create({
   arrowContainer: {
     alignSelf: 'flex-start',
   },
-  
   name: {
     color: '#313D4F',
     fontSize: 15,
@@ -238,11 +234,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(132,146,171,0.3)',
   },
   header: {
-    minHeight: 8,
+    height: 8,
+  },
+  noDataContainer: {
+    paddingTop: 24,
     alignItems: 'center',
   },
   noDataImage: {
-    marginTop: 32,
     width: 128,
     height: 128,
   },

@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from 'react-native'
+import Lottie from 'lottie-react-native'
 
 import Button from '../components/Button'
 import Input from '../components/Input'
@@ -15,7 +16,6 @@ import InsecurePassword from './InsecurePassword'
 
 import { finishPasswordCreation, resetAuth, useAppDispatch, useAppSelector } from '../redux'
 import { usePasswordValidation } from '../hooks/usePasswordValidation'
-import { ANIMATED } from '../config'
 
 function CreatePassword(): JSX.Element {
   const dispatch = useAppDispatch()
@@ -58,11 +58,8 @@ function CreatePassword(): JSX.Element {
       <KeyboardAvoidingView style={styles.scrollViewContainer} 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={styles.scrollView}>
-          <Image
-            source={ANIMATED
-              ? require('../../assets/bird2.gif')
-              : require('../../assets/bird9.png')}
-            style={styles.logoImage}/>
+          <Lottie source={require('../../assets/bird2.json')}
+            autoPlay loop style={styles.logoImage}/>
           <Text style={styles.title}>Congratulations!</Text>
           <Text style={styles.text1}>The wallet is ready.</Text>
           <Text style={styles.text2}>Create a password to protect it.</Text>
@@ -104,10 +101,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     alignItems: 'center',
-    paddingBottom: 50,
+    paddingVertical: 50,
   },
   logoImage: {
-    marginTop: 50,
     width: 150,
     height: 150,
   },

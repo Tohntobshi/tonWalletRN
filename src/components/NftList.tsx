@@ -1,13 +1,12 @@
 import React from 'react'
 import {
-  Image,
   StyleProp,
   StyleSheet,
   Text,
   ViewStyle,
   View,
 } from 'react-native'
-import { ANIMATED } from '../config'
+import Lottie from 'lottie-react-native'
 
 
 interface Props {
@@ -17,10 +16,8 @@ interface Props {
 function NftList({ style }: Props): JSX.Element {
   return (
     <View style={[styles.container, style]}>
-      <Image source={ANIMATED
-        ? require('../../assets/bird2.gif')
-        : require('../../assets/bird2.png')}
-        style={styles.noDataImage}/>
+      <Lottie source={require('../../assets/bird2.json')}
+        autoPlay loop style={styles.noDataImage}/>
       <Text style={styles.noDataText}>No NFTs yet</Text>
     </View>
   )
@@ -29,9 +26,9 @@ function NftList({ style }: Props): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    paddingTop: 32,
   },
   noDataImage: {
-    marginTop: 32,
     width: 128,
     height: 128,
   },

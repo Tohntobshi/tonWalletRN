@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
 import {
-  Image,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
+import Lottie from 'lottie-react-native'
 import Button from '../components/Button'
 
 import ModalBottom from '../components/ModalBottom'
 import EnterPasswordStep from './EnterPasswordStep'
 import { addNextWallet, setAuthPasswordError, useAppDispatch,
   useAppSelector, resetAuth } from '../redux'
-import { ANIMATED } from '../config'
 
 interface Props {
   onCancelPress?: () => void,
@@ -55,11 +54,8 @@ function AddWallet({ onCancelPress }: Props): JSX.Element {
       onRequestClose={_onCancelPress}
       disabledClose={isLoading}>
       {step === 0 && <View style={styles.step}>
-        <Image
-          source={ANIMATED
-            ? require('../../assets/bird7.gif')
-            : require('../../assets/bird7.png')}
-          style={styles.logoImage}/>
+        <Lottie source={require('../../assets/bird7.json')}
+          autoPlay loop style={styles.logoImage}/>
         <Text style={styles.text}>MyTonWallet allows you to seamlessly
           switch between multiple accounts.</Text>
         <Text style={styles.text}>Try it by creating a new wallet,
@@ -82,9 +78,9 @@ const styles = StyleSheet.create({
   step: {
     alignItems: 'center',
     minHeight: 500,
+    paddingTop: 16,
   },
   logoImage: {
-    marginTop: 16,
     width: 160,
     height: 160,
   },
