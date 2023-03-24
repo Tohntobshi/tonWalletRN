@@ -5,6 +5,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { ANIMATED } from '../config';
 
 interface Props {
   onCreated?: () => void,
@@ -30,7 +31,9 @@ function Creating({ onCreated }: Props): JSX.Element {
       style={styles.page}
       >
       <Image
-        source={require('../../assets/bird1.png')}
+        source={ANIMATED
+          ? require('../../assets/bird1.gif')
+          : require('../../assets/bird1.png')}
         style={styles.logoImage}
         />
       <Text style={styles.title}>Creating Wallet...</Text>

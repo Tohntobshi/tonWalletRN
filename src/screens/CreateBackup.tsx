@@ -9,6 +9,7 @@ import {
 import { completeBackup, resetAuth, useAppDispatch } from '../redux'
 import Button from '../components/Button'
 import BackupAuth from './BackupAuth'
+import { ANIMATED } from '../config'
 
 
 function CreateBackup(): JSX.Element {
@@ -20,7 +21,9 @@ function CreateBackup(): JSX.Element {
   return (
     <View style={styles.page}>
       <Image
-        source={require('../../assets/bird3.png')}
+        source={ANIMATED
+          ? require('../../assets/bird3.gif')
+          : require('../../assets/bird3.png')}
         style={styles.logoImage}/>
       <Text style={styles.title}>Create Backup</Text>
       <Text style={styles.text1}>This is a secure wallet and is only

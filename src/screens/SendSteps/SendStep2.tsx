@@ -9,6 +9,7 @@ import {
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import OutputWithActions from '../../components/OutputWithActions'
+import { ANIMATED } from '../../config'
 import { formatCurrency } from '../../utils/formatNumber'
 
 interface Props {
@@ -26,7 +27,9 @@ function SendStep2({ onContinuePress, onEditPress,
   return (
     <View style={styles.page}>
       <Image
-        source={require('../../../assets/bird4.png')}
+        source={ANIMATED
+          ? require('../../../assets/bird4.gif')
+          : require('../../../assets/bird4.png')}
         style={styles.logoImage} />
       <View style={styles.labelContainer}>
         <Text style={styles.label}>Receiving address</Text>

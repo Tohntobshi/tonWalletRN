@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import {
   Image,
+  ImageBackground,
   Modal,
   Pressable,
   StyleProp,
@@ -10,7 +11,6 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient'
 import Input from './Input'
 import OutputWithActions from './OutputWithActions'
 import { shortenString } from '../utils'
@@ -22,10 +22,6 @@ interface Props {
   style?: StyleProp<ViewStyle>,
   onAddWalletPress?: () => void
 }
-
-const gradientColors = ['#3F79CF','#2E74B5','#2160A1']
-const gradientStart = {x: 1, y: 0}
-const gradientEnd = {x: 0, y: 0}
 
 function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
   const dispatch = useAppDispatch()
@@ -58,10 +54,9 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
   }, [accounts])
   return (
     <View style={[styles.outerContainer, style]}>
-      <LinearGradient colors={gradientColors} start={gradientStart}
-        end={gradientEnd} style={styles.walletContainer}>
-        <Image source={require('../../assets/logo2.png')}
-          style={styles.backgroundImage}/>
+      <ImageBackground source={require('../../assets/card-big.jpg')}
+        resizeMode='cover' style={styles.walletContainer}
+        imageStyle={styles.backgroundImage}>
         <View style={styles.nameContainer}>
           {!isEditNameOpen && <TouchableOpacity style={styles.btn1}
             onPress={() => setSelectorOpen(true)}>
@@ -80,7 +75,7 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
         </Text>
         <OutputWithActions text={currentAccount?.address || ''}
           trim style={styles.address} copy tonScan/>
-      </LinearGradient>
+      </ImageBackground>
       <Modal transparent visible={isSelectorOpen}>
         <View style={styles.modalContainer}>
           <Pressable style={styles.touchableBackground}
@@ -94,9 +89,10 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
                   <TouchableOpacity style={styles.selectorElemContainer3}
                     disabled={isActive}
                     onPress={() => setActiveWallet(accId)}>
-                    <LinearGradient colors={gradientColors}
-                      start={gradientStart} end={gradientEnd}
-                      style={[styles.selectorWalletGrad,
+                    <ImageBackground resizeMode='cover'
+                      source={require('../../assets/card.jpg')}
+                      imageStyle={styles.selectorWalletImage}
+                      style={[styles.selectorWallet,
                         isActive && styles.selectorWalletGradActive]}>
                       <View style={styles.selectorNameContainer}>
                         <Text style={styles.selectorName}
@@ -108,7 +104,7 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
                       </View>
                       <Text style={styles.selectorWalletAddress}>
                         {shortenString(address, 4)}</Text>
-                    </LinearGradient>
+                    </ImageBackground>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -141,16 +137,10 @@ const styles = StyleSheet.create({
   },
   walletContainer: {
     flex: 1,
-    borderRadius: 16,
     paddingHorizontal: 16,
   },
   backgroundImage: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    height: 220,
-    width: 200,
-    objectFit: 'fill',
+    borderRadius: 16,
   },
   nameContainer: {
     marginTop: 20,
@@ -221,13 +211,16 @@ const styles = StyleSheet.create({
   selectorElemContainer3: {
     flex: 1,
   },
-  selectorWalletGrad: {
+  selectorWallet: {
     flex: 1,
     borderWidth: 1.5,
     borderColor: 'rgba(0,0,0,0)',
-    borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 6,
+    borderRadius: 8,
+  },
+  selectorWalletImage: {
+    borderRadius: 8,
   },
   selectorWalletGradActive: {
     borderColor: '#FFFFFF',

@@ -9,6 +9,7 @@ import {
 
 import Button from '../components/Button'
 import Input from '../components/Input'
+import { ANIMATED } from '../config'
 
 interface Props {
   onContinuePress?: () => void,
@@ -27,7 +28,9 @@ function EnterPasswordStep({ onContinuePress, onBackPress, placeholder,
       <View style={styles.scrollViewContainer}>
         <ScrollView contentContainerStyle={styles.contentContainer}>
           <Image
-            source={require('../../assets/bird5.png')}
+            source={ANIMATED
+              ? require('../../assets/bird5.gif')
+              : require('../../assets/bird5.png')}
             style={styles.logoImage} />
           <Input style={styles.input1} value={value} error={!!error}
             onChangeText={onChange} editable={!isLoading}

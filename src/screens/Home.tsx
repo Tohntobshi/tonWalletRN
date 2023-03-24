@@ -17,6 +17,7 @@ import AddWallet from './AddWallet'
 import LogOut from './LogOut'
 import AssetsList from '../components/AssetsList'
 import ActivityList from '../components/ActivityList'
+import NftList from '../components/NftList'
 import { useAppSelector, useAppDispatch, selectIsBackedUp } from '../redux'
 
 
@@ -67,6 +68,7 @@ function Home(): JSX.Element {
           <MainTabs labels={tabs} onChange={setTab} value={tab}/>
           {tab === 0 && <AssetsList style={styles.listContainer}/>}
           {tab === 1 && <ActivityList style={styles.listContainer}/>}
+          {tab === 2 && <NftList style={styles.listContainer}/>}
         </View>
       </View>
       

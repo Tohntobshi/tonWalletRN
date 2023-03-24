@@ -10,8 +10,10 @@ import {
 } from 'react-native'
 import Button from '../components/Button'
 import Input from '../components/Input'
+import { ANIMATED } from '../config'
 import {
   importWallet,
+  resetAuth,
   setAuthMnemonicError,
   useAppDispatch,
   useAppSelector,
@@ -23,6 +25,7 @@ const defaultInputValues = Array.from({ length: 24 }).map(() => '')
 
 function ImportSecretWords(): JSX.Element {
   const dispatch = useAppDispatch()
+  const onCancelPress = () => dispatch(resetAuth())
   const error = useAppSelector(state => state.auth.mnemonicError)
   const isLoading = useAppSelector(state => state.isAuthLoading)
   const [inputs, setInputs] = useState(defaultInputValues)
@@ -40,7 +43,9 @@ function ImportSecretWords(): JSX.Element {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Image
-            source={require('../../assets/bird3.png')}
+            source={ANIMATED
+              ? require('../../assets/bird3.gif')
+              : require('../../assets/bird3.png')}
             style={styles.logoImage} />
           <Text style={styles.title}>24 Secret Words</Text>
           <Text style={styles.text}>Please restore access to your non-hardware
@@ -60,8 +65,13 @@ function ImportSecretWords(): JSX.Element {
           {!!error && <Text style={styles.error}>{error}</Text>}
         </ScrollView>
       </KeyboardAvoidingView>
-      <Button type={'primary'} style={styles.btn} onPress={onContinuePress}
-        disabled={!isFilled || !!error || isLoading}>Continue</Button>
+      <View style={styles.buttonsContainer}>
+        <Button type={'secondary'} style={styles.btn1}
+          disabled={isLoading}
+          onPress={onCancelPress}>Cancel</Button>
+        <Button type={'primary'} style={styles.btn2} onPress={onContinuePress}
+          disabled={!isFilled || !!error || isLoading}>Continue</Button>
+      </View>
     </View>
   )
 }
@@ -116,10 +126,20 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
   },
-  btn: {
-    flexShrink: 0,
+  buttonsContainer: {
+    flexDirection: 'row',
     marginVertical: 16,
+    flexShrink: 0,
   },
+  btn1: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  btn2: {
+    flex: 1,
+    marginLeft: 15,
+    paddingHorizontal: 20,
+  }
 })
 
 export default ImportSecretWords

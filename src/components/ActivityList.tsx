@@ -14,6 +14,7 @@ import { ApiTransaction } from '../api/types'
 import { requestTransactions, selectCurrentTransactions,
   useAppDispatch, useAppSelector } from '../redux'
 import { bigStrToHuman, shortenString } from '../utils'
+import { ANIMATED } from '../config'
 
 
 interface Props {
@@ -65,7 +66,15 @@ function ActivityList({ style }: Props): JSX.Element {
         onEndReached={onEndReached} onEndReachedThreshold={0.9}
         onRefresh={() => getData(true)}
         refreshing={isLoading}
-        ListHeaderComponent={() => <View style={styles.header}/>}
+        ListHeaderComponent={() => <View style={styles.header}>
+          {transactions.length === 0 && <>
+            <Image source={ANIMATED
+              ? require('../../assets/bird8.gif')
+              : require('../../assets/bird8.png')}
+              style={styles.noDataImage}/>
+            <Text style={styles.noDataText}>No Activity</Text>
+          </>}
+        </View>}
         ItemSeparatorComponent={() => <View style={styles.separator1}><View style={styles.separator2}/></View>}
         renderSectionHeader={({section: {title}}) => <View style={styles.sectionHeaderContainer1}>
             <View style={styles.sectionHeaderContainer2}>
@@ -229,8 +238,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(132,146,171,0.3)',
   },
   header: {
-    height: 8,
+    minHeight: 8,
+    alignItems: 'center',
   },
+  noDataImage: {
+    marginTop: 32,
+    width: 128,
+    height: 128,
+  },
+  noDataText: {
+    marginTop: 20,
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#313D4F',
+  }
 })
 
 export default ActivityList

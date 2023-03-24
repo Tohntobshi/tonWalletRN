@@ -9,6 +9,7 @@ import {
 
 import Button from '../../components/Button'
 import Checkbox from '../../components/Checkbox'
+import { ANIMATED } from '../../config'
 
 interface Props {
   onUnderstoodPress?: () => void,
@@ -23,7 +24,9 @@ function SafetyRules({ onUnderstoodPress }: Props): JSX.Element {
       style={styles.page}
       >
       <Image
-          source={require('../../../assets/bird4.png')}
+          source={ANIMATED
+            ? require('../../../assets/bird4.gif')
+            : require('../../../assets/bird4.png')}
           style={styles.logoImage} />
       <TouchableOpacity style={styles.textContainer} onPress={() => setFirst(!first)}>
         <Checkbox value={first} style={styles.checkbox} onPress={() => setFirst(!first)}/>

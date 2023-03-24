@@ -15,6 +15,7 @@ import InsecurePassword from './InsecurePassword'
 
 import { finishPasswordCreation, resetAuth, useAppDispatch, useAppSelector } from '../redux'
 import { usePasswordValidation } from '../hooks/usePasswordValidation'
+import { ANIMATED } from '../config'
 
 function CreatePassword(): JSX.Element {
   const dispatch = useAppDispatch()
@@ -58,7 +59,9 @@ function CreatePassword(): JSX.Element {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Image
-            source={require('../../assets/bird2.png')}
+            source={ANIMATED
+              ? require('../../assets/bird2.gif')
+              : require('../../assets/bird9.png')}
             style={styles.logoImage}/>
           <Text style={styles.title}>Congratulations!</Text>
           <Text style={styles.text1}>The wallet is ready.</Text>

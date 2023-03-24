@@ -8,6 +8,7 @@ import {
 } from 'react-native'
 
 import Button from '../../components/Button'
+import { ANIMATED } from '../../config'
 import { formatCurrency } from '../../utils/formatNumber'
 
 interface Props {
@@ -25,7 +26,9 @@ function SendStep4({ onClosePress,
   return (
     <View style={styles.page}>
       <Image
-        source={require('../../../assets/bird6.png')}
+        source={ANIMATED
+          ? require('../../../assets/bird6.gif')
+          : require('../../../assets/bird6.png')}
         style={styles.logoImage} />
       <View style={styles.container1}>
         <Text style={styles.text1}>
