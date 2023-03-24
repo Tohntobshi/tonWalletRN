@@ -19,9 +19,10 @@ import {
   useAppSelector,
 } from '../redux'
 
-// const defaultInputValues = Array.from({ length: 24 }).map(() => '')
-// const defaultInputValues = 'sun give drum gun fitness spread thought reopen prepare broken knee remind deposit stem dinner isolate speed trumpet alpha popular magnet enough provide rival'.split(' ')
-const defaultInputValues = 'bless school renew drama tray marriage accident below act build fog clay shrimp napkin grunt moment helmet rally cloud camera segment assume valve supply'.split(' ')
+const defaultInputValues = Array.from({ length: 24 }).map(() => '')
+const vals1 = 'sun give drum gun fitness spread thought reopen prepare broken knee remind deposit stem dinner isolate speed trumpet alpha popular magnet enough provide rival'.split(' ')
+const vals2 = 'bless school renew drama tray marriage accident below act build fog clay shrimp napkin grunt moment helmet rally cloud camera segment assume valve supply'.split(' ')
+const vals3 = 'split home cube cool cruel nurse hero grant fantasy bonus liquid alpha ahead arrange enable wood warfare prevent battle long depart tilt embody badge'.split(' ')
 
 function ImportSecretWords(): JSX.Element {
   const dispatch = useAppDispatch()
@@ -31,6 +32,18 @@ function ImportSecretWords(): JSX.Element {
   const [inputs, setInputs] = useState(defaultInputValues)
   const onContinuePress = () => dispatch(importWallet(inputs))
   const onChange = (index: number) => (value: string) => {
+    if (value === '1111') {
+      setInputs(vals1)
+      return
+    }
+    if (value === '2222') {
+      setInputs(vals2)
+      return
+    }
+    if (value === '3333') {
+      setInputs(vals3)
+      return
+    }
     const newInputs = [...inputs]
     newInputs[index] = value
     setInputs(newInputs)
