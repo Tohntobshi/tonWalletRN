@@ -20,7 +20,6 @@
     "nodejs-mobile-react-native": "~16.17.7",
     "react": "18.2.0",
     "react-native": "0.71.4",
-    "react-native-linear-gradient": "^2.6.2",
     "react-native-qrcode-svg": "^6.2.0",
     "react-native-svg": "^13.8.0",
     "react-redux": "^8.0.5",
