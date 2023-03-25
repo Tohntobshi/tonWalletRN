@@ -35,7 +35,7 @@ function OutputWithActions({ style, text, frame, copy, tonScan, trim }: Props): 
   }
   const textToShow = trim ? shortenString(text) : text
   return (
-    <View style={[styles.container, frame && styles.frame, style]}>
+    <TouchableOpacity style={[styles.container, frame && styles.frame, style]} onPress={onCopyPress}>
       <Text style={[styles.text, frame && styles.framedText ]} textBreakStrategy='simple'>
         {textToShow}
         {copy && <TouchableOpacity style={styles.btn} onPress={onCopyPress}>
@@ -45,7 +45,7 @@ function OutputWithActions({ style, text, frame, copy, tonScan, trim }: Props): 
             <Image source={require('../../assets/tonScan.png')} style={[styles.img, !frame && styles.noFrameImg]}/>
           </TouchableOpacity>}
       </Text>
-    </View>
+    </TouchableOpacity>
     
   )
 }

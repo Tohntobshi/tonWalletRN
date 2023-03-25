@@ -35,6 +35,7 @@ function ReceiveStepQR({ onBackPress, address }: Props): JSX.Element {
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
+    flexGrow: 1,
   },
   qrContainer: {
     marginTop: 21,
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   btn: {
-    marginTop: 24,
+    marginTop: 'auto',
   },
 })
 

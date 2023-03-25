@@ -9,16 +9,13 @@ import {
 import ActionButton from '../components/ActionButton'
 import MainTabs from '../components/MainTabs'
 import Menu from '../components/Menu'
-import Send from './Send'
-import BackupRequest from './BackupRequest'
-import Receive from './Receive'
 import WalletSelector from '../components/WalletSelector'
-import AddWallet from './AddWallet'
 import LogOut from './LogOut'
 import AssetsList from '../components/AssetsList'
 import ActivityList from '../components/ActivityList'
 import NftList from '../components/NftList'
-import { useAppSelector, useAppDispatch, selectIsBackedUp } from '../redux'
+import { useAppSelector, useAppDispatch, selectIsBackedUp, setBackupRequestModalOpen,
+  setAddWalletModalOpen, setSendModalOpen, setReceiveModalOpen } from '../redux'
 
 
 const tabs = ['Assets', 'Activity', 'NFT']
@@ -27,16 +24,16 @@ function Home(): JSX.Element {
   const dispatch = useAppDispatch()
   const isBackedUp = useAppSelector(selectIsBackedUp)
   const [tab, setTab] = useState(0)
-  const [isSendOpen, setSendOpen] = useState(false)
-  const [isBackupOpen, setBackupOpen] = useState(false)
-  const [isReceiveOpen, setReceiveOpen] = useState(false)
-  const [isAddWalletOpen, setAddWalletOpen] = useState(false)
   const [isLogOutOpen, setLogOutOpen] = useState(false)
+  const openBackup = () => dispatch(setBackupRequestModalOpen(true))
+  const addWallet = () => dispatch(setAddWalletModalOpen(true))
+  const send = () => dispatch(setSendModalOpen(true))
+  const receive = () => dispatch(setReceiveModalOpen(true))
   return (
     <View style={styles.page}>
       <View style={styles.contentContainer}>
         {!isBackedUp && <TouchableOpacity style={styles.warningContainer}
-          onPress={() => setBackupOpen(true)}>
+          onPress={openBackup}>
           <Text style={styles.warningText1}>Wallet is not backed up</Text>
           <Text style={styles.warningText2}>
             Back up wallet to have full access to it</Text>
@@ -44,19 +41,19 @@ function Home(): JSX.Element {
         
         <View style={styles.searchContainer}>
           <Menu onExitPress={() => setLogOutOpen(true)}
-            onBackupPress={() => setBackupOpen(true)}/>
+            onBackupPress={openBackup}/>
         </View>
         <WalletSelector style={styles.walletContainer}
-          onAddWalletPress={() => setAddWalletOpen(true)}/>
+          onAddWalletPress={addWallet}/>
         <View style={styles.actionBtnsContainer}>
           <ActionButton label='Receive'
             source={require('../../assets/receive.png')}
             style={styles.actionBtn1}
-            onPress={() => setReceiveOpen(true)}/>
+            onPress={receive}/>
           <ActionButton label='Send'
             source={require('../../assets/send.png')}
             style={styles.actionBtn2}
-            onPress={() => setSendOpen(true)}/>
+            onPress={send}/>
           <ActionButton label='Swap' 
             source={require('../../assets/swap.png')} 
             style={styles.actionBtn2} onPress={() => {}}/>
@@ -72,15 +69,6 @@ function Home(): JSX.Element {
         </View>
       </View>
       
-      {isSendOpen && <Send
-        onCancelPress={() => setSendOpen(false)}/>}
-      {isBackupOpen && <BackupRequest
-        onClosePress={() => setBackupOpen(false)}
-        onSuccess={() => setBackupOpen(false)}/>}
-      {isReceiveOpen && <Receive
-        onCancelPress={() => setReceiveOpen(false)}/>}
-      {isAddWalletOpen && <AddWallet
-        onCancelPress={() => setAddWalletOpen(false)}/>}
       {isLogOutOpen && <LogOut
         onCancelPress={() => setLogOutOpen(false)} 
         onExitPress={() => setLogOutOpen(false)}/>}

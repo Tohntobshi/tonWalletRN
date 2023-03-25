@@ -26,7 +26,7 @@ type Props = React.ComponentProps<typeof TextInput> & {
 
 function Input({ style, error, prefix, suffix, pasteButton,
   onChangeText, amountInput, keyboardType, walletNameInput,
-  onDonePress, ...rest }: Props): JSX.Element {
+  onDonePress, editable, ...rest }: Props): JSX.Element {
   const onPastePress = async () => {
     const result = await Clipboard.getString()
     onChangeText && onChangeText(result)
@@ -39,10 +39,12 @@ function Input({ style, error, prefix, suffix, pasteButton,
         placeholderTextColor={'#91ABB8'}
         onChangeText={onChangeText}
         keyboardType={amountInput ? 'numbers-and-punctuation' : keyboardType}
+        editable={editable}
         {...rest}
       />
       {suffix && <Text style={styles.suffix}>{suffix}</Text>}
-      {pasteButton && <TouchableOpacity style={styles.pasteBtn} onPress={onPastePress}>
+      {pasteButton && <TouchableOpacity style={styles.pasteBtn}
+          onPress={onPastePress} disabled={editable === false}>
           <Image source={require('../../assets/paste.png')} style={styles.pasteImg}/>
         </TouchableOpacity>}
       {onDonePress && <TouchableOpacity style={styles.doneBtn} onPress={onDonePress}>

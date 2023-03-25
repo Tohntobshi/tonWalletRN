@@ -111,6 +111,7 @@ function SendStep1({ onContinuePress, balance, symbol, onAnyChange,
 
 const styles = StyleSheet.create({
   page: {
+    flexGrow: 1,
     alignItems: 'center',
   },
   labelContainer: {
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     minHeight: 12,
   },
   btn: {
-    marginTop: 24,
+    marginTop: 'auto',
   },
 })
 

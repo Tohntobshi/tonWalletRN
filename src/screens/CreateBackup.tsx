@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   StyleSheet,
   Text,
@@ -6,17 +6,15 @@ import {
 } from 'react-native'
 import Lottie from 'lottie-react-native'
 
-import { completeBackup, resetAuth, useAppDispatch } from '../redux'
+import { resetAuth, setBackupAuthModalOpen, useAppDispatch } from '../redux'
 import Button from '../components/Button'
-import BackupAuth from './BackupAuth'
 
 
 function CreateBackup(): JSX.Element {
   const dispatch = useAppDispatch()
   const onSkipPress = () => dispatch(resetAuth())
-  const onComplete = () => dispatch(completeBackup())
-  
-  const [isBackupOpen, setBackupOpen] = useState(false)
+  const onBackUpPress = () => dispatch(setBackupAuthModalOpen(true))
+
   return (
     <View style={styles.page}>
       <Lottie source={require('../../assets/bird3.json')}
@@ -30,12 +28,9 @@ function CreateBackup(): JSX.Element {
         up secret keys in a case you forget your
         password or lose access to this device.</Text>
       <Button type={'primary'} style={styles.btn1}
-        onPress={() => setBackupOpen(true)}>Back Up</Button>
+        onPress={onBackUpPress}>Back Up</Button>
       <Button type={'linkDanger'} style={styles.btn2}
         onPress={onSkipPress}>Skip For Now</Button>
-      {isBackupOpen && <BackupAuth
-        onClosePress={() => setBackupOpen(false)}
-        onSuccess={onComplete}/>}
     </View>
   )
 }

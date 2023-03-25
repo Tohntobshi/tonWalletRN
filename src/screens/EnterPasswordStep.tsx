@@ -49,7 +49,7 @@ function EnterPasswordStep({ onContinuePress, onBackPress, placeholder,
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
-    height: 450,
+    flexGrow: 1,
     justifyContent: 'space-between',
   },
   scrollViewContainer: {
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   btnContainer: {
-    marginTop: 24,
+    marginTop: 'auto',
     flexDirection: 'row',
   },
   btn1: {

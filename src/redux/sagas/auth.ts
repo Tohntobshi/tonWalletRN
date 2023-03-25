@@ -8,7 +8,7 @@ import { callApi } from '../../api'
 import { setAuthState, setAuthMnemonic, setAuthMnemonicError,
     setAuthPassword, setAuthIsImported, addAccount, resetAuth,
     resetBackupRequred, removeAllAccounts, setAuthPasswordError,
-    setCurrentAccountId, removeAccount, setIsAuthLoading } from '../reducers'
+    setCurrentAccountId, removeAccount, setIsAuthLoading, setAddWalletModalOpen } from '../reducers'
 import { MethodResponseUnwrapped } from '../../api/methods/types'
 import { AuthState } from '../../types'
 import { RootState } from '../types'
@@ -137,6 +137,7 @@ function* addNextWalletSaga({ payload: { password, isImported } }: ReturnType<ty
         yield put(setIsAuthLoading(false))
         return
     }
+    yield put(setAddWalletModalOpen(false))
     yield put(setAuthPassword(password))
     if (isImported) {
         yield put(setAuthState(AuthState.importWallet))
@@ -193,5 +194,4 @@ export function* authSaga() {
     yield takeEvery(addNextWallet.toString(), addNextWalletSaga)
     yield takeEvery(requestMnemonic, requestMnemonicSaga)
     yield takeLatest(REHYDRATE, activateAccountSaga)
-    // TODO add pending flags and block ui during loading
 }

@@ -54,7 +54,7 @@ function SendStep2({ onContinuePress, onEditPress,
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
-    minHeight: 500,
+    flexGrow: 1,
     paddingTop: 16,
   },
   logoImage: {

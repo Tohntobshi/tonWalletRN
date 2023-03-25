@@ -10,7 +10,8 @@ import Button from '../components/Button'
 import ModalBottom from '../components/ModalBottom'
 import EnterPasswordStep from './EnterPasswordStep'
 import { addNextWallet, setAuthPasswordError, useAppDispatch,
-  useAppSelector, resetAuth } from '../redux'
+  useAppSelector, resetAuth, setAddWalletModalOpen } from '../redux'
+import ModalBottomHeader from '../components/ModalBottomHeader'
 
 interface Props {
   onCancelPress?: () => void,
@@ -21,7 +22,7 @@ const titles = {
   1: 'Enter Password',
 }
 
-function AddWallet({ onCancelPress }: Props): JSX.Element {
+function AddWalletContent({ onCancelPress }: Props): JSX.Element {
   const dispatch = useAppDispatch()
   const isLoading = useAppSelector(state => state.isAuthLoading)
   const error = useAppSelector(state => state.auth.passwordError)
@@ -43,16 +44,10 @@ function AddWallet({ onCancelPress }: Props): JSX.Element {
   const onContinuePress = () => {
     dispatch(addNextWallet({ password, isImported }))
   }
-  const _onCancelPress = () => {
-    dispatch(resetAuth())
-    onCancelPress && onCancelPress()
-  }
   return (
-    <ModalBottom
-      title={(titles as any)[step]}
-      visible={true}
-      onRequestClose={_onCancelPress}
-      disabledClose={isLoading}>
+    <View style={styles.container}>
+      <ModalBottomHeader title={(titles as any)[step]}
+        onRequestClose={onCancelPress} disabledClose={isLoading}/>
       {step === 0 && <View style={styles.step}>
         <Lottie source={require('../../assets/bird7.json')}
           autoPlay loop style={styles.logoImage}/>
@@ -70,14 +65,17 @@ function AddWallet({ onCancelPress }: Props): JSX.Element {
         value={password} onChange={onPasswordChange} error={error}
         isLoading={isLoading}
         onBackPress={() => setStep(0)} placeholder='Enter your password'/>}
-    </ModalBottom>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+  },
   step: {
     alignItems: 'center',
-    minHeight: 500,
+    flexGrow: 1,
     paddingTop: 16,
   },
   logoImage: {
@@ -100,5 +98,23 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 })
+
+function AddWallet(): JSX.Element {
+  const dispatch = useAppDispatch()
+  const isLoading = useAppSelector(state => state.isAuthLoading)
+  const _onClosePress = () => {
+    dispatch(setAddWalletModalOpen(false))
+    dispatch(resetAuth())
+  }
+  const isOpen = useAppSelector(state => state.modals.addWallet)
+  return (
+    <ModalBottom
+      isOpen={isOpen}
+      onRequestClose={_onClosePress}
+      disabledClose={isLoading}>
+      <AddWalletContent onCancelPress={_onClosePress}/>
+    </ModalBottom>
+  )
+}
 
 export default AddWallet

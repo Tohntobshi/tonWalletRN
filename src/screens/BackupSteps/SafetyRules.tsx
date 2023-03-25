@@ -47,8 +47,8 @@ function SafetyRules({ onUnderstoodPress }: Props): JSX.Element {
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
-    minHeight: 500,
     paddingTop: 24,
+    flexGrow: 1,
   },
   logoImage: {
     width: 100,

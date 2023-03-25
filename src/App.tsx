@@ -17,6 +17,13 @@ import Home from './screens/Home'
 import Transitioner from './components/Transitioner'
 import { persistor, store, useAppSelector } from './redux'
 import { AuthState } from './types'
+import BackupAuth from './screens/BackupAuth'
+import BackupRequest from './screens/BackupRequest'
+import AddWallet from './screens/AddWallet'
+import Send from './screens/Send'
+import Receive from './screens/Receive'
+import ReceiveInvoice from './screens/ReceiveInvoice'
+import ReceiveQR from './screens/ReceiveQR'
 
 function MainScreen(): JSX.Element {
   const authState = useAppSelector(state => state.auth.authState)
@@ -48,6 +55,14 @@ function MainScreen(): JSX.Element {
         ]}
         active={getActiveScreen()}
       />
+      {/* modals */}
+      <BackupAuth />
+      <BackupRequest />
+      <AddWallet />
+      <Send />
+      <Receive />
+      <ReceiveQR />
+      <ReceiveInvoice />
     </SafeAreaView>
   )
 }

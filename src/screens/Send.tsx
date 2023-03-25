@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import { View, StyleSheet } from 'react-native'
 
 import ModalBottom from '../components/ModalBottom'
 import SendStep1 from './SendSteps/SendStep1'
@@ -7,9 +8,10 @@ import EnterPasswordStep from './EnterPasswordStep'
 import SendStep4 from './SendSteps/SendStep4'
 import { useAppDispatch, useAppSelector, setCurrentTransferState,
   resetCurrentTransfer, validateSendRequest, send,
-  selectCurrentAccountTokens, setCurrentTransferError } from '../redux'
+  selectCurrentAccountTokens, setCurrentTransferError, setSendModalOpen } from '../redux'
 import { TransferState } from '../types'
 import { bigStrToHuman } from '../utils'
+import ModalBottomHeader from '../components/ModalBottomHeader'
 
 interface Props {
   onCancelPress?: () => void,
@@ -22,11 +24,8 @@ const titles = {
   3: 'Coins have been sent!',
 }
 
-function Send({ onCancelPress }: Props): JSX.Element {
+function SendContent({ onCancelPress }: Props): JSX.Element {
   const dispatch = useAppDispatch()
-  useEffect(() => {
-    return () => void dispatch(resetCurrentTransfer())
-  }, [])
   const userTokens = useAppSelector(selectCurrentAccountTokens)
   const toncoin = userTokens?.find((el) => el.slug === 'toncoin')
   const { state: step, error, amount, fee, comment, toAddress, initialBalance } =
@@ -59,11 +58,9 @@ function Send({ onCancelPress }: Props): JSX.Element {
   }
   const feeReadable = bigStrToHuman(fee || '0', toncoin?.decimals)
   return (
-    <ModalBottom
-      title={(titles as any)[step]}
-      visible={true}
-      onRequestClose={onCancelPress}
-      disabledClose={isLoading}>
+    <View style={styles.content}>
+      <ModalBottomHeader title={(titles as any)[step]}
+        onRequestClose={onCancelPress} disabledClose={isLoading}/>
       {step === TransferState.None && <SendStep1
         balance={toncoin?.amount || 0}
         symbol={toncoin?.symbol || ''}
@@ -91,6 +88,31 @@ function Send({ onCancelPress }: Props): JSX.Element {
         fee={feeReadable}
         price={toncoin?.price || 0}
         onClosePress={onCancelPress}/>}
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  content: {
+    flexGrow: 1,
+  },
+})
+
+function Send(): JSX.Element {
+  const dispatch = useAppDispatch()
+  const isLoading = useAppSelector(state => state.isCurrentTransferLoading)
+  const _onClosePress = () => {
+    dispatch(setSendModalOpen(false))
+    dispatch(resetCurrentTransfer())
+  }
+  const isOpen = useAppSelector(state => state.modals.send)
+  return (
+    <ModalBottom
+      isOpen={isOpen}
+      onRequestClose={_onClosePress}
+      disabledClose={isLoading}
+      modalHeight={550}>
+      <SendContent onCancelPress={_onClosePress}/>
     </ModalBottom>
   )
 }

@@ -15,7 +15,8 @@ const initialState: MainState = {
     currentTransfer: {
         state: TransferState.None
     },
-    isCurrentTransferLoading: false
+    isCurrentTransferLoading: false,
+    modals: {},
 }
 
 export const mainSlice = createSlice({
@@ -156,6 +157,27 @@ export const mainSlice = createSlice({
             }
             return state
         },
+        setBackupAuthModalOpen: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, modals: { ...state.modals, backupAuth: payload } }
+        },
+        setBackupRequestModalOpen: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, modals: { ...state.modals, backupRequest: payload } }
+        },
+        setAddWalletModalOpen: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, modals: { ...state.modals, addWallet: payload } }
+        },
+        setSendModalOpen: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, modals: { ...state.modals, send: payload } }
+        },
+        setReceiveModalOpen: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, modals: { ...state.modals, receive: payload } }
+        },
+        setReceiveQRModalOpen: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, modals: { ...state.modals, receiveQR: payload } }
+        },
+        setReceiveInvoiceModalOpen: (state, { payload }: PayloadAction<boolean>): MainState => {
+            return { ...state, modals: { ...state.modals, receiveInvoice: payload } }
+        },
     }
 })
 
@@ -165,4 +187,6 @@ export const { setCurrentAccountId, setAuthState, setAuthMnemonic, setAuthPasswo
     updateTokenInfo, setCurrentTransferState, resetCurrentTransfer, setCurrentTransferError,
     setCurrentTransfer, setCurrentTransferInitialBalance, setIsTransactionsLoading,
     appendTransactions, prependTransaction, updateTransactionId, setTransactions,
-    setIsAuthLoading, setIsCurrentTransferLoading } = mainSlice.actions
+    setIsAuthLoading, setIsCurrentTransferLoading, setBackupAuthModalOpen, setBackupRequestModalOpen,
+    setAddWalletModalOpen, setSendModalOpen, setReceiveModalOpen, setReceiveQRModalOpen,
+    setReceiveInvoiceModalOpen } = mainSlice.actions

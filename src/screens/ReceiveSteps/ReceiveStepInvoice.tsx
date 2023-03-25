@@ -39,7 +39,7 @@ function ReceiveStepInvoice({ onBackPress, address }: Props): JSX.Element {
       <View style={styles.labelContainer}>
         <Text style={styles.label2}>Share this URL to receive TON</Text>
       </View>
-      <OutputWithActions style={styles.input1} text={link} frame copy/>
+      <OutputWithActions style={styles.input1} text={link} frame/>
       <Button type='secondary' style={styles.btn} onPress={onBackPress}>Back</Button>
     </View>
   )
@@ -48,6 +48,7 @@ function ReceiveStepInvoice({ onBackPress, address }: Props): JSX.Element {
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
+    flexGrow: 1,
   },
   scrollViewContainer: {
     flex: 1,
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   btn: {
-    marginTop: 24,
+    marginTop: 'auto',
   },
 })
 

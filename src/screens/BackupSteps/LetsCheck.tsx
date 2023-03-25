@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { StyleSheet, Text, View, Keyboard } from 'react-native'
 
 import Button from '../../components/Button'
@@ -31,12 +31,10 @@ function LetsCheck({ onSuccess, onBackPress, mnemonic }: Props): JSX.Element {
       setError('The secret words you have entered do not match the ones in the list. Please try again.')
       return
     }
+    Keyboard.dismiss()
     onSuccess && onSuccess()
   }
   const isFilled = inputs.reduce((acc, cur) => !!cur && acc, true)
-  useEffect(() => {
-    return () => Keyboard.dismiss()
-  }, [])
   return (
     <View style={styles.page}>
       <Text style={styles.text}>Now let’s check that you wrote your
@@ -60,6 +58,7 @@ function LetsCheck({ onSuccess, onBackPress, mnemonic }: Props): JSX.Element {
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
+    flexGrow: 1,
   },
   text: {
     marginTop: 24,
@@ -84,7 +83,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   btnContainer: {
-    marginTop: 16,
+    marginTop: 'auto',
     flexDirection: 'row',
     flexShrink: 0,
   },

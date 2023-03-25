@@ -1,51 +1,59 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
-  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
   SafeAreaView,
-  StyleProp,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
+  Animated,
 } from 'react-native'
 
-type Props = React.ComponentProps<typeof Modal> & {
+interface Props {
   onRequestClose?: () => void,
-  title: string,
-  style?: StyleProp<ViewStyle>,
   disabledClose?: boolean,
+  isOpen?: boolean,
+  children?: React.ReactNode,
+  modalHeight?: number,
+  noBackgroundShade?: boolean,
 }
 
-function ModalBottom({ onRequestClose, title, style, children,
-  disabledClose, ...rest }: Props): JSX.Element {
+function ModalBottom({ onRequestClose, children,
+  isOpen, disabledClose, noBackgroundShade, modalHeight = 600 }: Props): JSX.Element {
+  const [isModalVisible, setModalVisible] = useState(isOpen)
+  const animState = useRef(new Animated.Value(0)).current
+  const containerPosition = useRef(Animated.multiply(animState, -modalHeight)).current
   const _onRequestClose = () => {
     if (disabledClose) return
     onRequestClose && onRequestClose()
   }
+  const animate = () => {
+    Animated.timing(animState, {
+      toValue: isOpen ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      if (!isOpen) setModalVisible(false)
+    })
+  }
+  useEffect(() => {
+    if (isOpen) setModalVisible(true)
+    animate()
+  }, [isOpen])
   return (
-    <Modal transparent onRequestClose={_onRequestClose} {...rest}>
+    <Modal transparent onRequestClose={_onRequestClose}
+      visible={isModalVisible}>
       <KeyboardAvoidingView style={styles.container0}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <SafeAreaView style={styles.container1}>
-          <View style={styles.container2}>
-            <View style={styles.container3}>
-              <Text style={styles.title}>{title}</Text>
-              <TouchableOpacity
-                style={[styles.closeBtn, disabledClose && styles.disabled]}
-                onPress={_onRequestClose} disabled={disabledClose}>
-                <Image
-                  source={require('../../assets/cross.png')} 
-                  style={styles.closeBtnImg}/>
-              </TouchableOpacity>
-            </View>
-            <View style={style}>
-              {children}
-            </View>
-          </View>
+        {!noBackgroundShade &&
+          <Animated.View style={[styles.background, { opacity: animState }]}/>}
+        <SafeAreaView style={styles.container2}>
+          <Animated.View style={[styles.container3, {
+              height: modalHeight,
+              bottom: -modalHeight,
+              translateY: containerPosition,
+            }]}>
+            {children}
+          </Animated.View>
         </SafeAreaView>
       </KeyboardAvoidingView>
     </Modal>
@@ -56,43 +64,26 @@ const styles = StyleSheet.create({
   container0: {
     flex: 1,
   },
-  container1: {
-    flex: 1,
-    justifyContent: 'flex-end',
+  background: {
     backgroundColor: 'rgba(0,0,0,0.45)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
   container2: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  container3: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
     backgroundColor: '#F1F5FA',
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: 16,
-  },
-  container3: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  title: {
-    textAlign: 'center',
-    marginLeft: 30,
-    flex: 1,
-    color: '#313D4F',
-    fontSize: 17,
-    fontWeight: '700',
-  },
-  closeBtn: {
-    backgroundColor: '#E3E7EC',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  disabled: {
-    opacity: 0.4,
-  },
-  closeBtnImg: {
-    width: 12,
-    height: 12,
   },
 })
 

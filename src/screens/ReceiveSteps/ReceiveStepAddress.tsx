@@ -8,14 +8,15 @@ import {
 
 import Button from '../../components/Button'
 import OutputWithActions from '../../components/OutputWithActions'
+import { setReceiveInvoiceModalOpen, setReceiveQRModalOpen,
+  useAppDispatch } from '../../redux'
 
 interface Props {
-  onQRPress?: () => void,
-  onInvoicePress?: () => void,
   address: string,
 }
 
-function ReceiveStepAddress({ onQRPress, onInvoicePress, address }: Props): JSX.Element {
+function ReceiveStepAddress({  address }: Props): JSX.Element {
+  const dispatch = useAppDispatch()
   return (
     <View style={styles.page}>
       <Text style={styles.text}>You can share this address, show QR-code
@@ -25,11 +26,13 @@ function ReceiveStepAddress({ onQRPress, onInvoicePress, address }: Props): JSX.
       </View>
       <OutputWithActions style={styles.input1} text={address} frame copy tonScan/>
       <View style={styles.btnContainer}>
-        <Button type='secondary' style={styles.btn1} onPress={onQRPress}>
+        <Button type='secondary' style={styles.btn1}
+          onPress={() => dispatch(setReceiveQRModalOpen(true))}>
           <Image source={require('../../../assets/qr.png')} style={styles.qrImg}/>
         </Button>
         <Button type='secondary' style={styles.btn2}
-          onPress={onInvoicePress}>Create Invoice</Button>
+          onPress={() => dispatch(setReceiveInvoiceModalOpen(true))}>
+          Create Invoice</Button>
       </View>
     </View>
   )
@@ -38,6 +41,7 @@ function ReceiveStepAddress({ onQRPress, onInvoicePress, address }: Props): JSX.
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
+    flexGrow: 1,
   },
   text: {
     marginTop: 16,
@@ -63,7 +67,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   btnContainer: {
-    marginTop: 24,
+    marginTop: 'auto',
     flexDirection: 'row',
   },
   qrImg: {

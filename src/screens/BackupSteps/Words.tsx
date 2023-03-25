@@ -29,6 +29,7 @@ function Words({ onCheckPress, mnemonic }: Props): JSX.Element {
 const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
+    flexGrow: 1,
   },
   text: {
     marginTop: 24,
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   btn1: {
-    marginTop: 16,
+    marginTop: 'auto',
   },
 })
 

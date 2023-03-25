@@ -64,4 +64,13 @@ export interface MainState {
     tokenInfoBySlug: Record<string, ApiToken>;
     currentAccountId?: string;
     accounts: Record<string, AccountState>;
+    modals: {
+        backupAuth?: boolean;
+        backupRequest?: boolean;
+        addWallet?: boolean;
+        send?: boolean;
+        receive?: boolean;
+        receiveQR?: boolean;
+        receiveInvoice?: boolean;
+    }
 }
