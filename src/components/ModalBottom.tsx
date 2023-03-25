@@ -13,15 +13,15 @@ interface Props {
   disabledClose?: boolean,
   isOpen?: boolean,
   children?: React.ReactNode,
-  modalHeight?: number,
+  approxModalHeight?: number,
   noBackgroundShade?: boolean,
 }
 
 function ModalBottom({ onRequestClose, children,
-  isOpen, disabledClose, noBackgroundShade, modalHeight = 600 }: Props): JSX.Element {
+  isOpen, disabledClose, noBackgroundShade, approxModalHeight = 600 }: Props): JSX.Element {
   const [isModalVisible, setModalVisible] = useState(isOpen)
   const animState = useRef(new Animated.Value(0)).current
-  const containerPosition = useRef(Animated.multiply(animState, -modalHeight)).current
+  const containerPosition = useRef(Animated.multiply(Animated.add(animState, -1), -approxModalHeight)).current
   const _onRequestClose = () => {
     if (disabledClose) return
     onRequestClose && onRequestClose()
@@ -29,7 +29,7 @@ function ModalBottom({ onRequestClose, children,
   const animate = () => {
     Animated.timing(animState, {
       toValue: isOpen ? 1 : 0,
-      duration: 200,
+      duration: 300,
       useNativeDriver: true,
     }).start(() => {
       if (!isOpen) setModalVisible(false)
@@ -48,9 +48,8 @@ function ModalBottom({ onRequestClose, children,
           <Animated.View style={[styles.background, { opacity: animState }]}/>}
         <SafeAreaView style={styles.container2}>
           <Animated.View style={[styles.container3, {
-              height: modalHeight,
-              bottom: -modalHeight,
               translateY: containerPosition,
+              opacity: animState
             }]}>
             {children}
           </Animated.View>
@@ -80,6 +79,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
+    bottom: 0,
     backgroundColor: '#F1F5FA',
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,

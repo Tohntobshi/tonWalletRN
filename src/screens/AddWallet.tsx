@@ -72,6 +72,7 @@ function AddWalletContent({ onCancelPress }: Props): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    minHeight: 500,
   },
   step: {
     alignItems: 'center',

@@ -40,7 +40,7 @@ function Receive(): JSX.Element {
     <ModalBottom
       isOpen={isOpen}
       onRequestClose={_onClosePress}
-      modalHeight={350}>
+      approxModalHeight={350}>
       <ReceiveContent onCancelPress={_onClosePress}/>
     </ModalBottom>
   )

@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   btn: {
-    marginTop: 'auto',
+    marginTop: 16,
   },
 })
 

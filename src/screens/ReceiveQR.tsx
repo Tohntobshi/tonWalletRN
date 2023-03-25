@@ -43,7 +43,7 @@ function ReceiveQR(): JSX.Element {
       isOpen={isOpen}
       onRequestClose={_onClosePress}
       noBackgroundShade
-      modalHeight={500}>
+      approxModalHeight={500}>
       <ReceiveContent onCancelPress={_onClosePress}/>
     </ModalBottom>
   )

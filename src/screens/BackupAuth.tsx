@@ -37,6 +37,7 @@ function BackupAuthContent({ onClosePress, onSuccess }: ContentProps): JSX.Eleme
 const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
+    minHeight: 550
   },
 })
 

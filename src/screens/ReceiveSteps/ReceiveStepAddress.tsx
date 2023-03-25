@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   btnContainer: {
-    marginTop: 'auto',
+    marginTop: 16,
     flexDirection: 'row',
   },
   qrImg: {

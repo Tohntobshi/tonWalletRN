@@ -95,6 +95,7 @@ function SendContent({ onCancelPress }: Props): JSX.Element {
 const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
+    minHeight: 500
   },
 })
 
@@ -110,8 +111,7 @@ function Send(): JSX.Element {
     <ModalBottom
       isOpen={isOpen}
       onRequestClose={_onClosePress}
-      disabledClose={isLoading}
-      modalHeight={550}>
+      disabledClose={isLoading}>
       <SendContent onCancelPress={_onClosePress}/>
     </ModalBottom>
   )

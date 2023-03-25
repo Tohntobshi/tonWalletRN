@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   btn: {
-    marginTop: 'auto',
+    marginTop: 16,
   },
 })
 

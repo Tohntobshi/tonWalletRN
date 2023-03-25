@@ -61,6 +61,7 @@ function BackupRequestContent({ onClosePress }: Props): JSX.Element {
 const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
+    minHeight: 550,
   },
 })
 
