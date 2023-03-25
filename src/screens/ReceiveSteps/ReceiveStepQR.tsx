@@ -20,7 +20,7 @@ function ReceiveStepQR({ onBackPress, address }: Props): JSX.Element {
     <View style={styles.page}>
       <View style={styles.qrContainer}>
         <QRCode size={200} 
-          value={address}
+          value={address || 'no data'}
           logo={require('../../../assets/logo.png')}
           logoBackgroundColor='#FFFFFF'
         />

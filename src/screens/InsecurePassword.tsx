@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
-  Image,
-  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native'
 import Button from '../components/Button'
@@ -14,14 +11,15 @@ import ModalRegular from '../components/ModalRegular'
 interface Props {
   onCancelPress?: () => void,
   onContinuePress?: () => void,
+  isOpen?: boolean,
 }
 
 
-function InsecurePassword({ onCancelPress, onContinuePress }: Props): JSX.Element {
+function InsecurePassword({ onCancelPress, onContinuePress, isOpen }: Props): JSX.Element {
   return (
     <ModalRegular
       title='Insecure Password'
-      visible={true}
+      isOpen={isOpen}
       onRequestClose={onCancelPress}>
       <Text style={styles.text}>Your have entered an insecure password,
         which can be easily guessed by scammers.</Text>

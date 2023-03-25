@@ -1,33 +1,53 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
-  Image,
+  Animated,
   Modal,
-  StyleProp,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
-  ViewStyle,
 } from 'react-native';
 
-type Props = React.ComponentProps<typeof Modal> & {
+interface Props {
   onRequestClose?: () => void,
   title: string,
-  style?: StyleProp<ViewStyle>,
+  isOpen?: boolean,
+  children?: React.ReactNode,
 }
 
-function ModalRegular({ onRequestClose, title, style, children, ...rest }: Props): JSX.Element {
+const scaleInterpolationRange = { inputRange: [0,1], outputRange: [0.8, 1]}
+
+function ModalRegular({ onRequestClose, title, children, isOpen }: Props): JSX.Element {
+  const [isModalVisible, setModalVisible] = useState(isOpen)
+  const animState = useRef(new Animated.Value(0)).current
+  const animate = () => {
+    Animated.timing(animState, {
+      toValue: isOpen ? 1 : 0,
+      duration: 150,
+      useNativeDriver: true,
+    }).start(() => {
+      if (!isOpen) setModalVisible(false)
+    })
+  }
+  useEffect(() => {
+    if (isOpen) setModalVisible(true)
+    animate()
+  }, [isOpen])
   return (
-    <Modal transparent onRequestClose={onRequestClose} {...rest}>
+    <Modal transparent onRequestClose={onRequestClose}  visible={isModalVisible}>
       <View style={styles.container1}>
-        <View style={styles.container2}>
+        <Animated.View style={[styles.background, { opacity: animState }]}/>
+        <Animated.View style={[styles.container2, {
+          opacity: animState,
+          scaleX: animState.interpolate(scaleInterpolationRange),
+          scaleY: animState.interpolate(scaleInterpolationRange),
+        }]}>
           <View style={styles.container3}>
             <Text style={styles.title}>{title}</Text>
           </View>
-          <View style={style}>
+          <View style={[]}>
             {children}
           </View>
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   )
@@ -37,8 +57,16 @@ const styles = StyleSheet.create({
   container1: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
     padding: 16,
+  },
+  background: {
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
   container2: {
     backgroundColor: '#F1F5FA',

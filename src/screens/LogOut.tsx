@@ -10,13 +10,12 @@ import Checkbox from '../components/Checkbox'
 import ModalRegular from '../components/ModalRegular'
 import { useAppDispatch, logOut, useAppSelector } from '../redux'
 
-interface Props {
-  onCancelPress?: () => void,
-  onExitPress?: () => void,
+interface ContentProps {
+  onCloseRequest?: () => void,
 }
 
 
-function LogOut({ onCancelPress, onExitPress }: Props): JSX.Element {
+function LogOutContent({ onCloseRequest }: ContentProps): JSX.Element {
   const dispatch = useAppDispatch()
   const accounts = useAppSelector(state => state.accounts)
   const accAmount = Object.keys(accounts).length
@@ -24,13 +23,10 @@ function LogOut({ onCancelPress, onExitPress }: Props): JSX.Element {
   const onAllChangePress = () => setAll(!all)
   const _onExitPress = () => {
     dispatch(logOut(all || accAmount < 2))
-    onExitPress && onExitPress()
+    onCloseRequest && onCloseRequest()
   }
   return (
-    <ModalRegular
-      title='Log Out'
-      visible={true}
-      onRequestClose={onCancelPress}>
+    <View>
       <Text style={styles.text}>This will disconnect the wallet from this 
         app. You will be able to restore your wallet 
         using 24 secret words - or import another 
@@ -43,10 +39,10 @@ function LogOut({ onCancelPress, onExitPress }: Props): JSX.Element {
         wallet. If you log out, you will lose access 
         to your tokens and NFTs.</Text>
       <View style={styles.btnContainer}>
-        <Button type='secondary' style={styles.btn1} onPress={onCancelPress}>Cancel</Button>
+        <Button type='secondary' style={styles.btn1} onPress={onCloseRequest}>Cancel</Button>
         <Button type='danger' style={styles.btn2} onPress={_onExitPress}>Exit</Button>
       </View>
-    </ModalRegular>
+    </View>
   )
 }
 
@@ -85,5 +81,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 })
+
+interface Props {
+  onCloseRequest?: () => void,
+  isOpen?: boolean,
+}
+
+function LogOut({ onCloseRequest, isOpen }: Props): JSX.Element {
+  return (
+    <ModalRegular
+      title='Log Out'
+      isOpen={isOpen}
+      onRequestClose={onCloseRequest}>
+      <LogOutContent onCloseRequest={onCloseRequest}/>
+    </ModalRegular>
+  )
+}
 
 export default LogOut

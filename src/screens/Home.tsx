@@ -68,10 +68,9 @@ function Home(): JSX.Element {
           {tab === 2 && <NftList style={styles.listContainer}/>}
         </View>
       </View>
-      
-      {isLogOutOpen && <LogOut
-        onCancelPress={() => setLogOutOpen(false)} 
-        onExitPress={() => setLogOutOpen(false)}/>}
+      <LogOut
+        onCloseRequest={() => setLogOutOpen(false)} 
+        isOpen={isLogOutOpen}/>
     </View>
   )
 }

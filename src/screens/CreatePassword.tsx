@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -14,7 +13,8 @@ import Button from '../components/Button'
 import Input from '../components/Input'
 import InsecurePassword from './InsecurePassword'
 
-import { finishPasswordCreation, resetAuth, useAppDispatch, useAppSelector } from '../redux'
+import { finishPasswordCreation, resetAuth, useAppDispatch,
+  useAppSelector } from '../redux'
 import { usePasswordValidation } from '../hooks/usePasswordValidation'
 
 function CreatePassword(): JSX.Element {
@@ -84,9 +84,10 @@ function CreatePassword(): JSX.Element {
           disabled={!password1 || !password2 || !!error || isLoading}
           onPress={onContinuePress1}>Continue</Button>
       </View>
-      {isInsecurePasswordModalOpen && <InsecurePassword
+      <InsecurePassword
+        isOpen={isInsecurePasswordModalOpen}
         onCancelPress={() => setInsecurePasswordModalOpen(false)}
-        onContinuePress={onContinuePress2}/>}
+        onContinuePress={onContinuePress2}/>
     </View>
   )
 }
