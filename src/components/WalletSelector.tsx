@@ -1,5 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import {
+  Animated,
+  GestureResponderEvent,
   Image,
   ImageBackground,
   Modal,
@@ -31,13 +33,32 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
   const currentAccount = useAppSelector(selectCurrentAccount)
   const accounts = useAppSelector(state => state.accounts)
   const [isSelectorOpen, setSelectorOpen] = useState(false)
+  const [selectorPosition, setSelectorPosition] = useState(0)
   const [isEditNameOpen, setEditNameOpen] = useState(false)
+  const animState = useRef(new Animated.Value(0)).current
+  const animate = (open: boolean) => {
+    Animated.timing(animState, {
+      toValue: open ? 1 : 0,
+      duration: 120,
+      useNativeDriver: true,
+    }).start(() => {
+      if (!open) setSelectorOpen(false)
+    })
+  }
+  const openSelector = (e: GestureResponderEvent) => {
+    setSelectorPosition(e.nativeEvent.pageY + 30)
+    setSelectorOpen(true)
+    animate(true)
+  }
+  const closeSelector = () => {
+    animate(false)
+  }
   const onEditPress = () => {
     setEditNameOpen(true)
-    setSelectorOpen(false)
+    closeSelector()
   }
   const onAddPress = () => {
-    setSelectorOpen(false)
+    closeSelector()
     onAddWalletPress && onAddWalletPress()
   }
   const onDonePress = () => {
@@ -59,7 +80,7 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
         imageStyle={styles.backgroundImage}>
         <View style={styles.nameContainer}>
           {!isEditNameOpen && <TouchableOpacity style={styles.btn1}
-            onPress={() => setSelectorOpen(true)}>
+            onPress={openSelector}>
             <Text style={styles.name} numberOfLines={1}>
               {currentAccount?.title}</Text>
             <Image source={require('../../assets/arrowDown.png')}
@@ -79,8 +100,12 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
       <Modal transparent visible={isSelectorOpen}>
         <View style={styles.modalContainer}>
           <Pressable style={styles.touchableBackground}
-            onPress={() => setSelectorOpen(false)}/>
-          <View style={styles.selectorContainer}>
+            onPress={closeSelector}/>
+          <Animated.View style={[styles.selectorContainer, {
+              top: selectorPosition,
+              translateY: Animated.multiply(Animated.add(animState, -1), 20),
+              opacity: animState
+            }]}>
             {accountsArr.map(({ accId, address, title }) => {
               const isActive = currentAccountId === accId
               return <View key={accId} style={styles.selectorElemContainer1}>
@@ -123,7 +148,7 @@ function WalletSelector({ style, onAddWalletPress }: Props): JSX.Element {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </Animated.View>
         </View>
       </Modal>
     </View>
@@ -180,11 +205,9 @@ const styles = StyleSheet.create({
   },
   touchableBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   selectorContainer: {
     position: 'absolute',
-    top: 105,
     left: 22,
     right: 22,
     backgroundColor: '#FFFFFF',
@@ -193,6 +216,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flexDirection: 'row',
     padding: 4,
+    elevation: 20,
   },
   selectorElemContainer1: {
     width: '33.333%',

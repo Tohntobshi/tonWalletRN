@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
+  Animated,
+  GestureResponderEvent,
   Image,
   Modal,
   Pressable,
@@ -13,6 +15,8 @@ import {
 
 import Toggle from './Toggle'
 
+const scaleInterpolationRange = { inputRange: [0,1], outputRange: [0.8, 1]}
+
 interface Props {
   style?: StyleProp<ViewStyle>,
   onBackupPress?: () => void,
@@ -21,33 +25,60 @@ interface Props {
 
 function Menu({ style, onBackupPress, onExitPress }: Props): JSX.Element {
   const [isOpen, setOpen] = useState(false)
+  const [menuPosition, setMenuPosition] = useState(0)
+  const animState = useRef(new Animated.Value(0)).current
+  const animate = (open: boolean) => {
+    Animated.timing(animState, {
+      toValue: open ? 1 : 0,
+      duration: 120,
+      useNativeDriver: true,
+    }).start(() => {
+      if (!open) setOpen(false)
+    })
+  }
+  const openMenu = (e: GestureResponderEvent) => {
+    setMenuPosition(e.nativeEvent.pageY + 30)
+    setOpen(true)
+    animate(true)
+  }
+  const closeMenu = () => {
+    animate(false)
+  }
+
   const [toggle1, setToggle1] = useState(false)
   const [toggle2, setToggle2] = useState(false)
   const _onBackupPress = () => {
-    setOpen(false)
+    closeMenu()
     onBackupPress && onBackupPress()
   }
   const _onSettingsPress = () => {
-    setOpen(false)
+    closeMenu()
   }
   const _onAboutPress = () => {
-    setOpen(false)
+    closeMenu()
   }
   const _onExitPress = () => {
-    setOpen(false)
+    closeMenu()
     onExitPress && onExitPress()
   }
   return (
     <View style={[styles.container1, style]}>
-      <TouchableOpacity style={styles.menuBtn} onPress={() => setOpen(true)}>
+      <TouchableOpacity style={styles.menuBtn} onPress={openMenu}>
         <Image
           source={require('../../assets/menu.png')}
           style={styles.menuBtnImg}/>
       </TouchableOpacity>
       <Modal transparent visible={isOpen}>
         <View style={styles.container2}>
-          <Pressable style={styles.touchableBackground} onPress={() => setOpen(false)}/>
-          <View style={styles.container3}>
+          <Pressable style={styles.touchableBackground} onPress={closeMenu}/>
+          <Animated.View style={[styles.container3, {
+              top: menuPosition,
+              translateY: Animated.multiply(Animated.add(animState, -1), 30),
+              translateX: Animated.multiply(Animated.add(animState, -1), -20),
+              opacity: animState,
+              scaleY: animState.interpolate(scaleInterpolationRange),
+              scaleX: animState.interpolate(scaleInterpolationRange),
+            }]}>
             <TouchableOpacity style={styles.menuItemToggle} onPress={() => setToggle1(!toggle1)}>
               <Text style={styles.text}>TON Proxy</Text>
               <Toggle value={toggle1} onPress={() => setToggle1(!toggle1)}/>
@@ -69,7 +100,7 @@ function Menu({ style, onBackupPress, onExitPress }: Props): JSX.Element {
             <TouchableOpacity style={styles.menuItem} onPress={_onExitPress}>
               <Text style={styles.textRed}>Exit</Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         </View>
       </Modal>
     </View>
@@ -103,14 +134,13 @@ const styles = StyleSheet.create({
   },
   touchableBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   container3: {
     position: 'absolute',
-    top: 75,
     right: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
+    elevation: 20,
   },
   menuItem: {
     height: 47,
