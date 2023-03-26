@@ -11,19 +11,14 @@ import MainTabs from '../components/MainTabs'
 import Menu from '../components/Menu'
 import WalletSelector from '../components/WalletSelector'
 import LogOut from './LogOut'
-import AssetsList from '../components/AssetsList'
-import ActivityList from '../components/ActivityList'
-import NftList from '../components/NftList'
 import { useAppSelector, useAppDispatch, selectIsBackedUp, setBackupRequestModalOpen,
   setAddWalletModalOpen, setSendModalOpen, setReceiveModalOpen } from '../redux'
 
 
-const tabs = ['Assets', 'Activity', 'NFT']
 
 function Home(): JSX.Element {
   const dispatch = useAppDispatch()
   const isBackedUp = useAppSelector(selectIsBackedUp)
-  const [tab, setTab] = useState(0)
   const [isLogOutOpen, setLogOutOpen] = useState(false)
   const openBackup = () => dispatch(setBackupRequestModalOpen(true))
   const addWallet = () => dispatch(setAddWalletModalOpen(true))
@@ -62,10 +57,7 @@ function Home(): JSX.Element {
             style={styles.actionBtn2} onPress={() => {}}/>
         </View>
         <View style={styles.listsContainer}>
-          <MainTabs labels={tabs} onChange={setTab} value={tab}/>
-          {tab === 0 && <AssetsList style={styles.listContainer}/>}
-          {tab === 1 && <ActivityList style={styles.listContainer}/>}
-          {tab === 2 && <NftList style={styles.listContainer}/>}
+          <MainTabs />
         </View>
       </View>
       <LogOut
@@ -132,11 +124,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     flex: 1,
     width: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-  },
-  listContainer: {
-    flex: 1,
   },
 })
 
