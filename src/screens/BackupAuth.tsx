@@ -10,6 +10,26 @@ import Transitioner from '../components/Transitioner'
 import { completeBackup, setBackupAuthModalOpen,
   useAppDispatch, useAppSelector } from '../redux'
 
+
+interface WordsStepProps {
+  onCheckPress?: () => void,
+}
+function WordsStep({ onCheckPress }: WordsStepProps) {
+  const mnemonic = useAppSelector(state => state.auth.mnemonic)
+  return <Words mnemonic={mnemonic || []} onCheckPress={onCheckPress}/>
+}
+
+interface CheckStepProps {
+  onBackPress?: () => void,
+  onSuccess?: () => void,
+}
+
+function CheckStep({ onBackPress, onSuccess }: CheckStepProps) {
+  const mnemonic = useAppSelector(state => state.auth.mnemonic)
+  return <LetsCheck mnemonic={mnemonic || []} onSuccess={onSuccess}
+    onBackPress={onBackPress}/>
+}
+
 interface ContentProps {
   onClosePress?: () => void,
   onSuccess?: () => void,
@@ -22,16 +42,14 @@ const titles = {
 }
 
 function BackupAuthContent({ onClosePress, onSuccess }: ContentProps): JSX.Element {
-  const mnemonic = useAppSelector(state => state.auth.mnemonic)
   const [step, setStep] = useState(0)
   return (
     <View style={styles.content}>
       <ModalBottomHeader title={(titles as any)[step]} onRequestClose={onClosePress}/>
       <Transitioner style={styles.transitioner} active={step} elements={[
         <SafetyRules onUnderstoodPress={() => setStep(1)}/>,
-        <Words mnemonic={mnemonic || []} onCheckPress={() => setStep(2)}/>,
-        <LetsCheck mnemonic={mnemonic || []} onSuccess={onSuccess}
-          onBackPress={() => setStep(1)}/>
+        <WordsStep onCheckPress={() => setStep(2)}/>,
+        <CheckStep onSuccess={onSuccess} onBackPress={() => setStep(1)}/>
       ]}/>
     </View>
   )
@@ -41,11 +59,10 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     minHeight: 550,
-    // backgroundColor: 'red'
   },
   transitioner: {
     flexGrow: 1,
-  }
+  },
 })
 
 function BackupAuth(): JSX.Element {
