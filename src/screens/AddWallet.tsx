@@ -12,6 +12,48 @@ import EnterPasswordStep from './EnterPasswordStep'
 import { addNextWallet, setAuthPasswordError, useAppDispatch,
   useAppSelector, resetAuth, setAddWalletModalOpen } from '../redux'
 import ModalBottomHeader from '../components/ModalBottomHeader'
+import Transitioner from '../components/Transitioner'
+
+interface ChooseStepProps {
+  onCreatePress?: () => void,
+  onImportPress?: () => void,
+}
+
+function ChooseStep({ onCreatePress, onImportPress }: ChooseStepProps) {
+  return <View style={styles.step}>
+    <Lottie source={require('../../assets/bird7.json')}
+      autoPlay loop style={styles.logoImage}/>
+    <Text style={styles.text}>MyTonWallet allows you to seamlessly
+      switch between multiple accounts.</Text>
+    <Text style={styles.text}>Try it by creating a new wallet,
+      or importing any of your existing ones
+      using 24 secret words.</Text>
+    <Button type='primary' style={styles.createBtn}
+      onPress={onCreatePress}>Create Wallet</Button>
+    <Button type='link' style={styles.mnemonicLink}
+      onPress={onImportPress}>Import From 24 Secret Words</Button>
+  </View>
+}
+
+interface PasswordStepProps {
+  onPasswordConfirm: (val: string) => void,
+  onBackPress: () => void,
+}
+
+function PasswordStep({ onPasswordConfirm, onBackPress }: PasswordStepProps) {
+  const dispatch = useAppDispatch()
+  const error = useAppSelector(state => state.auth.passwordError)
+  const isLoading = useAppSelector(state => state.isAuthLoading)
+  const [password, setPassword] = useState('')
+  const onPasswordChange = (val: string) => {
+    if (error) dispatch(setAuthPasswordError())
+    setPassword(val)
+  }
+  return <EnterPasswordStep onContinuePress={() => onPasswordConfirm(password)}
+    onBackPress={onBackPress} error={error} value={password}
+    onChange={onPasswordChange} isLoading={isLoading}
+    placeholder='Enter your password'/>
+}
 
 interface Props {
   onCancelPress?: () => void,
@@ -25,9 +67,7 @@ const titles = {
 function AddWalletContent({ onCancelPress }: Props): JSX.Element {
   const dispatch = useAppDispatch()
   const isLoading = useAppSelector(state => state.isAuthLoading)
-  const error = useAppSelector(state => state.auth.passwordError)
   const [step, setStep] = useState(0)
-  const [password, setPassword] = useState('')
   const [isImported, setIsImported] = useState(false)
   const onCreatePress = () => {
     setStep(1)
@@ -37,39 +77,27 @@ function AddWalletContent({ onCancelPress }: Props): JSX.Element {
     setStep(1)
     setIsImported(true)
   }
-  const onPasswordChange = (val: string) => {
-    if (error) dispatch(setAuthPasswordError())
-    setPassword(val)
-  }
-  const onContinuePress = () => {
+  const onContinuePress = (password: string) => {
     dispatch(addNextWallet({ password, isImported }))
   }
   return (
     <View style={styles.container}>
       <ModalBottomHeader title={(titles as any)[step]}
         onRequestClose={onCancelPress} disabledClose={isLoading}/>
-      {step === 0 && <View style={styles.step}>
-        <Lottie source={require('../../assets/bird7.json')}
-          autoPlay loop style={styles.logoImage}/>
-        <Text style={styles.text}>MyTonWallet allows you to seamlessly
-          switch between multiple accounts.</Text>
-        <Text style={styles.text}>Try it by creating a new wallet,
-          or importing any of your existing ones
-          using 24 secret words.</Text>
-        <Button type='primary' style={styles.createBtn}
-          onPress={onCreatePress}>Create Wallet</Button>
-        <Button type='link' style={styles.mnemonicLink}
-          onPress={onImportPress}>Import From 24 Secret Words</Button>
-      </View>}
-      {step === 1 && <EnterPasswordStep onContinuePress={onContinuePress}
-        value={password} onChange={onPasswordChange} error={error}
-        isLoading={isLoading}
-        onBackPress={() => setStep(0)} placeholder='Enter your password'/>}
+      <Transitioner style={styles.transitioner} active={step} elements={[
+        <ChooseStep onCreatePress={onCreatePress}
+          onImportPress={onImportPress} />,
+        <PasswordStep onPasswordConfirm={onContinuePress}
+          onBackPress={() => setStep(0)}/>,
+      ]}/>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  transitioner: {
+    flexGrow: 1,
+  },
   container: {
     flexGrow: 1,
     minHeight: 500,

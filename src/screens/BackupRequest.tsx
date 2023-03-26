@@ -90,9 +90,11 @@ function BackupRequestContent({ onClosePress }: Props): JSX.Element {
     <View style={styles.content}>
       <ModalBottomHeader title={(titles as any)[step]}
         onRequestClose={onClosePress} disabledClose={isLoading}/>
-      <Transitioner style={styles.transitioner} active={getActiveScreen()} elements={[
+      <Transitioner style={styles.transitioner}
+        active={getActiveScreen()} elements={[
         <SafetyRules onUnderstoodPress={() => setStep(1)}/>,
-        <PasswordStep onPasswordConfirm={onPasswordConfirm} onBackPress={() => setStep(0)}/>,
+        <PasswordStep onPasswordConfirm={onPasswordConfirm}
+          onBackPress={() => setStep(0)}/>,
         <WordsStep onCheckPress={() => setStep(3)}/>,
         <CheckStep onBackPress={() => setStep(2)}/>
       ]}/>
