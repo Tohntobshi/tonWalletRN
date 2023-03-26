@@ -8,8 +8,8 @@ import LetsCheck from './BackupSteps/LetsCheck'
 import EnterPasswordStep from './EnterPasswordStep'
 import ModalBottomHeader from '../components/ModalBottomHeader'
 
-import { completeBackup, requestMnemonic, resetAuth, setAuthPasswordError,
-  setBackupRequestModalOpen, useAppDispatch, useAppSelector } from '../redux'
+import { completeBackup, gracefulyCloseRequestBackupModal, requestMnemonic,
+  setAuthPasswordError, useAppDispatch, useAppSelector } from '../redux'
 import Transitioner from '../components/Transitioner'
 
 
@@ -48,7 +48,6 @@ interface CheckStepProps {
 function CheckStep({ onBackPress }: CheckStepProps) {
   const onSuccess = () => {
     dispatch(completeBackup())
-    dispatch(setBackupRequestModalOpen(false))
   }
   const dispatch = useAppDispatch()
   const mnemonic = useAppSelector(state => state.auth.mnemonic)
@@ -116,8 +115,7 @@ function BackupRequest(): JSX.Element {
   const dispatch = useAppDispatch()
   const isLoading = useAppSelector(state => state.isAuthLoading)
   const _onClosePress = () => {
-    dispatch(setBackupRequestModalOpen(false))
-    dispatch(resetAuth())
+    dispatch(gracefulyCloseRequestBackupModal())
   }
   const isOpen = useAppSelector(state => state.modals.backupRequest)
   return (

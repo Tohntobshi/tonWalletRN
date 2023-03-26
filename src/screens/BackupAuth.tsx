@@ -67,18 +67,17 @@ const styles = StyleSheet.create({
 
 function BackupAuth(): JSX.Element {
   const dispatch = useAppDispatch()
-  const onSkipPress = () => dispatch(setBackupAuthModalOpen(false))
+  const onClosePress = () => dispatch(setBackupAuthModalOpen(false))
   const onComplete = () => {
-    dispatch(setBackupAuthModalOpen(false))
     dispatch(completeBackup())
   }
   const isOpen = useAppSelector(state => state.modals.backupAuth)
   return (
     <ModalBottom
       isOpen={isOpen}
-      onRequestClose={onSkipPress}>
+      onRequestClose={onClosePress}>
       <BackupAuthContent
-        onClosePress={onSkipPress}
+        onClosePress={onClosePress}
         onSuccess={onComplete} />
     </ModalBottom>
   )

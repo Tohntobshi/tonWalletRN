@@ -10,19 +10,28 @@ import Button from '../../components/Button'
 import Input from '../../components/Input'
 import OutputWithActions from '../../components/OutputWithActions'
 import { formatCurrency } from '../../utils/formatNumber'
+import { selectCurrentAccountTokens, setCurrentTransferState,
+  useAppDispatch, useAppSelector } from '../../redux'
+import { bigStrToHuman } from '../../utils'
+import { TransferState } from '../../types'
 
-interface Props {
-  onContinuePress?: () => void,
-  onEditPress?: () => void,
-  address: string,
-  amount: number,
-  symbol: string,
-  comment?: string,
-  fee: number,
-}
 
-function SendStep2({ onContinuePress, onEditPress,
-  address, amount, comment, fee, symbol }: Props): JSX.Element {
+function SendStep2(): JSX.Element {
+  const dispatch = useAppDispatch()
+  const userTokens = useAppSelector(selectCurrentAccountTokens)
+  const toncoin = userTokens?.find((el) => el.slug === 'toncoin')
+  const currentTransfer = useAppSelector(state => state.currentTransfer)
+  const amount = currentTransfer.amount || 0
+  const address = currentTransfer.toAddress || ''
+  const fee = bigStrToHuman(currentTransfer.fee || '0', toncoin?.decimals)
+  const symbol = toncoin?.symbol || ''
+  const comment = currentTransfer.comment
+  const onContinuePress = () => {
+    dispatch(setCurrentTransferState(TransferState.Password))
+  }
+  const onEditPress = () => {
+    dispatch(setCurrentTransferState(TransferState.None))
+  }
   return (
     <View style={styles.page}>
       <Lottie source={require('../../../assets/bird4.json')}

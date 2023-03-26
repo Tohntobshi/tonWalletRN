@@ -1,9 +1,9 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects'
-import { validateSendRequest, send, requestTransactions, apiUpdate } from '../asyncActions'
+import { call, delay, put, select, takeEvery } from 'redux-saga/effects'
+import { validateSendRequest, send, requestTransactions, apiUpdate, gracefulyCloseSendModal } from '../asyncActions'
 import { callApi } from '../../api'
-import { appendTransactions, prependTransaction, setCurrentTransfer, setCurrentTransferError,
+import { appendTransactions, prependTransaction, resetCurrentTransfer, setCurrentTransfer, setCurrentTransferError,
     setCurrentTransferInitialBalance, setCurrentTransferState, setIsCurrentTransferLoading,
-    setIsTransactionsLoading, setTransactions, updateTransactionId } from '../reducers'
+    setIsTransactionsLoading, setSendModalOpen, setTransactions, updateTransactionId } from '../reducers'
 import { MethodResponseUnwrapped } from '../../api/methods/types'
 import { TransferState } from '../../types'
 import { RootState } from '../types'
@@ -101,10 +101,17 @@ function* apiUpdateSaga({ payload }: ReturnType<typeof apiUpdate>) {
     }
 }
 
+function* gracefulyCloseSendModalSaga() {
+    yield put(setSendModalOpen(false))
+    yield delay(300)
+    yield put(resetCurrentTransfer())
+}
+
 
 export function* transactionsSaga() {
     yield takeEvery(validateSendRequest.toString(), validateSendRequestSaga)
     yield takeEvery(send.toString(), sendSaga)
     yield takeEvery(requestTransactions.toString(), requestTransactionsSaga)
     yield takeEvery(apiUpdate.toString(), apiUpdateSaga)
+    yield takeEvery(gracefulyCloseSendModal.toString(), gracefulyCloseSendModalSaga)
 }

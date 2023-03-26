@@ -2,13 +2,15 @@ import { REHYDRATE } from 'redux-persist'
 import { Alert } from 'react-native'
 import { call, put, takeLatest, all, delay, select, takeEvery } from 'redux-saga/effects'
 import { addNextWallet, completeBackup, createWallet, finishPasswordCreation,
+    gracefulyCloseRequestBackupModal,
     importWallet, logOut, requestMnemonic, startCreatingWallet, switchAccount
 } from '../asyncActions'
 import { callApi } from '../../api'
 import { setAuthState, setAuthMnemonic, setAuthMnemonicError,
     setAuthPassword, setAuthIsImported, addAccount, resetAuth,
     resetBackupRequred, removeAllAccounts, setAuthPasswordError,
-    setCurrentAccountId, removeAccount, setIsAuthLoading, setAddWalletModalOpen } from '../reducers'
+    setCurrentAccountId, removeAccount, setIsAuthLoading, setAddWalletModalOpen,
+    setBackupAuthModalOpen, setBackupRequestModalOpen } from '../reducers'
 import { MethodResponseUnwrapped } from '../../api/methods/types'
 import { AuthState } from '../../types'
 import { RootState } from '../types'
@@ -96,7 +98,10 @@ function* createWalletSaga() {
 }
 
 function* completeBackupSaga() {
+    yield put(setBackupAuthModalOpen(false))
+    yield put(setBackupRequestModalOpen(false))
     yield put(resetBackupRequred())
+    yield delay(300)
     yield put(resetAuth())
 }
 
@@ -171,7 +176,7 @@ function* requestMnemonicSaga({ payload: { password } }: ReturnType<typeof reque
     yield put(setIsAuthLoading(false))
 }
 
-export function* activateAccountSaga() {
+function* activateAccountSaga() {
     const { currentAccountId }: RootState = yield select()
     const transactions: ApiTransaction[] = yield select(selectCurrentTransactions)
     const lastTx = transactions.find((el) => !getIsTxIdLocal(el.txId))
@@ -181,6 +186,12 @@ export function* activateAccountSaga() {
     } catch (e: any) {
         console.log('failed to activate account', e?.message)
     }
+}
+
+function* gracefulyCloseRequestBackupModalSaga() {
+    yield put(setBackupRequestModalOpen(false))
+    yield delay(300)
+    yield put(resetAuth())
 }
 
 export function* authSaga() {
@@ -193,5 +204,6 @@ export function* authSaga() {
     yield takeLatest(logOut.toString(), logOutSaga)
     yield takeEvery(addNextWallet.toString(), addNextWalletSaga)
     yield takeEvery(requestMnemonic, requestMnemonicSaga)
+    yield takeEvery(gracefulyCloseRequestBackupModal.toString(), gracefulyCloseRequestBackupModalSaga)
     yield takeLatest(REHYDRATE, activateAccountSaga)
 }

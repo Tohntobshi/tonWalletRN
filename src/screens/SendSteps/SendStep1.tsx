@@ -7,6 +7,8 @@ import {
 
 import Button from '../../components/Button'
 import Input from '../../components/Input'
+import { selectCurrentAccountTokens, setCurrentTransferError,
+  useAppDispatch, useAppSelector, validateSendRequest } from '../../redux'
 import { formatCurrency } from '../../utils/formatNumber'
 
 const TON_ADDRESS_REGEX = /^[-\w_]{48}$/i
@@ -27,35 +29,35 @@ function getIsAddressValid(address?: string) {
   )
 }
 
-interface Props {
-  onContinuePress?: (address: string, amount: number, comment: string) => void,
-  balance: number,
-  symbol: string,
-  error?: string,
-  onAnyChange?: () => void,
-  isLoading?: boolean,
-}
-
-function SendStep1({ onContinuePress, balance, symbol, onAnyChange,
-  error, isLoading }: Props): JSX.Element {
+function SendStep1(): JSX.Element {
+  const dispatch = useAppDispatch()
+  const isLoading = useAppSelector(state => state.isCurrentTransferLoading)
+  const error = useAppSelector(state => state.currentTransfer.error)
+  const userTokens = useAppSelector(selectCurrentAccountTokens)
+  const toncoin = userTokens?.find((el) => el.slug === 'toncoin')
+  const balance = toncoin?.amount || 0
+  const symbol = toncoin?.symbol || ''
   const [address, setAddress] = useState('')
   const [addressError, setAddressError] = useState('')
+  const onAnyChange = () => {
+    if (error) dispatch(setCurrentTransferError())
+  }
   const onAddressChange = (val: string) => {
     setAddressError('')
     setAddress(val)
-    onAnyChange && onAnyChange()
+    onAnyChange()
   }
   const [amount, setAmount] = useState('')
   const [amountError, setAmountError] = useState('')
   const onAmountChange = (val: string) => {
     setAmountError('')
     setAmount(val)
-    onAnyChange && onAnyChange()
+    onAnyChange()
   }
   const [comment, setComment] = useState('')
   const onCommentChange = (val: string) => {
     setComment(val)
-    onAnyChange && onAnyChange()
+    onAnyChange()
   }
   const onSendPress = () => {
     if (!getIsAddressValid(address)) {
@@ -72,7 +74,12 @@ function SendStep1({ onContinuePress, balance, symbol, onAnyChange,
       return
     }
     const commentToSend = trimStringByMaxBytes(comment, COMMENT_MAX_SIZE_BYTES)
-    onContinuePress && onContinuePress(address, amountToSend, comment)
+    dispatch(validateSendRequest({
+      slug: 'toncoin',
+      address,
+      amount: amountToSend,
+      comment: commentToSend,
+    }))
   }
   return (
     <View style={styles.page}>

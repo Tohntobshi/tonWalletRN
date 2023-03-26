@@ -10,18 +10,22 @@ import Lottie from 'lottie-react-native'
 
 import Button from '../../components/Button'
 import { formatCurrency } from '../../utils/formatNumber'
+import { selectCurrentAccountTokens, useAppSelector } from '../../redux'
+import { bigStrToHuman } from '../../utils'
 
 interface Props {
   onClosePress?: () => void,
-  initialBalance: number,
-  amount: number,
-  fee: number,
-  price: number,
-  symbol: string
 }
 
-function SendStep4({ onClosePress,
-  initialBalance, amount, fee, price, symbol }: Props): JSX.Element {
+function SendStep4({ onClosePress }: Props): JSX.Element {
+  const userTokens = useAppSelector(selectCurrentAccountTokens)
+  const toncoin = userTokens?.find((el) => el.slug === 'toncoin')
+  const currentTransfer = useAppSelector(state => state.currentTransfer)
+  const initialBalance = currentTransfer.initialBalance || 0
+  const amount = currentTransfer.amount || 0
+  const symbol = toncoin?.symbol || ''
+  const fee = bigStrToHuman(currentTransfer.fee || '0', toncoin?.decimals)
+  const price = toncoin?.price || 0
   const spent = formatCurrency(amount + fee, '').split('.')
   return (
     <View style={styles.page}>

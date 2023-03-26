@@ -7,11 +7,34 @@ import SendStep2 from './SendSteps/SendStep2'
 import EnterPasswordStep from './EnterPasswordStep'
 import SendStep4 from './SendSteps/SendStep4'
 import { useAppDispatch, useAppSelector, setCurrentTransferState,
-  resetCurrentTransfer, validateSendRequest, send,
-  selectCurrentAccountTokens, setCurrentTransferError, setSendModalOpen } from '../redux'
+  send, selectCurrentAccountTokens,
+  setCurrentTransferError, gracefulyCloseSendModal } from '../redux'
 import { TransferState } from '../types'
-import { bigStrToHuman } from '../utils'
 import ModalBottomHeader from '../components/ModalBottomHeader'
+import Transitioner from '../components/Transitioner'
+
+
+function PasswordStep() {
+  const dispatch = useAppDispatch()
+  const userTokens = useAppSelector(selectCurrentAccountTokens)
+  const toncoin = userTokens?.find((el) => el.slug === 'toncoin')
+  const error = useAppSelector(state => state.currentTransfer.error)
+  const isLoading = useAppSelector(state => state.isCurrentTransferLoading)
+  const [password, setPassword] = useState('')
+  const onPasswordChange = (val: string) => {
+    if (error) dispatch(setCurrentTransferError())
+    setPassword(val)
+  }
+  const onPasswordConfirm = () => {
+    dispatch(send({ password, initialBalance: toncoin?.amount || 0 }))
+  }
+  const onBackPress = () => {
+    dispatch(setCurrentTransferState(TransferState.None))
+  }
+  return <EnterPasswordStep onContinuePress={onPasswordConfirm}
+    onBackPress={onBackPress} error={error} value={password}
+    onChange={onPasswordChange} isLoading={isLoading}/>
+}
 
 interface Props {
   onCancelPress?: () => void,
@@ -25,74 +48,27 @@ const titles = {
 }
 
 function SendContent({ onCancelPress }: Props): JSX.Element {
-  const dispatch = useAppDispatch()
-  const userTokens = useAppSelector(selectCurrentAccountTokens)
-  const toncoin = userTokens?.find((el) => el.slug === 'toncoin')
-  const { state: step, error, amount, fee, comment, toAddress, initialBalance } =
-    useAppSelector(state => state.currentTransfer)
+  const step = useAppSelector(state => state.currentTransfer.state)
   const isLoading = useAppSelector(state => state.isCurrentTransferLoading)
-  const onAnyChange = () => {
-    if (error) dispatch(setCurrentTransferError())
-  }
 
-  const [password, setPassword] = useState('')
-  const onPasswordChange = (val: string) => {
-    onAnyChange()
-    setPassword(val)
-  }
-
-  const onFirstStepConfirmPress = (address: string, amount: number, comment: string) => {
-    dispatch(validateSendRequest({ slug: 'toncoin', address, amount, comment }))
-  }
-  const onPasswordStepConfirmPress = () => {
-    dispatch(send({ password, initialBalance: toncoin?.amount || 0 }))
-  }
-  const onEditPress = () => {
-    dispatch(setCurrentTransferState(TransferState.None))
-  }
-  const onBackFromPasswordPress = () => {
-    dispatch(setCurrentTransferState(TransferState.None))
-  }
-  const onProceedToPasswordPress = () => {
-    dispatch(setCurrentTransferState(TransferState.Password))
-  }
-  const feeReadable = bigStrToHuman(fee || '0', toncoin?.decimals)
   return (
     <View style={styles.content}>
       <ModalBottomHeader title={(titles as any)[step]}
         onRequestClose={onCancelPress} disabledClose={isLoading}/>
-      {step === TransferState.None && <SendStep1
-        balance={toncoin?.amount || 0}
-        symbol={toncoin?.symbol || ''}
-        onContinuePress={onFirstStepConfirmPress}
-        onAnyChange={onAnyChange}
-        error={error}
-        isLoading={isLoading}/>}
-      {step === TransferState.Confirm && <SendStep2
-        amount={amount || 0}
-        symbol={toncoin?.symbol || ''}
-        address={toAddress || ''}
-        fee={feeReadable}
-        comment={comment}
-        onContinuePress={onProceedToPasswordPress}
-        onEditPress={onEditPress}/>}
-      {step === TransferState.Password && <EnterPasswordStep
-        value={password} onChange={onPasswordChange} 
-        onContinuePress={onPasswordStepConfirmPress}
-        onBackPress={onBackFromPasswordPress}
-        isLoading={isLoading} error={error}/>}
-      {step === TransferState.Complete && <SendStep4
-        initialBalance={initialBalance || 0}
-        amount={amount || 0}
-        symbol={toncoin?.symbol || ''}
-        fee={feeReadable}
-        price={toncoin?.price || 0}
-        onClosePress={onCancelPress}/>}
+      <Transitioner style={styles.transitioner} active={step} elements={[
+          <SendStep1/>,
+          <SendStep2 />,
+          <PasswordStep />,
+          <SendStep4 onClosePress={onCancelPress}/>
+        ]}/>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  transitioner: {
+    flexGrow: 1,
+  },
   content: {
     flexGrow: 1,
     minHeight: 500
@@ -103,8 +79,7 @@ function Send(): JSX.Element {
   const dispatch = useAppDispatch()
   const isLoading = useAppSelector(state => state.isCurrentTransferLoading)
   const _onClosePress = () => {
-    dispatch(setSendModalOpen(false))
-    dispatch(resetCurrentTransfer())
+    dispatch(gracefulyCloseSendModal())
   }
   const isOpen = useAppSelector(state => state.modals.send)
   return (
