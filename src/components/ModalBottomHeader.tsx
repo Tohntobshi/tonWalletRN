@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flexShrink: 0,
+    paddingHorizontal: 16,
   },
   title: {
     textAlign: 'center',

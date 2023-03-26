@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexGrow: 1,
     justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
   scrollViewContainer: {
     width: '100%',

@@ -5,13 +5,11 @@ import {
   View,
   ViewStyle,
   Animated,
-  Dimensions,
+  LayoutChangeEvent,
 } from 'react-native'
 
-const width = Dimensions.get('window').width
-
 const scaleInterpolationRange = {
-  inputRange: [-width, 0, width],
+  inputRange: [-1, 0, 1],
   outputRange: [0.2, 1, 1]
 }
 
@@ -25,18 +23,19 @@ function Transitioner({ style, elements, active: activeElement }: Props): JSX.El
   const [elementToRender1, setElementToRender1] = useState<JSX.Element | undefined>()
   const [elementToRender2, setElementToRender2] = useState<JSX.Element | undefined>()
   const [prevActiveElement, setPrevActiveElement] = useState(0)
+  const [width, setWidth] = useState(0)
 
   const [activeScreen, setActiveScreen] = useState(0)
   const [nextScreen, setNextScreen] = useState(0)
   const position = useRef(new Animated.Value(0)).current
-  const position1 = useRef(Animated.add(Animated.modulo(position, width * 3), -width)).current
-  const position2 = useRef(Animated.add(Animated.modulo(Animated.add(position, width), width * 3), -width)).current
-  const position3 = useRef(Animated.add(Animated.modulo(Animated.add(position, 2 * width), width * 3), -width)).current
+  const position1 = useRef(Animated.add(Animated.modulo(position, 3), -1)).current
+  const position2 = useRef(Animated.add(Animated.modulo(Animated.add(position, 1), 3), -1)).current
+  const position3 = useRef(Animated.add(Animated.modulo(Animated.add(position, 2), 3), -1)).current
 
   const activateScreen = (index: number) => {
     setNextScreen(index)
     Animated.timing(position, {
-      toValue: (1 - index) * width,
+      toValue: (1 - index),
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
@@ -56,10 +55,14 @@ function Transitioner({ style, elements, active: activeElement }: Props): JSX.El
     activateScreen(prevActiveElement > activeElement ? activeScreen - 1 : activeScreen + 1)
     setPrevActiveElement(activeElement)
   }, [activeElement])
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    setWidth(e.nativeEvent.layout.width)
+  }
   return (
-    <View style={style}>
+    <View style={style} onLayout={onLayout}>
       <Animated.View style={[styles.common, { 
-          translateX: position1,
+          translateX: Animated.multiply(position1, width),
           scaleX: position1.interpolate(scaleInterpolationRange),
           scaleY: position1.interpolate(scaleInterpolationRange),
           opacity: position1.interpolate(scaleInterpolationRange),
@@ -68,7 +71,7 @@ function Transitioner({ style, elements, active: activeElement }: Props): JSX.El
         {realNextScreen === 0 && elementToRender2}
       </Animated.View>
       <Animated.View style={[styles.common, { 
-          translateX: position2,
+          translateX: Animated.multiply(position2, width),
           scaleX: position2.interpolate(scaleInterpolationRange),
           scaleY: position2.interpolate(scaleInterpolationRange),
           opacity: position2.interpolate(scaleInterpolationRange),
@@ -77,7 +80,7 @@ function Transitioner({ style, elements, active: activeElement }: Props): JSX.El
         {realNextScreen === 1 && elementToRender2}
       </Animated.View>
       <Animated.View style={[styles.common, { 
-          translateX: position3,
+          translateX: Animated.multiply(position3, width),
           scaleX: position3.interpolate(scaleInterpolationRange),
           scaleY: position3.interpolate(scaleInterpolationRange),
           opacity: position3.interpolate(scaleInterpolationRange),

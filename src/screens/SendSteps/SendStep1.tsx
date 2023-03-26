@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
   page: {
     flexGrow: 1,
     alignItems: 'center',
+    paddingHorizontal: 16,
   },
   labelContainer: {
     marginTop: 16,

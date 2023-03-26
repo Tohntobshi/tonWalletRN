@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 24,
     flexGrow: 1,
+    paddingHorizontal: 16,
   },
   logoImage: {
     width: 100,

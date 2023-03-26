@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
     flexGrow: 1,
+    paddingHorizontal: 16,
   },
   scrollViewContainer: {
     flex: 1,

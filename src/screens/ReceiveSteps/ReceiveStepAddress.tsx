@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   page: {
     alignItems: 'center',
     flexGrow: 1,
+    paddingHorizontal: 16,
   },
   text: {
     marginTop: 16,

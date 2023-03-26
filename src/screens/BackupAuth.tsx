@@ -6,6 +6,7 @@ import SafetyRules from './BackupSteps/SafetyRules'
 import Words from './BackupSteps/Words'
 import LetsCheck from './BackupSteps/LetsCheck'
 import ModalBottomHeader from '../components/ModalBottomHeader'
+import Transitioner from '../components/Transitioner'
 import { completeBackup, setBackupAuthModalOpen,
   useAppDispatch, useAppSelector } from '../redux'
 
@@ -26,10 +27,12 @@ function BackupAuthContent({ onClosePress, onSuccess }: ContentProps): JSX.Eleme
   return (
     <View style={styles.content}>
       <ModalBottomHeader title={(titles as any)[step]} onRequestClose={onClosePress}/>
-      {step === 0 && <SafetyRules onUnderstoodPress={() => setStep(1)}/>}
-      {step === 1 && <Words mnemonic={mnemonic || []} onCheckPress={() => setStep(2)}/>}
-      {step === 2 && <LetsCheck mnemonic={mnemonic || []} onSuccess={onSuccess}
-        onBackPress={() => setStep(1)}/>}
+      <Transitioner style={styles.transitioner} active={step} elements={[
+        <SafetyRules onUnderstoodPress={() => setStep(1)}/>,
+        <Words mnemonic={mnemonic || []} onCheckPress={() => setStep(2)}/>,
+        <LetsCheck mnemonic={mnemonic || []} onSuccess={onSuccess}
+          onBackPress={() => setStep(1)}/>
+      ]}/>
     </View>
   )
 }
@@ -37,8 +40,12 @@ function BackupAuthContent({ onClosePress, onSuccess }: ContentProps): JSX.Eleme
 const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
-    minHeight: 550
+    minHeight: 550,
+    // backgroundColor: 'red'
   },
+  transitioner: {
+    flexGrow: 1,
+  }
 })
 
 function BackupAuth(): JSX.Element {
