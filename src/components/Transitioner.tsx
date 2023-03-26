@@ -19,41 +19,62 @@ interface Props {
   active: number,
 }
 
+interface State {
+  currentElement: JSX.Element | undefined,
+  nextElement: JSX.Element | undefined,
+  prevActiveElement: number,
+  activeScreen: number,
+  nextScreen: number,
+
+}
+
 function Transitioner({ style, elements, active: activeElement }: Props): JSX.Element {
-  const [elementToRender1, setElementToRender1] = useState<JSX.Element | undefined>()
-  const [elementToRender2, setElementToRender2] = useState<JSX.Element | undefined>()
-  const [prevActiveElement, setPrevActiveElement] = useState(0)
+  const [state, setState] = useState<State>({
+    currentElement: undefined,
+    nextElement: undefined,
+    prevActiveElement: 0,
+    activeScreen: 0,
+    nextScreen: 0
+  })
   const [width, setWidth] = useState(0)
 
-  const [activeScreen, setActiveScreen] = useState(0)
-  const [nextScreen, setNextScreen] = useState(0)
   const position = useRef(new Animated.Value(0)).current
   const position1 = useRef(Animated.add(Animated.modulo(position, 3), -1)).current
   const position2 = useRef(Animated.add(Animated.modulo(Animated.add(position, 1), 3), -1)).current
   const position3 = useRef(Animated.add(Animated.modulo(Animated.add(position, 2), 3), -1)).current
+  const positions = [position1, position2, position3]
 
   const activateScreen = (index: number) => {
-    setNextScreen(index)
     Animated.timing(position, {
       toValue: (1 - index),
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-      setActiveScreen(index)
-      setElementToRender1(elements[activeElement])
-      setElementToRender2(undefined)
+      setState((st) => ({
+        activeScreen: index,
+        currentElement: elements[activeElement],
+        nextElement: undefined,
+        nextScreen: st.nextScreen,
+        prevActiveElement: st.prevActiveElement
+      }))
     })
   }
-  let realActiveScreen = activeScreen % 3
+  let realActiveScreen = state.activeScreen % 3
   realActiveScreen = realActiveScreen < 0 ? 3 + realActiveScreen : realActiveScreen
 
-  let realNextScreen = nextScreen % 3
+  let realNextScreen = state.nextScreen % 3
   realNextScreen = realNextScreen < 0 ? 3 + realNextScreen : realNextScreen
   
   useEffect(() => {
-    setElementToRender2(elements[activeElement])
-    activateScreen(prevActiveElement > activeElement ? activeScreen - 1 : activeScreen + 1)
-    setPrevActiveElement(activeElement)
+    const nextScreen = state.prevActiveElement > activeElement ? state.activeScreen - 1 : state.activeScreen + 1
+    setState({
+      nextScreen,
+      nextElement: elements[activeElement],
+      prevActiveElement: activeElement,
+      currentElement: elements[state.prevActiveElement],
+      activeScreen: state.activeScreen
+    })
+    activateScreen(nextScreen)
   }, [activeElement])
 
   const onLayout = (e: LayoutChangeEvent) => {
@@ -61,33 +82,16 @@ function Transitioner({ style, elements, active: activeElement }: Props): JSX.El
   }
   return (
     <View style={style} onLayout={onLayout}>
-      <Animated.View style={[styles.common, { 
-          translateX: Animated.multiply(position1, width),
-          scaleX: position1.interpolate(scaleInterpolationRange),
-          scaleY: position1.interpolate(scaleInterpolationRange),
-          opacity: position1.interpolate(scaleInterpolationRange),
-        }]}>
-        {realActiveScreen === 0 && elementToRender1}
-        {realNextScreen === 0 && elementToRender2}
-      </Animated.View>
-      <Animated.View style={[styles.common, { 
-          translateX: Animated.multiply(position2, width),
-          scaleX: position2.interpolate(scaleInterpolationRange),
-          scaleY: position2.interpolate(scaleInterpolationRange),
-          opacity: position2.interpolate(scaleInterpolationRange),
-        }]}>
-        {realActiveScreen === 1 && elementToRender1}
-        {realNextScreen === 1 && elementToRender2}
-      </Animated.View>
-      <Animated.View style={[styles.common, { 
-          translateX: Animated.multiply(position3, width),
-          scaleX: position3.interpolate(scaleInterpolationRange),
-          scaleY: position3.interpolate(scaleInterpolationRange),
-          opacity: position3.interpolate(scaleInterpolationRange),
-        }]}>
-        {realActiveScreen === 2 && elementToRender1}
-        {realNextScreen === 2 && elementToRender2}
-      </Animated.View>
+      {positions.map((el, index) => {
+        return <Animated.View key={index} style={[styles.common, { 
+            translateX: Animated.multiply(el, width),
+            scaleX: el.interpolate(scaleInterpolationRange),
+            scaleY: el.interpolate(scaleInterpolationRange),
+            opacity: el.interpolate(scaleInterpolationRange),
+          }]}>
+          {realActiveScreen === index ? state.currentElement : (realNextScreen === index ? state.nextElement : undefined)}
+        </Animated.View>
+      })}
     </View>
   )
 }
