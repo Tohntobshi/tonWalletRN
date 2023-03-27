@@ -141,7 +141,8 @@ function AddWallet(): JSX.Element {
     <ModalBottom
       isOpen={isOpen}
       onRequestClose={_onClosePress}
-      disabledClose={isLoading}>
+      disabledClose={isLoading}
+      shiftUnderKeyboard={100}>
       <AddWalletContent onCancelPress={_onClosePress}/>
     </ModalBottom>
   )

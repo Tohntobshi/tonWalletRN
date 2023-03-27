@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    minHeight: 500
+    minHeight: 550
   },
 })
 
@@ -86,7 +86,8 @@ function Send(): JSX.Element {
     <ModalBottom
       isOpen={isOpen}
       onRequestClose={_onClosePress}
-      disabledClose={isLoading}>
+      disabledClose={isLoading}
+      shiftUnderKeyboard={150}>
       <SendContent onCancelPress={_onClosePress}/>
     </ModalBottom>
   )

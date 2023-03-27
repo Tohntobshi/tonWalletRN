@@ -122,7 +122,8 @@ function BackupRequest(): JSX.Element {
     <ModalBottom
       isOpen={isOpen}
       onRequestClose={_onClosePress}
-      disabledClose={isLoading}>
+      disabledClose={isLoading}
+      shiftUnderKeyboard={150}>
       <BackupRequestContent onClosePress={_onClosePress}/>
     </ModalBottom>
   )

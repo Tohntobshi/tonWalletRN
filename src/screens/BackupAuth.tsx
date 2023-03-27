@@ -75,7 +75,8 @@ function BackupAuth(): JSX.Element {
   return (
     <ModalBottom
       isOpen={isOpen}
-      onRequestClose={onClosePress}>
+      onRequestClose={onClosePress}
+      shiftUnderKeyboard={150}>
       <BackupAuthContent
         onClosePress={onClosePress}
         onSuccess={onComplete} />
