@@ -64,10 +64,10 @@ function CreatePassword(): JSX.Element {
           <Text style={styles.text1}>The wallet is ready.</Text>
           <Text style={styles.text2}>Create a password to protect it.</Text>
           <Input style={styles.input1} placeholder='Password'
-            error={!!error} editable={!isLoading}
+            error={!!error} editable={!isLoading} secureTextEntry
             value={password1} onChangeText={setFirstPassword}/>
           <Input style={styles.input2} placeholder='Repeat password'
-            error={!!error} editable={!isLoading}
+            error={!!error} editable={!isLoading} secureTextEntry
             value={password2} onChangeText={setSecondPassword}/>
           {!!error ? <Text style={styles.error}>{error}</Text> 
             : <Text style={styles.text3}>To protect your wallet as much as possible,

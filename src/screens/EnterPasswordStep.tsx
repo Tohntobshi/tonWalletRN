@@ -29,7 +29,7 @@ function EnterPasswordStep({ onContinuePress, onBackPress, placeholder,
           <Lottie source={require('../../assets/bird5.json')}
             autoPlay loop style={styles.logoImage}/>
           <Input style={styles.input1} value={value} error={!!error}
-            onChangeText={onChange} editable={!isLoading}
+            onChangeText={onChange} editable={!isLoading} secureTextEntry
             placeholder={placeholder || 'Confirm operation with your password'}/>
           {!!error && <Text style={styles.error}>{error}</Text>}
         </ScrollView>

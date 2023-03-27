@@ -38,7 +38,7 @@ function Input({ style, error, prefix, suffix, pasteButton,
         style={[styles.input, amountInput && styles.amtInput, walletNameInput && styles.walletNameInput]}
         placeholderTextColor={'#91ABB8'}
         onChangeText={onChangeText}
-        keyboardType={amountInput ? 'numbers-and-punctuation' : keyboardType}
+        keyboardType={amountInput ? 'numeric' : keyboardType}
         editable={editable}
         {...rest}
       />
